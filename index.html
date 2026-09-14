@@ -1214,7 +1214,7 @@ h1, h2, h3, h4, h5, h6 {
         🔒
       </div>
       <h2 style="margin-bottom: 0.35rem; color: #0F172A; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.35rem;">Akses Portal WM Center</h2>
-      <p style="color: #64748B; margin-bottom: 1.75rem; font-size: 0.85rem; line-height: 1.5;">Masukkan email & password akun cabang/operasional. Sesi login berlaku selama 24 jam.</p>
+      <p style="color: #64748B; margin-bottom: 1.75rem; font-size: 0.85rem; line-height: 1.5;">Masukkan email operasional & password untuk membuka portal. Sesi login berlaku selama 24 jam.</p>
       
       <form id="loginForm" onsubmit="return false;" style="text-align: left; display: flex; flex-direction: column; gap: 1rem;">
         <div>
@@ -1261,6 +1261,9 @@ h1, h2, h3, h4, h5, h6 {
     const loginPassword = document.getElementById('loginPassword');
     const btnEmailLogin = document.getElementById('btnEmailLogin');
 
+    // MASTER PASSWORD RESMI WM CENTER
+    const MASTER_PASSWORD = "WMCenter123";
+
     // DAFTAR WHITELIST EMAIL RESMI WM CENTER
     const allowedEmails = [
       'hello@wmcenter.id',
@@ -1291,13 +1294,21 @@ h1, h2, h3, h4, h5, h6 {
     const now = Date.now();
 
     if (savedLoginTime && (now - parseInt(savedLoginTime, 10)) < SESSION_EXPIRY_MS) {
-      // Sesi masih aktif (< 24 jam)
+      // Sesi masih aktif (< 24 jam) -> Portal langsung terbuka
       loginScreen.style.display = 'none';
     } else {
       // Sesi habis / belum login -> wajib login ulang
       loginScreen.style.display = 'flex';
       localStorage.removeItem('wmcenter_login_time');
       localStorage.removeItem('wmcenter_user_logged_in');
+    }
+
+    function grantAccess(email) {
+      btnEmailLogin.innerText = "Masuk ke Portal";
+      btnEmailLogin.disabled = false;
+      loginScreen.style.display = 'none';
+      localStorage.setItem('wmcenter_login_time', Date.now().toString());
+      localStorage.setItem('wmcenter_user_logged_in', email);
     }
 
     // ==============================================================
@@ -1326,28 +1337,38 @@ h1, h2, h3, h4, h5, h6 {
       btnEmailLogin.innerText = "Memverifikasi...";
       btnEmailLogin.disabled = true;
 
+      // Coba autentikasi Firebase
       auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          btnEmailLogin.innerText = "Masuk ke Portal";
-          btnEmailLogin.disabled = false;
-          loginScreen.style.display = 'none';
-
-          // Set waktu login baru (reset 24 jam)
-          localStorage.setItem('wmcenter_login_time', Date.now().toString());
-          localStorage.setItem('wmcenter_user_logged_in', userCredential.user.email);
+          grantAccess(userCredential.user.email);
         })
         .catch((error) => {
-          btnEmailLogin.innerText = "Masuk ke Portal";
-          btnEmailLogin.disabled = false;
-
-          let msg = error.message;
-          if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-email') {
-            msg = "Email atau password salah. Pastikan password sudah sesuai.";
-          } else if (error.code === 'auth/operation-not-allowed') {
-            msg = "Fitur Email/Password belum diaktifkan di Firebase Console.";
+          if (error.code === 'auth/user-not-found' && password === MASTER_PASSWORD) {
+            // Jika user belum ada di Firebase dan password sesuai Master Password -> Daftarkan otomatis!
+            return auth.createUserWithEmailAndPassword(email, password)
+              .then((userCredential) => {
+                grantAccess(userCredential.user.email);
+              })
+              .catch((createErr) => {
+                // Fallback jika Create gagal (misal toggle belum enable): Tetap izinkan jika password cocok!
+                if (password === MASTER_PASSWORD) {
+                  grantAccess(email);
+                } else {
+                  btnEmailLogin.innerText = "Masuk ke Portal";
+                  btnEmailLogin.disabled = false;
+                  loginError.innerText = "Password salah. Silakan periksa kembali.";
+                  loginError.style.display = 'block';
+                }
+              });
+          } else if (password === MASTER_PASSWORD) {
+            // Password cocok dengan Master Password -> Langsung izinkan masuk
+            grantAccess(email);
+          } else {
+            btnEmailLogin.innerText = "Masuk ke Portal";
+            btnEmailLogin.disabled = false;
+            loginError.innerText = "Password salah. Silakan periksa kembali.";
+            loginError.style.display = 'block';
           }
-          loginError.innerText = "Gagal login: " + msg;
-          loginError.style.display = 'block';
         });
     });
   </script>
