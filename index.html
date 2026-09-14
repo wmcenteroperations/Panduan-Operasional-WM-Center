@@ -1253,6 +1253,28 @@ h1, h2, h3, h4, h5, h6 {
     const loginError = document.getElementById('loginErrorMsg');
     const btnGoogleLogin = document.getElementById('btnGoogleLogin');
 
+    // DAFTAR WHITELIST EMAIL RESMI WM CENTER
+    const allowedEmails = [
+      'hello@wmcenter.id',
+      'wmphysiocenter@gmail.com',
+      'operations@wmcenter.id',
+      'operationswmcenter@gmail.com',
+      'wmcenteroperations@gmail.com',
+      'wmcenterpemuda@gmail.com',
+      'wmcenterbandung@gmail.com',
+      'wmcenterbsd@gmail.com',
+      'bsdwmcenter@gmail.com',
+      'kemangwmcenter@gmail.com',
+      'wmcentercibubur@gmail.com',
+      'wmcenterkebayoran@gmail.com',
+      'wmcenterpuri@gmail.com',
+      'wmcentersurabaya@gmail.com',
+      'wmcenterkuningan@gmail.com',
+      'wmcenteralamsutera@gmail.com',
+      'wmcenterbekasi@gmail.com',
+      'wmcentersunter@gmail.com'
+    ];
+
     btnGoogleLogin.addEventListener('click', () => {
       loginError.style.display = 'none';
       btnGoogleLogin.innerText = "Menghubungkan Google...";
@@ -1269,9 +1291,22 @@ h1, h2, h3, h4, h5, h6 {
 
     auth.onAuthStateChanged(user => {
       if (user) {
-        // User berhasil login dengan akun Google
-        loginScreen.style.display = 'none';
-        sessionStorage.setItem('wmcenter_user_logged_in', user.email);
+        const userEmail = (user.email || '').toLowerCase().trim();
+        const isAllowed = allowedEmails.some(email => email.toLowerCase().trim() === userEmail) || userEmail.endsWith('@wmcenter.id');
+
+        if (isAllowed) {
+          // Email terdaftar / domain resmi -> Buka akses portal
+          loginScreen.style.display = 'none';
+          sessionStorage.setItem('wmcenter_user_logged_in', user.email);
+        } else {
+          // Email di luar whitelist -> Tolak & Logout otomatis
+          auth.signOut().then(() => {
+            loginScreen.style.display = 'flex';
+            sessionStorage.removeItem('wmcenter_user_logged_in');
+            loginError.innerText = "⛔ Akses Ditolak: Email (" + user.email + ") tidak terdaftar di sistem whitelist WM Center. Silakan gunakan akun resmi cabang / operasional.";
+            loginError.style.display = 'block';
+          });
+        }
       } else {
         // Belum login
         loginScreen.style.display = 'flex';
