@@ -3032,7 +3032,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function renderLatestInfoSection() {
+    function renderLatestInfoSection() {
     const section = document.getElementById('latestInfoSection');
     const container = document.getElementById('latestInfoGrid');
     if (!container || !section) return;
@@ -3050,23 +3050,23 @@ document.addEventListener('DOMContentLoaded', () => {
       const driveBtnText = hasDriveUrl ? '🔗 Buka Link ➔' : '📖 Detail ➔';
       const summaryText = item.summary || 'Klik untuk membuka info terbaru.';
 
-      return 
+      return `
         <div class="item-card latest-info-card" tabindex="0">
-          <span class="card-top-tag" style="background: #FEF3C7; color: #D97706; border-color: #FCD34D;">🔥 \</span>
+          <span class="card-top-tag" style="background: #FEF3C7; color: #D97706; border-color: #FCD34D;">🔥 ${item.code}</span>
           <div class="card-icon-badge" style="background: #FEF3C7; color: #D97706;">🔥</div>
-          <h3 class="card-title">\</h3>
+          <h3 class="card-title">${item.title}</h3>
           
           <div class="popover-desc">
-            <p style="margin:0; opacity:0.95;">\</p>
+            <p style="margin:0; opacity:0.95;">${summaryText}</p>
           </div>
 
           <div>
-            <button class="btn-open-link btn-open-item" data-id="\" style="background: #FEF3C7; color: #D97706; border-color: #FCD34D;">
-              \
+            <button class="btn-open-link btn-open-item" data-id="${item.id}" style="background: #FEF3C7; color: #D97706; border-color: #FCD34D;">
+              ${driveBtnText}
             </button>
           </div>
         </div>
-      ;
+      `;
     }).join('');
 
     container.querySelectorAll('.btn-open-item').forEach(btn => {
@@ -3078,20 +3078,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (item.driveUrl && item.driveUrl.length > 5) {
           window.open(item.driveUrl, '_blank');
-          showToast(🔥 Membuka: \);
+          showToast(🔥 Membuka: ${item.title});
         } else {
           openSopModal(id);
         }
       });
     });
-  });
   }
 
   function openSopModal(id) {
     const item = itemList.find(i => i.id === id);
     if (!item) return;
-    modalTitle.textContent = `[${item.code}] ${item.title}`;
-    modalBody.innerHTML = item.details || `<p>${item.summary}</p>`;
+    modalTitle.textContent = [${item.code}] ${item.title};
+    modalBody.innerHTML = item.details || <p>${item.summary}</p>;
     sopModalOverlay.classList.add('active');
   }
 
@@ -3103,11 +3102,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Module Title Text
     if (sectionTitleHeading) {
       if (currentModule === 'sop') {
-        sectionTitleHeading.textContent = `\uD83D\uDCC4 Daftar ${appSettings.moduleTab1 || 'SOP & Product Knowledge'} ${appSettings.brandTitle}`;
+        sectionTitleHeading.textContent = 📄 Daftar ${appSettings.moduleTab1 || 'SOP & Product Knowledge'} ${appSettings.brandTitle};
       } else if (currentModule === 'dailytask') {
-        sectionTitleHeading.textContent = `\uD83D\uDCC5 Link ${appSettings.moduleTab2 || 'Spreadsheet Daily Tasks & Jadwal Cabang'}`;
+        sectionTitleHeading.textContent = 📅 Link ${appSettings.moduleTab2 || 'Spreadsheet Daily Tasks & Jadwal Cabang'};
       } else {
-        sectionTitleHeading.textContent = `\u26A1 ${appSettings.moduleTab3 || 'Akses Cepat System & Drive Tools'}`;
+        sectionTitleHeading.textContent = ⚡ ${appSettings.moduleTab3 || 'Akses Cepat System & Drive Tools'};
       }
     }
 
@@ -3124,80 +3123,81 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (filtered.length === 0) {
       contentGrid.innerHTML = `
-        <div style=\"grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: 16px; border: 1px solid #E2E8F0;\">
-          <div style=\"margin-bottom: 0.75rem;\">
-            <svg width=\"56\" height=\"56\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#94A3B8\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;\"><circle cx=\"11\" cy=\"11\" r=\"8\"></circle><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"></line></svg>
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: 16px; border: 1px solid #E2E8F0;">
+          <div style="margin-bottom: 0.75rem;">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </div>
-          <h3 style=\"margin-bottom: 0.5rem; color: #1E293B;\">Tidak Ada Dokumen / Link Ditemukan</h3>
-          <p style=\"color: #64748B; font-size: 0.9rem;\">Coba pilih modul/tab lain atau ubah kata kunci pencarian.</p>
+          <h3 style="margin-bottom: 0.5rem; color: #1E293B;">Tidak Ada Dokumen / Link Ditemukan</h3>
+          <p style="color: #64748B; font-size: 0.9rem;">Coba pilih modul/tab lain atau ubah kata kunci pencarian.</p>
         </div>
       `;
       return;
     }
 
     contentGrid.innerHTML = filtered.map(item => {
-        const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
-        const driveBtnText = hasDriveUrl ? '🔗 Buka Link ➔' : '📖 Baca Detail SOP ➔';
-        
-        let icon = '📄';
-        const codeUpper = (item.code || '').toUpperCase();
-        const titleUpper = (item.title || '').toUpperCase();
-        if (codeUpper.includes('INC') || titleUpper.includes('INCOME') || titleUpper.includes('REKAP')) icon = '📊';
-        else if (codeUpper.includes('WA') || titleUpper.includes('WHATSAPP') || titleUpper.includes('CHAT')) icon = '💬';
-        else if (codeUpper.includes('JADWAL') || titleUpper.includes('SHIFT') || titleUpper.includes('TASK')) icon = '📅';
-        else if (codeUpper.includes('PL') || titleUpper.includes('PRICELIST') || titleUpper.includes('KATALOG') || titleUpper.includes('VOUCHER')) icon = '🏷️';
-        else if (codeUpper.includes('PHY') || titleUpper.includes('FISIO') || titleUpper.includes('TERAPI')) icon = '🩺';
-        else if (codeUpper.includes('TUTOR') || titleUpper.includes('VIDEO') || titleUpper.includes('TRAINING')) icon = '🎓';
-        else if (codeUpper.includes('IOC')) icon = '⚡';
-        else if (codeUpper.includes('LEGAL') || titleUpper.includes('IZIN')) icon = '⚖️';
-        else if (codeUpper.includes('FEEDBACK') || titleUpper.includes('GREVIEW')) icon = '⭐';
+      const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
+      const driveBtnText = hasDriveUrl ? '🔗 Buka Link ➔' : '📖 Baca Detail SOP ➔';
+      
+      let icon = '📄';
+      const codeUpper = (item.code || '').toUpperCase();
+      const titleUpper = (item.title || '').toUpperCase();
+      if (codeUpper.includes('INC') || titleUpper.includes('INCOME') || titleUpper.includes('REKAP')) icon = '📊';
+      else if (codeUpper.includes('WA') || titleUpper.includes('WHATSAPP') || titleUpper.includes('CHAT')) icon = '💬';
+      else if (codeUpper.includes('JADWAL') || titleUpper.includes('SHIFT') || titleUpper.includes('TASK')) icon = '📅';
+      else if (codeUpper.includes('PL') || titleUpper.includes('PRICELIST') || titleUpper.includes('KATALOG') || titleUpper.includes('VOUCHER')) icon = '🏷️';
+      else if (codeUpper.includes('PHY') || titleUpper.includes('FISIO') || titleUpper.includes('TERAPI')) icon = '🩺';
+      else if (codeUpper.includes('TUTOR') || titleUpper.includes('VIDEO') || titleUpper.includes('TRAINING')) icon = '🎓';
+      else if (codeUpper.includes('IOC')) icon = '⚡';
+      else if (codeUpper.includes('LEGAL') || titleUpper.includes('IZIN')) icon = '⚖️';
+      else if (codeUpper.includes('FEEDBACK') || titleUpper.includes('GREVIEW')) icon = '⭐';
 
-        const summaryText = item.summary || 'Klik tombol di bawah untuk membuka dokumen ini.';
+      const summaryText = item.summary || 'Klik tombol di bawah untuk membuka dokumen ini.';
 
-        return `
-          <div class="item-card" tabindex="0">
-            <span class="card-top-tag">${item.code || 'DOC'}</span>
-            <div class="card-icon-badge">${icon}</div>
-            <h3 class="card-title">${item.title}</h3>
-            
-            <div class="popover-desc">
-              <p style="margin:0; opacity:0.95;">${summaryText}</p>
-            </div>
-
-            <div>
-              <button class="btn-open-link btn-open-item" data-id="${item.id}">
-                ${driveBtnText}
-              </button>
-            </div>
+      return `
+        <div class="item-card" tabindex="0">
+          <span class="card-top-tag">${item.code || 'DOC'}</span>
+          <div class="card-icon-badge">${icon}</div>
+          <h3 class="card-title">${item.title}</h3>
+          
+          <div class="popover-desc">
+            <p style="margin:0; opacity:0.95;">${summaryText}</p>
           </div>
-        `;
-      }).join('');
 
-      document.querySelectorAll('.btn-open-item').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const id = e.currentTarget.getAttribute('data-id');
-          const item = itemList.find(i => i.id === id);
-          if (!item) return;
+          <div>
+            <button class="btn-open-link btn-open-item" data-id="${item.id}">
+              ${driveBtnText}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
 
-          if (item.driveUrl && item.driveUrl.length > 5) {
-            window.open(item.driveUrl, '_blank');
-            showToast(`📊 Membuka: ${item.title}`);
-          } else {
-            openSopModal(id);
-          }
-        });
+    document.querySelectorAll('.btn-open-item').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = e.currentTarget.getAttribute('data-id');
+        const item = itemList.find(i => i.id === id);
+        if (!item) return;
+
+        if (item.driveUrl && item.driveUrl.length > 5) {
+          window.open(item.driveUrl, '_blank');
+          showToast(📊 Membuka: ${item.title});
+        } else {
+          openSopModal(id);
+        }
       });
+    });
 
-      document.querySelectorAll('.item-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-          if (e.target.closest('.btn-open-item')) return;
-          document.querySelectorAll('.item-card.open').forEach(c => {
-            if (c !== card) c.classList.remove('open');
-          });
-          card.classList.toggle('open');
+    document.querySelectorAll('.item-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-open-item')) return;
+        document.querySelectorAll('.item-card.open').forEach(c => {
+          if (c !== card) c.classList.remove('open');
         });
+        card.classList.toggle('open');
       });
+    });
+  });
   }
 
   if (modalClose) modalClose.addEventListener('click', () => sopModalOverlay.classList.remove('active'));
