@@ -1743,12 +1743,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Studio Editor Script (Internal Admin Edit Mode)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260916_v6') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260916_v7') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260916_v6');
+    localStorage.setItem('wmcenter_build_version', 'v20260916_v7');
   }
 
   const defaultRoles = [
@@ -1840,6 +1840,26 @@ document.addEventListener('DOMContentLoaded', () => {
 };
 
   const defaultItems = [
+  {
+    "id": "inc_master_2026",
+    "icon": "ðŸ“Š",
+    "isFeatured": false,
+    "modules": [
+      "mod_mtmfs2ka",
+      "dailytask"
+    ],
+    "module": "mod_mtmfs2ka",
+    "categories": [
+      "all",
+      "fo"
+    ],
+    "category": "fo",
+    "code": "INC-MASTER",
+    "title": "Daily Income & Rekap Closing",
+    "driveUrl": "https://docs.google.com/spreadsheets/d/1jbiID58EdjOPX-7hv1mC9iW_BBdJH2j3Rj7ZN4M6gns/edit?gid=1760885747#gid=1760885747",
+    "summary": "Master spreadsheet daily income pasien harian, transaksi kasir, dan closing omset cabang WM Center.",
+    "details": "<p>Spreadsheet resmi Daily Income dan rekapan closing kasir cabang WM Center.</p>"
+  },
   {
     "summary": "Link Google Sheets checklist pembukaan kasir, pendaftaran pasien, dan tugas rutin harian FO.",
     "id": "fo_01",
@@ -4232,8 +4252,8 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
         indexTemplate = indexTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
         indexTemplate = indexTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
-        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260916_v6');`);
-        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260916_v6'`);
+        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260916_v7');`);
+        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260916_v7'`);
 
         // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
         if ('showSaveFilePicker' in window) {
