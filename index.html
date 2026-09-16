@@ -3047,33 +3047,44 @@ document.addEventListener('DOMContentLoaded', () => {
     section.style.display = 'block';
     container.innerHTML = featuredItems.map(item => {
       const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
+      const driveBtnText = hasDriveUrl ? '🔗 Buka Link ➔' : '📖 Detail ➔';
+      const summaryText = item.summary || 'Klik untuk membuka info terbaru.';
 
-      return `
-        <div class=\"latest-info-card\">
-          <div style=\"display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 0.5rem;\">
-            <span class=\"card-code\" style=\"background: #FEF3C7; color: #D97706; border-color: #FCD34D;\">\uD83D\uDD25 ${item.code}</span>
+      return 
+        <div class="item-card latest-info-card" tabindex="0">
+          <span class="card-top-tag" style="background: #FEF3C7; color: #D97706; border-color: #FCD34D;">🔥 \</span>
+          <div class="card-icon-badge" style="background: #FEF3C7; color: #D97706;">🔥</div>
+          <h3 class="card-title">\</h3>
+          
+          <div class="popover-desc">
+            <p style="margin:0; opacity:0.95;">\</p>
           </div>
-          <h3 class=\"card-title\" style=\"font-size: 1.025rem; margin-bottom: 0.4rem; font-weight:700;\">${item.title}</h3>
-          <p class=\"card-summary\" style=\"font-size: 0.85rem; color: #475569; margin-bottom: 0.85rem;\">${item.summary}</p>
-          <div style=\"display: flex; gap: 0.5rem; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 0.5rem; border-top: 1px dashed #FDE68A;\">
-            ${hasDriveUrl ? `
-              <a href=\"${item.driveUrl}\" target=\"_blank\" class=\"card-link\" style=\"font-size: 0.825rem; font-weight: 700; color: #D97706; text-decoration:none;\">\uD83D\uDD17 Buka Link \u2794</a>
-            ` : `
-              <button class=\"card-link btn-read-sop\" data-id=\"${item.id}\" style=\"font-size: 0.825rem; font-weight: 700; color: #D97706; background: none; border: none; cursor: pointer; padding:0;\">
-                \uD83D\uDCD6 Detail \u2794
-              </button>
-            `}
+
+          <div>
+            <button class="btn-open-link btn-open-item" data-id="\" style="background: #FEF3C7; color: #D97706; border-color: #FCD34D;">
+              \
+            </button>
           </div>
         </div>
-      `;
+      ;
     }).join('');
 
-    container.querySelectorAll('.btn-read-sop').forEach(btn => {
-      btn.addEventListener('click', () => {
+    container.querySelectorAll('.btn-open-item').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const id = btn.getAttribute('data-id');
-        openSopModal(id);
+        const item = itemList.find(i => i.id === id);
+        if (!item) return;
+
+        if (item.driveUrl && item.driveUrl.length > 5) {
+          window.open(item.driveUrl, '_blank');
+          showToast(🔥 Membuka: \);
+        } else {
+          openSopModal(id);
+        }
       });
     });
+  });
   }
 
   function openSopModal(id) {
@@ -3125,41 +3136,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     contentGrid.innerHTML = filtered.map(item => {
-      const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
-      const driveBtnText = hasDriveUrl ? '\uD83D\uDD17 Buka di Google Drive / Spreadsheet \u2794' : '\uD83D\uDCD6 Baca Detail SOP \u2794';
+        const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
+        const driveBtnText = hasDriveUrl ? '🔗 Buka Link ➔' : '📖 Baca Detail SOP ➔';
+        
+        let icon = '📄';
+        const codeUpper = (item.code || '').toUpperCase();
+        const titleUpper = (item.title || '').toUpperCase();
+        if (codeUpper.includes('INC') || titleUpper.includes('INCOME') || titleUpper.includes('REKAP')) icon = '📊';
+        else if (codeUpper.includes('WA') || titleUpper.includes('WHATSAPP') || titleUpper.includes('CHAT')) icon = '💬';
+        else if (codeUpper.includes('JADWAL') || titleUpper.includes('SHIFT') || titleUpper.includes('TASK')) icon = '📅';
+        else if (codeUpper.includes('PL') || titleUpper.includes('PRICELIST') || titleUpper.includes('KATALOG') || titleUpper.includes('VOUCHER')) icon = '🏷️';
+        else if (codeUpper.includes('PHY') || titleUpper.includes('FISIO') || titleUpper.includes('TERAPI')) icon = '🩺';
+        else if (codeUpper.includes('TUTOR') || titleUpper.includes('VIDEO') || titleUpper.includes('TRAINING')) icon = '🎓';
+        else if (codeUpper.includes('IOC')) icon = '⚡';
+        else if (codeUpper.includes('LEGAL') || titleUpper.includes('IZIN')) icon = '⚖️';
+        else if (codeUpper.includes('FEEDBACK') || titleUpper.includes('GREVIEW')) icon = '⭐';
 
-      return `
-        <div class=\"item-card\">
-          <div>
-            <div class=\"card-top\">
-              <span class=\"card-type-tag\">${item.code || 'DOC'}</span>
+        const summaryText = item.summary || 'Klik tombol di bawah untuk membuka dokumen ini.';
+
+        return `
+          <div class="item-card" tabindex="0">
+            <span class="card-top-tag">${item.code || 'DOC'}</span>
+            <div class="card-icon-badge">${icon}</div>
+            <h3 class="card-title">${item.title}</h3>
+            
+            <div class="popover-desc">
+              <p style="margin:0; opacity:0.95;">${summaryText}</p>
             </div>
-            <h3 class=\"card-title\">${item.title}</h3>
-            <p class=\"card-summary\">${item.summary}</p>
-          </div>
-          <div>
-            <button class=\"btn-open-link btn-open-item\" data-id=\"${item.id}\">
-              ${driveBtnText}
-            </button>
-          </div>
-        </div>
-      `;
-    }).join('');
 
-    document.querySelectorAll('.btn-open-item').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const id = e.currentTarget.getAttribute('data-id');
-        const item = itemList.find(i => i.id === id);
-        if (!item) return;
+            <div>
+              <button class="btn-open-link btn-open-item" data-id="${item.id}">
+                ${driveBtnText}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
 
-        if (item.driveUrl && item.driveUrl.length > 5) {
-          window.open(item.driveUrl, '_blank');
-          showToast(`\uD83D\uDCCA Membuka Google Drive / Spreadsheet: ${item.title}`);
-        } else {
-          openSopModal(id);
-        }
+      document.querySelectorAll('.btn-open-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = e.currentTarget.getAttribute('data-id');
+          const item = itemList.find(i => i.id === id);
+          if (!item) return;
+
+          if (item.driveUrl && item.driveUrl.length > 5) {
+            window.open(item.driveUrl, '_blank');
+            showToast(`📊 Membuka: ${item.title}`);
+          } else {
+            openSopModal(id);
+          }
+        });
       });
-    });
+
+      document.querySelectorAll('.item-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-open-item')) return;
+          document.querySelectorAll('.item-card.open').forEach(c => {
+            if (c !== card) c.classList.remove('open');
+          });
+          card.classList.toggle('open');
+        });
+      });
   }
 
   if (modalClose) modalClose.addEventListener('click', () => sopModalOverlay.classList.remove('active'));
