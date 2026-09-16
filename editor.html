@@ -1356,6 +1356,20 @@ h1, h2, h3, h4, h5, h6 {
   background: #FDE68A;
 }
 
+.btn-item-emoji {
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  font-size: 1.15rem;
+  padding: 0.35rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-item-emoji:hover {
+  background: #CCFBF1;
+  border-color: #0D9488;
+  transform: translateY(-2px);
+}
 </style>
 </head>
 <body>
@@ -1538,7 +1552,30 @@ h1, h2, h3, h4, h5, h6 {
 
 
 
-            <div class="form-group">
+                        <div class="form-group">
+              <label class="form-label" for="formItemIcon">Simbol / Ikon Kartu (Emoji)</label>
+              <div style="display: flex; gap: 0.6rem; align-items: center; margin-bottom: 0.45rem;">
+                <input type="text" id="formItemIcon" class="form-input" placeholder="ðŸ“„" style="width: 65px; text-align: center; font-size: 1.3rem; padding: 0.35rem;" />
+                <span style="font-size: 0.8rem; color: #64748B;">Klik simbol cepat di bawah atau ketik emoji apapun (bisa tekan <strong>Win + .</strong> di keyboard):</span>
+              </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                <button type="button" class="btn-item-emoji" data-emoji="&#128196;" title="Dokumen SOP">&#128196;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#128202;" title="Spreadsheet / Data Rekap">&#128202;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#128209;" title="Checklist / Form FO">&#128209;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#9889;" title="IOC / Fast Access">&#9889;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#129658;" title="Medis / Fisioterapi">&#129658;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#128197;" title="Jadwal / Shift / Task">&#128197;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#127991;&#65039;" title="Pricelist / Promo / Voucher">&#127991;&#65039;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#128172;" title="WhatsApp / Komunikasi">&#128172;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#127891;" title="Training / Video">&#127891;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#11088;" title="Review / Evaluasi">&#11088;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#128176;" title="Kasir / Omset / Income">&#128176;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#128204;" title="Highlight / Pinned">&#128204;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#128279;" title="Link Drive Eksternal">&#128279;</button>
+                <button type="button" class="btn-item-emoji" data-emoji="&#9878;&#65039;" title="Legalitas / Kebijakan">&#9878;&#65039;</button>
+              </div>
+            </div>
+<div class="form-group">
               <label class="form-label" for="formItemCode">Kode / Tag Label</label>
               <input type="text" id="formItemCode" class="form-input" placeholder="Misal: SOP-PHY-03 atau DRIVE-SHEET" />
             </div>
@@ -1706,12 +1743,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Studio Editor Script (Internal Admin Edit Mode)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260916_v5') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260916_v6') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260916_v5');
+    localStorage.setItem('wmcenter_build_version', 'v20260916_v6');
   }
 
   const defaultRoles = [
@@ -3050,6 +3087,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnToggleAllModules = document.getElementById('btnToggleAllModules');
   const formItemCategoriesContainer = document.getElementById('formItemCategoriesContainer');
   const btnToggleAllCategories = document.getElementById('btnToggleAllCategories');
+  const formItemIcon = document.getElementById('formItemIcon');
   const formItemCode = document.getElementById('formItemCode');
   const formItemTitle = document.getElementById('formItemTitle');
   const formItemDriveUrl = document.getElementById('formItemDriveUrl');
@@ -3454,7 +3492,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const moduleManagerListContainer = document.getElementById('moduleManagerListContainer');
   const newModuleIconInput = document.getElementById('newModuleIconInput');
   const newModuleNameInput = document.getElementById('newModuleNameInput');
-  const btnAddNewModule = document.getElementById('btnAddNewModule');
+  const btnAddNewModule = document.getElementById('btnAddNewModule');  // Quick Emoji Pickers for Item Form
+  document.querySelectorAll('.btn-item-emoji').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const emoji = btn.getAttribute('data-emoji');
+      if (formItemIcon) formItemIcon.value = emoji;
+    });
+  });
+
 
   // Quick Emoji Pickers
   document.querySelectorAll('.btn-quick-emoji').forEach(btn => {
@@ -3847,6 +3892,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check currently active module by default
     populateItemFormModuleCheckboxes([currentModule || 'sop']);
 
+    if (formItemIcon) formItemIcon.value = '\uD83D\uDCC4';
     formItemCode.value = '';
     formItemTitle.value = '';
     formItemDriveUrl.value = '';
@@ -3874,6 +3920,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedMods = getItemModules(item);
     populateItemFormModuleCheckboxes(selectedMods);
 
+    if (formItemIcon) formItemIcon.value = item.icon || '\uD83D\uDCC4';
     formItemCode.value = item.code;
     formItemTitle.value = item.title;
     formItemDriveUrl.value = item.driveUrl || '';
@@ -3901,6 +3948,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const primaryModule = selectedModules[0];
     const selectedCategories = ['all'];
 
+    const icon = formItemIcon ? formItemIcon.value.trim() || '\uD83D\uDCC4' : '\uD83D\uDCC4';
     const code = formItemCode.value.trim() || 'DOC';
     const title = formItemTitle.value.trim() || 'Item Baru';
     const driveUrl = formItemDriveUrl.value.trim();
@@ -3913,6 +3961,7 @@ document.addEventListener('DOMContentLoaded', () => {
         itemList[idx] = { 
           id, 
           isFeatured,
+          icon,
           modules: selectedModules,
           module: primaryModule,
           categories: selectedCategories,
@@ -3929,7 +3978,8 @@ document.addEventListener('DOMContentLoaded', () => {
       itemList.unshift({
         id: `item_${Date.now()}`,
         isFeatured,
-        modules: selectedModules,
+          icon,
+          modules: selectedModules,
         module: primaryModule,
         categories: selectedCategories,
         category: selectedCategories[0],
@@ -4182,8 +4232,8 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
         indexTemplate = indexTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
         indexTemplate = indexTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
-        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260916_v5');`);
-        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260916_v5'`);
+        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260916_v6');`);
+        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260916_v6'`);
 
         // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
         if ('showSaveFilePicker' in window) {
