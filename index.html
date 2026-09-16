@@ -1929,12 +1929,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260916_v4') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260916_v5') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260916_v4');
+    localStorage.setItem('wmcenter_build_version', 'v20260916_v5');
   }
 
   const defaultRoles = [

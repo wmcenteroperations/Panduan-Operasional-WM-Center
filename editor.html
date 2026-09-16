@@ -1706,12 +1706,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Studio Editor Script (Internal Admin Edit Mode)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260916_v4') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260916_v5') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260916_v4');
+    localStorage.setItem('wmcenter_build_version', 'v20260916_v5');
   }
 
   const defaultRoles = [
@@ -2970,7 +2970,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (Array.isArray(appSettings.modules)) {
     let changed = false;
     appSettings.modules.forEach(m => {
-      if (m.icon && (m.icon.includes('ð') || m.icon.includes('â') || m.icon.includes(''))) {
+      if (m.icon && (m.icon.includes('ð') || m.icon.includes('â') || false)) {
         if (m.id === 'sop') m.icon = '\uD83D\uDCC4';
         else if (m.id === 'dailytask') m.icon = '\uD83D\uDCC5';
         else if (m.id === 'quicklink') m.icon = '\u26A1';
@@ -3715,12 +3715,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     });
-  });
-  });
-  });
   }
 
-  // Render Content
+// Render Content
   function renderContent() {
     renderCategoryTabs();
     renderLatestInfoSection();
@@ -4185,8 +4182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
         indexTemplate = indexTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
         indexTemplate = indexTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
-        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260916_v4');`);
-        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260916_v4'`);
+        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260916_v5');`);
+        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260916_v5'`);
 
         // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
         if ('showSaveFilePicker' in window) {
