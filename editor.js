@@ -906,7 +906,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function renderLatestInfoSection() {
+      function renderLatestInfoSection() {
     const section = document.getElementById('latestInfoSection');
     const container = document.getElementById('latestInfoGrid');
     if (!container || !section) return;
@@ -916,10 +916,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (featuredItems.length === 0) {
       section.style.display = 'block';
       container.innerHTML = `
-        <div style=\"grid-column: 1/-1; text-align: center; padding: 1.5rem; background: #FFFBEB; border: 1.5px dashed #FCD34D; border-radius: 12px; color: #B45309;\">
-          <div style=\"font-size: 1.5rem; margin-bottom: 0.35rem;\">ðŸ“Œ</div>
-          <strong style=\"font-size: 0.95rem; display: block; margin-bottom: 0.25rem;\">Belum Ada Info Terbaru Yang Dipin</strong>
-          <span style=\"font-size: 0.825rem;\">Klik ðŸ“Œ Pin pada kartu SOP/IOC di bawah atau centang saat edit item untuk menampilkannya di sini!</span>
+        <div style="grid-column: 1/-1; text-align: center; padding: 1.5rem; background: #F8FAFC; border: 1.5px dashed #CBD5E1; border-radius: 12px; color: #64748B;">
+          <div style="font-size: 1.5rem; margin-bottom: 0.35rem;">\uD83D\uDCCD</div>
+          <strong style="font-size: 0.95rem; display: block; margin-bottom: 0.25rem; color: #334155;">Belum Ada Info Terbaru Yang Dipin</strong>
+          <span style="font-size: 0.825rem;">Klik \uD83D\uDCCC Pin pada kartu SOP/IOC di bawah atau centang saat edit item untuk menampilkannya di sini!</span>
         </div>
       `;
       return;
@@ -927,43 +927,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     section.style.display = 'block';
     container.innerHTML = featuredItems.map(item => {
-      const cats = getItemCategories(item);
-      const badgesHtml = cats.map(catId => {
-        const badgeClass = getRoleBadgeClass(catId);
-        const badgeText = getRoleName(catId);
-        return `<span class=\"card-badge ${badgeClass}\">${badgeText}</span>`;
-      }).join('');
-
       const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
+      const summaryText = item.summary || 'Klik untuk membuka info terbaru.';
+
+      let icon = '\uD83D\uDCCC';
+      const titleUpper = (item.title || '').toUpperCase();
+      if (titleUpper.includes('INCOME') || titleUpper.includes('REKAP') || titleUpper.includes('SPREADSHEET')) icon = '\uD83D\uDCCA';
+      else if (titleUpper.includes('WA') || titleUpper.includes('CHAT') || titleUpper.includes('KOMUNIKASI') || titleUpper.includes('WHATSAPP')) icon = '\uD83D\uDCAC';
+      else if (titleUpper.includes('JADWAL') || titleUpper.includes('SHIFT') || titleUpper.includes('EVENT')) icon = '\uD83D\uDCC5';
+      else if (titleUpper.includes('PROMO') || titleUpper.includes('VOUCHER') || titleUpper.includes('DISCOUNT') || titleUpper.includes('PRICELIST') || titleUpper.includes('KATALOG')) icon = '\uD83C\uDFF7\uFE0F';
+      else if (titleUpper.includes('MEDAL') || titleUpper.includes('MONDAY')) icon = '\uD83C\uDFC5';
+      else if (titleUpper.includes('UNIFORM') || titleUpper.includes('SERAGAM')) icon = '\uD83D\uDC54';
+      else if (titleUpper.includes('CEKAT') || titleUpper.includes('AI')) icon = '\uD83E\uDD16';
+      else if (titleUpper.includes('TUTOR') || titleUpper.includes('TRAINING') || titleUpper.includes('VIDEO')) icon = '\uD83C\uDF93';
 
       return `
-        <div class=\"latest-info-card\">
-          <div style=\"display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 0.5rem;\">
-            <span class=\"card-code\" style=\"background: #FEF3C7; color: #D97706; border-color: #FCD34D;\">ðŸ”¥ ${item.code}</span>
-            <div class=\"card-badges-wrapper\">${badgesHtml}</div>
-          </div>
-          <h3 class=\"card-title\" style=\"font-size: 1.025rem; margin-bottom: 0.4rem; font-weight:700;\">${item.title}</h3>
-          <p class=\"card-summary\" style=\"font-size: 0.85rem; color: #475569; margin-bottom: 0.85rem;\">${item.summary}</p>
-          <div style=\"display: flex; gap: 0.5rem; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 0.5rem; border-top: 1px dashed #FDE68A;\">
-            ${hasDriveUrl ? `
-              <a href=\"${item.driveUrl}\" target=\"_blank\" class=\"card-link\" style=\"font-size: 0.825rem; font-weight: 700; color: #D97706; text-decoration:none;\">
-                ðŸ”— Buka Link âž”
-              </a>
-            ` : `
-              <button class=\"card-link btn-read-sop\" data-id=\"${item.id}\" style=\"font-size: 0.825rem; font-weight: 700; color: #D97706; background: none; border: none; cursor: pointer; padding:0;\">
-                ðŸ“– Detail âž”
+        <div class="latest-info-card" tabindex="0">
+          <div class="latest-info-card-top">
+            <div class="latest-info-icon-badge">${icon}</div>
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+              <span class="latest-info-pill">HIGHLIGHT</span>
+              <button class="btn-unpin-featured" data-id="${item.id}" style="background: #FEE2E2; color: #DC2626; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer;" title="Keluarkan dari Info Terbaru">
+                \uD83D\uDCCD Unpin
               </button>
+            </div>
+          </div>
+          <h3 class="latest-info-title">${item.title}</h3>
+          <p class="latest-info-desc">${summaryText}</p>
+          <div>
+            ${hasDriveUrl ? `
+              <a href="${item.driveUrl}" target="_blank" class="btn-latest-info">\uD83D\uDD17 Buka Dokumen \u2794</a>
+            ` : `
+              <button class="btn-latest-info btn-read-sop" data-id="${item.id}">\uD83D\uDCD6 Baca Detail \u2794</button>
             `}
-            <button class=\"btn-unpin-featured\" data-id=\"${item.id}\" style=\"background: #FEE2E2; color: #DC2626; border: none; padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;\" title=\"Keluarkan dari Info Terbaru\">
-              âŒ Unpin
-            </button>
           </div>
         </div>
       `;
     }).join('');
 
     container.querySelectorAll('.btn-unpin-featured').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         const id = btn.getAttribute('data-id');
         const item = itemList.find(i => i.id === id);
         if (item) {
@@ -971,7 +975,7 @@ document.addEventListener('DOMContentLoaded', () => {
           persistItems(itemList);
           renderLatestInfoSection();
           renderContent();
-          showToast(`ðŸ“Œ Item [${item.code}] dikeluarkan dari Info Terbaru.`);
+          showToast(`\uD83D\uDCCC Item [${item.code}] dikeluarkan dari Info Terbaru.`);
         }
       });
     });
@@ -987,6 +991,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     });
+  });
+  });
   }
 
   // Render Content
