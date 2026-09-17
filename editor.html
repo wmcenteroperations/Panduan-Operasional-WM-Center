@@ -1788,12 +1788,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Studio Editor Script (Internal Admin Edit Mode)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v3') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v4') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260917_v3');
+    localStorage.setItem('wmcenter_build_version', 'v20260917_v4');
   }
 
   const defaultRoles = [
@@ -3202,7 +3202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCategoryTabs();
   }
 
-    // Render Module Tabs with Drag & Drop Reordering
+      // Render Module Tabs with Drag & Drop Reordering
   function renderModuleTabs() {
     const container = document.getElementById('moduleTabsContainer');
     if (!container) return;
@@ -3212,27 +3212,16 @@ document.addEventListener('DOMContentLoaded', () => {
       currentModule = 'all';
     }
 
-    const queryMatchingItems = itemList.filter(item => {
-      if (searchQuery === '') return true;
-      return (item.title && item.title.toLowerCase().includes(searchQuery)) ||
-             (item.code && item.code.toLowerCase().includes(searchQuery)) ||
-             (item.summary && item.summary.toLowerCase().includes(searchQuery)) ||
-             (item.details && item.details.toLowerCase().includes(searchQuery));
-    });
-
-    const totalCount = queryMatchingItems.length;
-
     let html = `
       <button class="module-tab-btn ${currentModule === 'all' ? 'active' : ''}" data-module="all" style="position: relative;">
-        <span>&#128194;</span> <span>Semua Dokumen (${totalCount})</span>
+        <span>&#128194;</span> <span>Semua Dokumen</span>
       </button>
     `;
 
     html += modules.map((m, idx) => {
-      const modCount = queryMatchingItems.filter(item => getItemModules(item).includes(m.id)).length;
       return `
         <button class="module-tab-btn ${currentModule === m.id ? 'active' : ''}" data-module="${m.id}" data-index="${idx}" draggable="true" title="Tahan &amp; Geser (Drag) untuk mengubah urutan modul" style="position: relative;">
-          <span>${m.icon || '&#128196;'}</span> <span>${m.name} (${modCount})</span>
+          <span>${m.icon || '&#128196;'}</span> <span>${m.name}</span>
           <span class="btn-inline-edit btn-edit-moduletab" data-id="${m.id}" title="Edit Modul ${m.name}" style="top: 4px; right: 6px; width: 26px; height: 26px; font-size: 0.7rem;">&#9999;&#65039;</span>
         </button>
       `;
@@ -4361,8 +4350,8 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
         indexTemplate = indexTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
         indexTemplate = indexTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
-        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260917_v3');`);
-        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260917_v3'`);
+        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260917_v4');`);
+        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260917_v4'`);
 
         // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
         if ('showSaveFilePicker' in window) {
