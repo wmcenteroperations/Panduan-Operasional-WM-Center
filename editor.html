@@ -12,14 +12,14 @@
 :root {
   --primary: #0F172A;
   --primary-hover: #1E293B;
-  --primary-light: #E2E8F0;
+  --primary-light: #EDE8DF;
   --secondary: #0F172A;
   --text-main: #0F172A;
-  --text-muted: #475569;
-  --text-light: #64748B;
-  --bg-main: #E2E8F0;
+  --text-muted: #57534E;
+  --text-light: #78716C;
+  --bg-main: #F5F3EF;
   --card-bg: #FFFFFF;
-  --border-color: #CBD5E1;
+  --border-color: #E5E0D8;
   
   --success: #059669;
   --success-light: #D1FAE5;
@@ -35,10 +35,10 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -2px rgba(15, 23, 42, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 10px 10px -5px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 1px 3px rgba(28, 25, 23, 0.05), 0 1px 2px rgba(28, 25, 23, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(28, 25, 23, 0.07), 0 2px 4px -1px rgba(28, 25, 23, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(28, 25, 23, 0.09), 0 4px 6px -2px rgba(28, 25, 23, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(28, 25, 23, 0.12), 0 10px 10px -5px rgba(28, 25, 23, 0.04);
 
   --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -144,9 +144,9 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Navbar */
 .navbar {
-  background-color: #1E293B;
-  border-bottom: 1px solid #334155;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+  background-color: #0F172A;
+  border-bottom: 1px solid #1E293B;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
 }
 
 .navbar-inner {
@@ -216,7 +216,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0.55rem 1rem 0.55rem 2.25rem;
   border: 1px solid #334155;
   border-radius: var(--radius-sm);
-  background-color: #0F172A;
+  background-color: #090E1A;
   color: #F8FAFC;
   font-weight: 600;
   font-size: 0.875rem;
@@ -231,7 +231,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .role-pills {
   display: flex;
-  background-color: #0F172A;
+  background-color: #090E1A;
   border: 1px solid #334155;
   padding: 3px;
   border-radius: var(--radius-md);
@@ -251,7 +251,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .role-pill.active {
-  background-color: #334155;
+  background-color: #1E293B;
   color: #FFFFFF;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
@@ -269,9 +269,9 @@ h1, h2, h3, h4, h5, h6 {
   flex: 1;
 }
 
-/* Sleek Operational Hero Header (Navy & Slate Contrast) */
+/* Sleek Operational Hero Header (Midnight & Warm Cream) */
 .ops-hero-section {
-  background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 55%, #0F172A 100%);
+  background: linear-gradient(135deg, #090E1A 0%, #0F172A 50%, #1E3A8A 100%);
   border-radius: 20px;
   padding: 2.75rem 2rem;
   margin-bottom: 2rem;
@@ -280,7 +280,7 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   overflow: hidden;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #1E293B;
 }
 
 .ops-hero-section::before {
@@ -371,7 +371,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
   max-width: 620px;
   margin: 0 auto;
-  border: 1px solid #CBD5E1;
+  border: 1px solid #E5E0D8;
 }
 
 .ops-search-icon {
@@ -446,9 +446,9 @@ h1, h2, h3, h4, h5, h6 {
   flex: 1;
   min-width: 200px;
   padding: 0.85rem 1.25rem;
-  border: 1px solid #E2E8F0;
-  background: #F1F5F9;
-  color: #475569;
+  border: 1px solid #EAE5DE;
+  background: #FAF8F5;
+  color: #57534E;
   font-size: 0.95rem;
   font-weight: 700;
   border-radius: var(--radius-md);
@@ -464,13 +464,13 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #0F172A;
   color: #FFFFFF;
   border-color: #0F172A;
-  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
 }
 
 .module-tab-btn:hover:not(.active) {
-  background-color: #E2E8F0;
+  background-color: #EDE8DF;
   color: #0F172A;
-  border-color: #CBD5E1;
+  border-color: #D6CEC3;
 }
 
 /* Edit Pencil on Module Tabs */
@@ -491,7 +491,7 @@ h1, h2, h3, h4, h5, h6 {
 .category-tabs {
   display: flex;
   gap: 0.5rem;
-  border-bottom: 2px solid #CBD5E1;
+  border-bottom: 2px solid #E5E0D8;
   margin-bottom: 1.5rem;
   overflow-x: auto;
   padding-bottom: 2px;
@@ -503,7 +503,7 @@ h1, h2, h3, h4, h5, h6 {
   border: none;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #475569;
+  color: #78716C;
   cursor: pointer;
   position: relative;
   white-space: nowrap;
@@ -542,7 +542,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: 0 2px 5px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 2px 5px rgba(28, 25, 23, 0.04);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -552,8 +552,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .item-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px -3px rgba(15, 23, 42, 0.12);
-  border-color: #94A3B8;
+  box-shadow: 0 10px 20px -3px rgba(15, 23, 42, 0.1);
+  border-color: #D6CEC3;
 }
 
 .card-top {
@@ -1794,12 +1794,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Studio Editor Script (Internal Admin Edit Mode)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v5') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v6') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260917_v5');
+    localStorage.setItem('wmcenter_build_version', 'v20260917_v6');
   }
 
   const defaultRoles = [
@@ -4356,8 +4356,8 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
         indexTemplate = indexTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
         indexTemplate = indexTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
-        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260917_v5');`);
-        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260917_v5'`);
+        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260917_v6');`);
+        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260917_v6'`);
 
         // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
         if ('showSaveFilePicker' in window) {
