@@ -1794,12 +1794,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Studio Editor Script (Internal Admin Edit Mode)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v6') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v7') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260917_v6');
+    localStorage.setItem('wmcenter_build_version', 'v20260917_v7');
   }
 
   const defaultRoles = [
@@ -2060,7 +2060,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
     "isFeatured": false
   },
-  {
+    {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Sunter.",
     "id": "fo_14_sunter",
     "details": "<p>Spreadsheet input transaksi dan omset harian cabang Sunter.</p>",
@@ -2068,6 +2068,20 @@ document.addEventListener('DOMContentLoaded', () => {
     "module": "mod_mtmfs2ka",
     "code": "INC-SUNTER",
     "title": "Daily Income Cabang Sunter",
+    "icon": "&#128202;",
+    "modules": [
+      "mod_mtmfs2ka"
+    ],
+    "isFeatured": false
+  },
+  {
+    "summary": "Spreadsheet catatan dan log penyesuaian/revisi daily income seluruh cabang WM Center.",
+    "id": "fo_15_adj_income",
+    "details": "<p>Master spreadsheet catatan penyesuaian transaksi dan pembukuan daily income seluruh cabang WM Center.</p>",
+    "driveUrl": "https://docs.google.com/spreadsheets/d/1CELDWtNlnb12GvDp3EfMpHhaPNwHQjLsHT8q3UUJD5M/edit?usp=sharing",
+    "module": "mod_mtmfs2ka",
+    "code": "INC-PENYESUAIAN",
+    "title": "Catatan Penyesuaian - Daily Income (All Cabang)",
     "icon": "&#128202;",
     "modules": [
       "mod_mtmfs2ka"
@@ -4356,8 +4370,8 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
         indexTemplate = indexTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
         indexTemplate = indexTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
-        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260917_v6');`);
-        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260917_v6'`);
+        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260917_v7');`);
+        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260917_v7'`);
 
         // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
         if ('showSaveFilePicker' in window) {
