@@ -1969,12 +1969,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v2') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v3') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260917_v2');
+    localStorage.setItem('wmcenter_build_version', 'v20260917_v3');
   }
 
   const defaultRoles = [
@@ -3229,7 +3229,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let appSettings = getActiveSettings();
   let itemList = getActiveItems();
 
-  let currentModule = (appSettings.modules && appSettings.modules.length > 0) ? appSettings.modules[0].id : 'mod_mtmfs2ka';
+  let currentModule = 'all';
   let currentRole = 'all';
   let currentSubCategory = 'all';
   let searchQuery = '';
@@ -3375,19 +3375,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Render Sub-Category Filter Tabs
+    // Render Sub-Category Filter Tabs
   function renderCategoryTabs() {
     if (!categoryTabsContainer) return;
 
-    const currentModuleItems = itemList.filter(i => getItemModules(i).includes(currentModule));
+    const currentModuleItems = itemList.filter(i => (currentModule === 'all') || getItemModules(i).includes(currentModule));
     const activeRoleItems = currentModuleItems.filter(i => currentRole === 'all' || getItemCategories(i).includes(currentRole));
     const totalCount = activeRoleItems.length;
 
-    let html = `<button class=\"tab-btn ${currentSubCategory === 'all' ? 'active' : ''}\" data-category=\"all\">Semua Dokumen (${totalCount})</button>`;
+    let html = `<button class="tab-btn ${currentSubCategory === 'all' ? 'active' : ''}" data-category="all">Semua Dokumen (${totalCount})</button>`;
 
     appSettings.roles.forEach(r => {
       const roleCount = activeRoleItems.filter(i => getItemCategories(i).includes(r.id)).length;
-      html += `<button class=\"tab-btn ${currentSubCategory === r.id ? 'active' : ''}\" data-category=\"${r.id}\">${r.name} (${roleCount})</button>`;
+      html += `<button class="tab-btn ${currentSubCategory === r.id ? 'active' : ''}" data-category="${r.id}">${r.name} (${roleCount})</button>`;
     });
 
     categoryTabsContainer.innerHTML = html;
@@ -3464,10 +3464,25 @@ document.addEventListener('DOMContentLoaded', () => {
     sopModalOverlay.classList.add('active');
   }
 
-    // Render Grid Content Cards
+      // Render Grid Content Cards
   function renderContent() {
     renderCategoryTabs();
     renderLatestInfoSection();
+
+    const filtered = itemList.filter(item => {
+      const mods = getItemModules(item);
+      const matchModule = (currentModule === 'all') || mods.includes(currentModule);
+      const cats = getItemCategories(item);
+      const matchRole = (currentRole === 'all') || cats.includes(currentRole);
+      const matchSubCat = (currentSubCategory === 'all') || cats.includes(currentSubCategory);
+      const matchQuery = searchQuery === '' || 
+        (item.title && item.title.toLowerCase().includes(searchQuery)) ||
+        (item.code && item.code.toLowerCase().includes(searchQuery)) ||
+        (item.summary && item.summary.toLowerCase().includes(searchQuery)) ||
+        (item.details && item.details.toLowerCase().includes(searchQuery));
+
+      return matchModule && matchRole && matchSubCat && matchQuery;
+    });
 
     // Module Title Text & Search Results Heading
     if (sectionTitleHeading) {
@@ -3486,18 +3501,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sectionTitleHeading.textContent = `${activeModObj ? (activeModObj.icon || '\u26A1') : '\u26A1'} ${activeModObj ? activeModObj.name : 'Akses Cepat'}`;
       }
     }
-
-    const filtered = itemList.filter(item => {
-      const mods = getItemModules(item);
-      const matchModule = (currentModule === 'all') || mods.includes(currentModule);
-      const matchQuery = searchQuery === '' || 
-        (item.title && item.title.toLowerCase().includes(searchQuery)) ||
-        (item.code && item.code.toLowerCase().includes(searchQuery)) ||
-        (item.summary && item.summary.toLowerCase().includes(searchQuery)) ||
-        (item.details && item.details.toLowerCase().includes(searchQuery));
-
-      return matchModule && matchQuery;
-    });
 
     if (filtered.length === 0) {
       contentGrid.innerHTML = `
