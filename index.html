@@ -1651,6 +1651,37 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
   }
 }
+.card-module-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #F1F5F9;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid #CBD5E1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.module-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 10px;
+  padding: 0.45rem 0.85rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+
+.module-search-wrapper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
 </style>
 </head>
 <body>
@@ -1886,7 +1917,16 @@ h1, h2, h3, h4, h5, h6 {
       </nav>
 
       <!-- Main Module Content Display Section -->
+            <!-- Main Module Content Display Section -->
       <section id="contentSection" class="sop-section">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+          <h2 id="sectionTitleHeading" style="font-size: 1.25rem; font-weight: 700; color: #0F172A; margin: 0;">Daftar Dokumen Operasional</h2>
+          <div class="module-search-wrapper" style="min-width: 260px;">
+            <span style="font-size: 0.95rem; color: #64748B;">&#128269;</span>
+            <input type="text" id="moduleSearchInput" placeholder="Filter di modul ini..." style="border: none; outline: none; background: transparent; font-size: 0.875rem; color: #1E293B; width: 100%; font-family: inherit;" />
+            <button id="btnClearSearch" style="background: none; border: none; color: #94A3B8; font-size: 0.85rem; cursor: pointer; display: none;" title="Hapus pencarian">&#10005;</button>
+          </div>
+        </div>
         <!-- Dynamic Grid Content Cards -->
         <div class="content-grid" id="contentGrid">
           <!-- Rendered dynamically by JS -->
@@ -1929,12 +1969,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260916_v8') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v2') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260916_v8');
+    localStorage.setItem('wmcenter_build_version', 'v20260917_v2');
   }
 
   const defaultRoles = [
@@ -3245,20 +3285,41 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
   }
 
-  function renderModuleTabs() {
+    function renderModuleTabs() {
     const container = document.getElementById('moduleTabsContainer');
     if (!container) return;
     const modules = getAppModules();
 
-    if (!modules.some(m => m.id === currentModule)) {
-      currentModule = modules[0].id;
+    if (currentModule !== 'all' && !modules.some(m => m.id === currentModule)) {
+      currentModule = 'all';
     }
 
-    container.innerHTML = modules.map(m => `
-      <button class=\"module-tab-btn ${currentModule === m.id ? 'active' : ''}\" data-module=\"${m.id}\">
-        <span>${m.icon || '\uD83D\uDCC4'}</span> <span>${m.name}</span>
+    const queryMatchingItems = itemList.filter(item => {
+      if (searchQuery === '') return true;
+      return (item.title && item.title.toLowerCase().includes(searchQuery)) ||
+             (item.code && item.code.toLowerCase().includes(searchQuery)) ||
+             (item.summary && item.summary.toLowerCase().includes(searchQuery)) ||
+             (item.details && item.details.toLowerCase().includes(searchQuery));
+    });
+
+    const totalCount = queryMatchingItems.length;
+
+    let html = `
+      <button class="module-tab-btn ${currentModule === 'all' ? 'active' : ''}" data-module="all" style="position: relative;">
+        <span>&#128194;</span> <span>Semua Dokumen (${totalCount})</span>
       </button>
-    `).join('');
+    `;
+
+    html += modules.map(m => {
+      const modCount = queryMatchingItems.filter(item => getItemModules(item).includes(m.id)).length;
+      return `
+        <button class="module-tab-btn ${currentModule === m.id ? 'active' : ''}" data-module="${m.id}">
+          <span>${m.icon || '&#128196;'}</span> <span>${m.name} (${modCount})</span>
+        </button>
+      `;
+    }).join('');
+
+    container.innerHTML = html;
 
     container.querySelectorAll('.module-tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -3403,41 +3464,49 @@ document.addEventListener('DOMContentLoaded', () => {
     sopModalOverlay.classList.add('active');
   }
 
-  // Render Grid Content Cards
+    // Render Grid Content Cards
   function renderContent() {
     renderCategoryTabs();
     renderLatestInfoSection();
 
-    // Module Title Text
+    // Module Title Text & Search Results Heading
     if (sectionTitleHeading) {
-      if (currentModule === 'sop') {
+      if (searchQuery !== '') {
+        const activeModObj = getAppModules().find(m => m.id === currentModule);
+        const modLabel = currentModule === 'all' ? 'Semua Dokumen' : (activeModObj ? activeModObj.name : 'Modul');
+        sectionTitleHeading.textContent = `\uD83D\uDD0D Hasil Pencarian: "${searchQuery}" (${filtered.length} ditemukan di ${modLabel})`;
+      } else if (currentModule === 'all') {
+        sectionTitleHeading.textContent = `\uD83D\uDCC2 Seluruh Dokumen & SOP Operasional ${appSettings.brandTitle}`;
+      } else if (currentModule === 'sop') {
         sectionTitleHeading.textContent = `\uD83D\uDCC4 Daftar ${appSettings.moduleTab1 || 'SOP & Product Knowledge'} ${appSettings.brandTitle}`;
       } else if (currentModule === 'dailytask') {
         sectionTitleHeading.textContent = `\uD83D\uDCC5 Link ${appSettings.moduleTab2 || 'Spreadsheet Daily Tasks & Jadwal Cabang'}`;
       } else {
-        sectionTitleHeading.textContent = `\u26A1 ${appSettings.moduleTab3 || 'Akses Cepat System & Drive Tools'}`;
+        const activeModObj = getAppModules().find(m => m.id === currentModule);
+        sectionTitleHeading.textContent = `${activeModObj ? (activeModObj.icon || '\u26A1') : '\u26A1'} ${activeModObj ? activeModObj.name : 'Akses Cepat'}`;
       }
     }
 
     const filtered = itemList.filter(item => {
       const mods = getItemModules(item);
-      const matchModule = mods.includes(currentModule);
+      const matchModule = (currentModule === 'all') || mods.includes(currentModule);
       const matchQuery = searchQuery === '' || 
-        item.title.toLowerCase().includes(searchQuery) ||
-        item.code.toLowerCase().includes(searchQuery) ||
-        item.summary.toLowerCase().includes(searchQuery);
+        (item.title && item.title.toLowerCase().includes(searchQuery)) ||
+        (item.code && item.code.toLowerCase().includes(searchQuery)) ||
+        (item.summary && item.summary.toLowerCase().includes(searchQuery)) ||
+        (item.details && item.details.toLowerCase().includes(searchQuery));
 
       return matchModule && matchQuery;
     });
 
     if (filtered.length === 0) {
       contentGrid.innerHTML = `
-        <div style=\"grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: 16px; border: 1px solid #E2E8F0;\">
-          <div style=\"margin-bottom: 0.75rem;\">
-            <svg width=\"56\" height=\"56\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#94A3B8\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;\"><circle cx=\"11\" cy=\"11\" r=\"8\"></circle><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"></line></svg>
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: 16px; border: 1px solid #E2E8F0;">
+          <div style="margin-bottom: 0.75rem;">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </div>
-          <h3 style=\"margin-bottom: 0.5rem; color: #1E293B;\">Tidak Ada Dokumen / Link Ditemukan</h3>
-          <p style=\"color: #64748B; font-size: 0.9rem;\">Coba pilih modul/tab lain atau ubah kata kunci pencarian.</p>
+          <h3 style="margin-bottom: 0.5rem; color: #1E293B;">Tidak Ada Dokumen / Link Ditemukan</h3>
+          <p style="color: #64748B; font-size: 0.9rem;">Coba pilih modul/tab lain atau ubah kata kunci pencarian.</p>
         </div>
       `;
       return;
@@ -3447,33 +3516,43 @@ document.addEventListener('DOMContentLoaded', () => {
       const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
       const driveBtnText = hasDriveUrl ? '\uD83D\uDD17 Buka di Google Drive / Spreadsheet \u2794' : '\uD83D\uDCD6 Baca Detail SOP \u2794';
 
-            let icon = '📄';
-      const codeUpper = (item.code || '').toUpperCase();
-      const titleUpper = (item.title || '').toUpperCase();
-      if (codeUpper.includes('INC') || titleUpper.includes('INCOME') || titleUpper.includes('REKAP')) icon = '📊';
-      else if (codeUpper.includes('WA') || titleUpper.includes('WHATSAPP') || titleUpper.includes('CHAT')) icon = '💬';
-      else if (codeUpper.includes('JADWAL') || titleUpper.includes('SHIFT') || titleUpper.includes('TASK')) icon = '📅';
-      else if (codeUpper.includes('PL') || titleUpper.includes('PRICELIST') || titleUpper.includes('KATALOG') || titleUpper.includes('VOUCHER')) icon = '🏷️';
-      else if (codeUpper.includes('PHY') || titleUpper.includes('FISIO') || titleUpper.includes('TERAPI')) icon = '🩺';
-      else if (codeUpper.includes('TUTOR') || titleUpper.includes('VIDEO') || titleUpper.includes('TRAINING')) icon = '🎓';
-      else if (codeUpper.includes('IOC')) icon = '⚡';
-      else if (codeUpper.includes('LEGAL') || titleUpper.includes('IZIN')) icon = '⚖️';
-      else if (codeUpper.includes('FEEDBACK') || titleUpper.includes('GREVIEW')) icon = '⭐';
+      let icon = item.icon || '&#128196;';
+      if (!item.icon) {
+        const codeUpper = (item.code || '').toUpperCase();
+        const titleUpper = (item.title || '').toUpperCase();
+        if (codeUpper.includes('INC') || titleUpper.includes('INCOME') || titleUpper.includes('REKAP')) icon = '&#128202;';
+        else if (codeUpper.includes('WA') || titleUpper.includes('WHATSAPP') || titleUpper.includes('CHAT')) icon = '&#128172;';
+        else if (codeUpper.includes('JADWAL') || titleUpper.includes('SHIFT') || titleUpper.includes('TASK')) icon = '&#128197;';
+        else if (codeUpper.includes('PL') || titleUpper.includes('PRICELIST') || titleUpper.includes('KATALOG') || titleUpper.includes('VOUCHER')) icon = '&#127991;&#65039;';
+        else if (codeUpper.includes('PHY') || titleUpper.includes('FISIO') || titleUpper.includes('TERAPI')) icon = '&#129658;';
+        else if (codeUpper.includes('TUTOR') || titleUpper.includes('VIDEO') || titleUpper.includes('TRAINING')) icon = '&#127891;';
+        else if (codeUpper.includes('IOC')) icon = '&#9889;';
+        else if (codeUpper.includes('LEGAL') || titleUpper.includes('IZIN')) icon = '&#9878;&#65039;';
+        else if (codeUpper.includes('FEEDBACK') || titleUpper.includes('GREVIEW')) icon = '&#11088;';
+      }
 
       const summaryText = item.summary || 'Klik tombol di bawah untuk membuka dokumen ini.';
+      const mods = getItemModules(item);
+      const moduleNames = mods.map(mId => {
+        const mObj = getAppModules().find(x => x.id === mId);
+        return mObj ? mObj.name : mId;
+      }).join(', ');
 
       return `
-        <div class=\"item-card\" tabindex=\"0\">
-          <span class=\"card-top-tag\">${item.code || 'DOC'}</span>
-          <div class=\"card-icon-badge\">${icon}</div>
-          <h3 class=\"card-title\">${item.title}</h3>
+        <div class="item-card" tabindex="0">
+          <div class="card-top">
+            <span class="card-top-tag">${item.code || 'DOC'}</span>
+            ${(currentModule === 'all' || searchQuery !== '') ? `<span class="card-module-tag">${moduleNames}</span>` : ''}
+          </div>
+          <div class="card-icon-badge">${icon}</div>
+          <h3 class="card-title">${item.title}</h3>
           
-          <div class=\"popover-desc\">
-            <p style=\"margin:0; opacity:0.95;\">${summaryText}</p>
+          <div class="popover-desc">
+            <p style="margin:0; opacity:0.95;">${summaryText}</p>
           </div>
 
           <div>
-            <button class=\"btn-open-link btn-open-item\" data-id=\"${item.id}\">
+            <button class="btn-open-link btn-open-item" data-id="${item.id}">
               ${driveBtnText}
             </button>
           </div>
@@ -3499,10 +3578,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (modalClose) modalClose.addEventListener('click', () => sopModalOverlay.classList.remove('active'));
 
+    const moduleSearchInput = document.getElementById('moduleSearchInput');
+  const btnClearSearch = document.getElementById('btnClearSearch');
+
+  function updateSearch(query, origin) {
+    searchQuery = query.trim().toLowerCase();
+    
+    if (origin === 'hero') {
+      if (moduleSearchInput) moduleSearchInput.value = query;
+      if (searchQuery !== '') {
+        currentModule = 'all';
+      }
+    } else if (origin === 'module') {
+      if (searchInput) searchInput.value = query;
+    }
+
+    if (btnClearSearch) {
+      btnClearSearch.style.display = searchQuery ? 'inline-block' : 'none';
+    }
+
+    renderModuleTabs();
+    renderContent();
+  }
+
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
-      searchQuery = e.target.value.trim().toLowerCase();
-      renderContent();
+      updateSearch(e.target.value, 'hero');
+    });
+  }
+
+  if (moduleSearchInput) {
+    moduleSearchInput.addEventListener('input', (e) => {
+      updateSearch(e.target.value, 'module');
+    });
+  }
+
+  if (btnClearSearch) {
+    btnClearSearch.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      if (moduleSearchInput) moduleSearchInput.value = '';
+      updateSearch('', 'hero');
     });
   }
 
