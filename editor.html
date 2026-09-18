@@ -1791,6 +1791,406 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.5rem;
 }
 
+
+/* === WEGROW PORTAL SHORTCUTS & MODAL HUB STYLES === */
+.portal-shortcuts-section {
+  margin: 1.5rem 0 2rem 0;
+}
+
+.portal-shortcuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.portal-shortcut-card {
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.portal-shortcut-card:hover {
+  transform: translateY(-4px);
+  border-color: #CBD5E1;
+  box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+.portal-shortcut-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  margin-bottom: 0.85rem;
+  transition: transform 0.2s;
+}
+
+.portal-shortcut-card:hover .portal-shortcut-icon {
+  transform: scale(1.08);
+}
+
+.portal-shortcut-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 0.35rem 0;
+  line-height: 1.3;
+}
+
+.portal-shortcut-desc {
+  font-size: 0.8rem;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Modal WeGrow Overlay */
+.wegrow-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.wegrow-modal-overlay.active {
+  display: flex;
+}
+
+.wegrow-modal-container {
+  background: #F8FAFC;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  max-width: 680px;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid #E2E8F0;
+  animation: weGrowModalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wegrow-modal-container.wide {
+  max-width: 880px;
+}
+
+@keyframes weGrowModalPop {
+  0% { transform: scale(0.94); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.wegrow-modal-close-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 36px;
+  height: 36px;
+  background: #F1F5F9;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.wegrow-modal-close-btn:hover {
+  background: #E2E8F0;
+  color: #0F172A;
+  transform: rotate(90deg);
+}
+
+/* Hub Views inside Modal */
+.wegrow-view {
+  display: none;
+  padding: 2.25rem 2rem;
+}
+
+.wegrow-view.active {
+  display: block;
+}
+
+/* View 1: Hub Menu (Screenshot 3 style) */
+.wegrow-hub-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.wegrow-hub-logo-badge {
+  width: 76px;
+  height: 76px;
+  background: #F0FDF4;
+  border: 1.5px solid #DCFCE7;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin: 0 auto 1.25rem auto;
+  box-shadow: 0 4px 10px rgba(34, 197, 94, 0.12);
+}
+
+.wegrow-hub-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  color: #1E3A5F;
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.02em;
+}
+
+.wegrow-hub-subtitle {
+  font-size: 1rem;
+  color: #64748B;
+  margin: 0;
+}
+
+.wegrow-hub-buttons-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.btn-wegrow-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.15rem 1.5rem;
+  border-radius: 16px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-wegrow-nav-dash {
+  background: #1E3A5F;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 4px 8px rgba(30, 58, 95, 0.25);
+}
+
+.btn-wegrow-nav-dash:hover {
+  background: #152942;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(30, 58, 95, 0.3);
+}
+
+.btn-wegrow-nav-form {
+  background: #E0692D;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 4px 8px rgba(224, 105, 45, 0.25);
+}
+
+.btn-wegrow-nav-form:hover {
+  background: #C8541A;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(224, 105, 45, 0.3);
+}
+
+.btn-wegrow-nav-booklet {
+  background: #FFFFFF;
+  color: #1E3A5F;
+  border: 1.5px solid #1E3A5F;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.btn-wegrow-nav-booklet:hover {
+  background: #F1F5F9;
+  transform: translateY(-2px);
+}
+
+/* Sub-View Top Nav Bar */
+.wegrow-subnav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1.5px solid #E2E8F0;
+  flex-wrap: wrap;
+}
+
+.btn-wegrow-back {
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  color: #334155;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+}
+
+.btn-wegrow-back:hover {
+  background: #F1F5F9;
+  border-color: #94A3B8;
+  color: #0F172A;
+}
+
+.wegrow-view-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0;
+}
+
+/* Form Styles (Screenshot 4 style) */
+.wegrow-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #946300;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 1.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.wegrow-section-heading::before {
+  content: "●";
+  font-size: 0.8rem;
+  color: #D97706;
+}
+
+.wegrow-form-group {
+  margin-bottom: 1.15rem;
+}
+
+.wegrow-form-label {
+  display: block;
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 0.4rem;
+}
+
+.wegrow-form-label .req {
+  color: #DC2626;
+  margin-left: 2px;
+}
+
+.wegrow-form-input, .wegrow-form-select, .wegrow-form-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1rem;
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: #0F172A;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.wegrow-form-input:focus, .wegrow-form-select:focus, .wegrow-form-textarea:focus {
+  border-color: #0D9488;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.wegrow-form-input::placeholder, .wegrow-form-textarea::placeholder {
+  color: #94A3B8;
+  font-size: 0.875rem;
+}
+
+.wegrow-doc-box {
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.btn-wegrow-read-doc {
+  background: #0F172A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1.25rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-wegrow-read-doc:hover {
+  background: #1E293B;
+  transform: translateY(-1px);
+}
+
+.btn-wegrow-submit {
+  background: #0D9488;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  padding: 0.95rem 1.75rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-wegrow-submit:hover {
+  background: #0F766E;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px -2px rgba(13, 148, 136, 0.4);
+}
+
 </style>
 </head>
 <body>
@@ -1875,6 +2275,41 @@ h1, h2, h3, h4, h5, h6 {
               Cari Dokumen
             </button>
           </div>
+        </div>
+      </section>
+
+      <!-- Direct Portal Shortcuts Row (WeGrow, Manpower Request, Form GA, Buku Saku FO) -->
+      <section class="portal-shortcuts-section" id="portalShortcutsSection">
+        <div class="portal-shortcuts-grid">
+          
+          <!-- Portal 1: WeGrow (Sosialisasi SOP FO & Log Konfirmasi) -->
+          <div class="portal-shortcut-card" id="btnOpenWeGrowPortal" title="Buka Portal WeGrow / Sosialisasi SOP FO">
+            <div class="portal-shortcut-icon" style="background: #F0FDF4; border: 1.5px solid #DCFCE7;">🌱</div>
+            <h3 class="portal-shortcut-title">WeGrow</h3>
+            <p class="portal-shortcut-desc">Portal sosialisasi SOP, IOC &amp; konfirmasi baca staf FO</p>
+          </div>
+
+          <!-- Portal 2: Manpower Request -->
+          <div class="portal-shortcut-card" id="btnOpenManpowerPortal" title="Buka Form Manpower Request">
+            <div class="portal-shortcut-icon" style="background: #EEF2FF; border: 1.5px solid #E0E7FF;">👥</div>
+            <h3 class="portal-shortcut-title">Manpower Request</h3>
+            <p class="portal-shortcut-desc">Pengajuan penambahan staf &amp; SDM operasional</p>
+          </div>
+
+          <!-- Portal 3: Form Permintaan & Perbaikan Barang GA -->
+          <div class="portal-shortcut-card" id="btnOpenGaPortal" title="Buka Form Permintaan & Perbaikan Barang">
+            <div class="portal-shortcut-icon" style="background: #FFF7ED; border: 1.5px solid #FFEDD5;">📦</div>
+            <h3 class="portal-shortcut-title">Form Permintaan &amp; Perbaikan Barang</h3>
+            <p class="portal-shortcut-desc">Butuh barang baru atau perbaikan? Submit request ke tim GA</p>
+          </div>
+
+          <!-- Portal 4: Buku Saku FO -->
+          <div class="portal-shortcut-card" id="btnOpenBukuSakuPortal" title="Buka Buku Saku FO">
+            <div class="portal-shortcut-icon" style="background: #F0F9FF; border: 1.5px solid #E0F2FE;">📱</div>
+            <h3 class="portal-shortcut-title">Buku Saku FO</h3>
+            <p class="portal-shortcut-desc">Panduan cepat alur kerja harian &amp; checklist Front Office</p>
+          </div>
+
         </div>
       </section>
 
@@ -2284,12 +2719,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Studio Editor Script (Internal Admin Edit Mode)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260918_v4') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260918_v5') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260918_v4');
+    localStorage.setItem('wmcenter_build_version', 'v20260918_v5');
   }
 
   const defaultRoles = [
@@ -3807,6 +4242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentModule = btn.getAttribute('data-module');
         renderModuleTabs();
         renderContent();
+    initWeGrowEvents();
       });
     });
 
@@ -3968,6 +4404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRolePills();
         renderCategoryTabs();
         renderContent();
+    initWeGrowEvents();
         showToast(`\uD83C\uDFAF Filter Peran: ${pill.textContent}`);
       });
     });
@@ -3995,6 +4432,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSubCategory = btn.getAttribute('data-category');
         renderCategoryTabs();
         renderContent();
+    initWeGrowEvents();
       });
     });
   }
@@ -4041,6 +4479,7 @@ document.addEventListener('DOMContentLoaded', () => {
           persistSettings(appSettings);
           applySettingsUI();
           renderContent();
+    initWeGrowEvents();
           showToast(`\u2705 Nama kategori diubah menjadi: "${newName}"`);
         }
       });
@@ -4083,6 +4522,7 @@ document.addEventListener('DOMContentLoaded', () => {
       persistItems(itemList);
       applySettingsUI();
       renderContent();
+    initWeGrowEvents();
       renderRoleManagerList();
       showToast(`\uD83D\uDDD1\uFE0F Kategori \"${roleObj.name}\" berhasil dihapus.`);
     }
@@ -4104,6 +4544,7 @@ document.addEventListener('DOMContentLoaded', () => {
       persistSettings(appSettings);
       applySettingsUI();
       renderContent();
+    initWeGrowEvents();
       renderRoleManagerList(newId);
       showToast(`\u2728 Kategori Tim Baru \"${name}\" berhasil ditambahkan!`);
     });
@@ -4262,6 +4703,7 @@ document.addEventListener('DOMContentLoaded', () => {
       persistItems(itemList);
       renderModuleTabs();
       renderContent();
+    initWeGrowEvents();
       renderModuleManagerList();
       showToast(`\uD83D\uDDD1\uFE0F Modul \"${modObj.name}\" berhasil dihapus.`);
     }
@@ -4287,6 +4729,7 @@ document.addEventListener('DOMContentLoaded', () => {
       persistSettings(appSettings);
       renderModuleTabs();
       renderContent();
+    initWeGrowEvents();
       renderModuleManagerList(newId);
       showToast(`\u2728 Modul Baru "${icon} ${name}" berhasil ditambahkan!`);
     });
@@ -4392,6 +4835,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
           renderContent();
+    initWeGrowEvents();
           showToast(`\uD83D\uDCCC Item [${item.code}] dikeluarkan dari Info Terbaru.`);
         }
       });
@@ -5051,6 +5495,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
           renderContent();
+    initWeGrowEvents();
           if (item.isFeatured) {
             showToast(`\uD83D\uDCCC Item [${item.code}] ditambahkan ke Info Terbaru!`);
           } else {
@@ -5392,6 +5837,7 @@ document.addEventListener('DOMContentLoaded', () => {
       saveReadAcknowledgment(entry);
       ackModalOverlay.classList.remove('active');
       renderContent();
+    initWeGrowEvents();
       showToast(`🎉 Terima kasih ${sName}! Konfirmasi baca untuk "${item ? item.title : 'SOP'}" berhasil dicatat.`);
     });
   }
@@ -5534,6 +5980,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderCategoryTabs();
     renderContent();
+    initWeGrowEvents();
     itemFormModalOverlay.classList.remove('active');
   }
 
@@ -5572,6 +6019,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       renderCategoryTabs();
       renderContent();
+    initWeGrowEvents();
       showToast(`\uD83D\uDDD1\uFE0F Item [${item.code}] dihapus.`);
     }
   }
@@ -5601,6 +6049,7 @@ document.addEventListener('DOMContentLoaded', () => {
     persistSettings(appSettings);
     applySettingsUI();
     renderContent();
+    initWeGrowEvents();
     moduleTabModalOverlay.classList.remove('active');
     showToast(`\u2705 Nama Tab Modul ${tabNum} diubah menjadi: "${newTitle}"`);
   }
@@ -5683,6 +6132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     persistSettings(appSettings);
     applySettingsUI();
     renderContent();
+    initWeGrowEvents();
     adminSettingsModalOverlay.classList.remove('active');
     showToast('âš™ï¸ Pengaturan portal, nama brand, & lokasi cabang berhasil disimpan!');
   }
@@ -5725,6 +6175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
         renderContent();
+    initWeGrowEvents();
         showToast('\uD83D\uDD04 Studio Editor dikembalikan ke data awal.');
       }
     });
@@ -5753,6 +6204,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderModuleTabs();
     renderContent();
+    initWeGrowEvents();
   }
 
   if (searchInput) {
@@ -5836,8 +6288,8 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
         indexTemplate = indexTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
         indexTemplate = indexTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
-        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260918_v4');`);
-        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260918_v4'`);
+        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260918_v5');`);
+        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260918_v5'`);
 
         // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
         if ('showSaveFilePicker' in window) {
@@ -5892,7 +6344,693 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial Load
   applySettingsUI();
   renderContent();
+    initWeGrowEvents();
 });
+
+
+// ========================================================
+// WEGROW HUB CONTROLLER (PORTAL SHORTCUT, MODAL, FORM, DASHBOARD)
+// ========================================================
+
+function openWeGrowModal(targetView = 'menu', preselectedDocId = null) {
+  const modal = document.getElementById('weGrowModalOverlay');
+  if (!modal) return;
+
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Populate branch selectors
+  populateWeGrowBranches();
+  // Populate doc selectors
+  populateWeGrowDocs();
+
+  if (preselectedDocId) {
+    const docSelect = document.getElementById('wgSelectDoc');
+    if (docSelect) docSelect.value = preselectedDocId;
+    updateWeGrowDocPreview();
+  }
+
+  switchWeGrowView(targetView);
+}
+
+function closeWeGrowModal() {
+  const modal = document.getElementById('weGrowModalOverlay');
+  if (modal) {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+}
+
+function switchWeGrowView(viewName) {
+  const views = ['menu', 'form', 'dashboard', 'booklet'];
+  const viewMap = {
+    'menu': document.getElementById('weGrowMenuView'),
+    'form': document.getElementById('weGrowFormView'),
+    'dashboard': document.getElementById('weGrowDashView'),
+    'booklet': document.getElementById('weGrowBookletView')
+  };
+
+  const container = document.getElementById('weGrowModalContainer');
+  if (container) {
+    if (viewName === 'dashboard' || viewName === 'booklet') {
+      container.classList.add('wide');
+    } else {
+      container.classList.remove('wide');
+    }
+  }
+
+  views.forEach(v => {
+    if (viewMap[v]) {
+      viewMap[v].classList.toggle('active', v === viewName);
+    }
+  });
+
+  if (viewName === 'dashboard') {
+    renderWeGrowDashboardTable();
+  } else if (viewName === 'form') {
+    updateWeGrowDocPreview();
+  } else if (viewName === 'booklet') {
+    renderWeGrowBookletGrid();
+  }
+}
+
+function populateWeGrowBranches() {
+  const branchSelect = document.getElementById('wgStaffBranch');
+  const filterBranch = document.getElementById('wgFilterBranch');
+  const branches = (typeof branchData !== 'undefined' && branchData.length > 0) 
+    ? branchData.map(b => b.name)
+    : [
+        'WM Center - Head Office',
+        'WM Center Pemuda (Surabaya)',
+        'WM Center Bandung',
+        'WM Center BSD',
+        'WM Center Kemang (Jakarta)',
+        'WM Center Cibubur',
+        'WM Center Kebayoran',
+        'WM Center Puri',
+        'WM Center Surabaya',
+        'WM Center Kuningan',
+        'WM Center Alam Sutera',
+        'WM Center Bekasi',
+        'WM Center Sunter'
+      ];
+
+  if (branchSelect) {
+    const currentVal = branchSelect.value;
+    branchSelect.innerHTML = branches.map(b => `<option value="${b}">${b}</option>`).join('');
+    if (currentVal && branches.includes(currentVal)) {
+      branchSelect.value = currentVal;
+    }
+  }
+
+  if (filterBranch) {
+    const currentFilter = filterBranch.value;
+    filterBranch.innerHTML = '<option value="all">Semua Cabang (All)</option>' +
+      branches.map(b => `<option value="${b}">${b}</option>`).join('');
+    if (currentFilter) {
+      filterBranch.value = currentFilter;
+    }
+  }
+}
+
+function getSosialisasiItems() {
+  if (typeof itemList === 'undefined' || !Array.isArray(itemList)) return [];
+  // Return items that belong to mod_sosialisasi or all active items if none explicitly tagged
+  const tagged = itemList.filter(i => {
+    const mods = (typeof getItemModules === 'function') ? getItemModules(i) : (i.modules || []);
+    return mods.includes('mod_sosialisasi') || i.requiresAck;
+  });
+  return tagged.length > 0 ? tagged : itemList.slice(0, 10);
+}
+
+function populateWeGrowDocs() {
+  const docSelect = document.getElementById('wgSelectDoc');
+  const filterDoc = document.getElementById('wgFilterDoc');
+  const items = getSosialisasiItems();
+
+  if (docSelect) {
+    const currentDoc = docSelect.value;
+    docSelect.innerHTML = '<option value="">-- Pilih Dokumen Ketentuan / SOP --</option>' +
+      items.map(i => `<option value="${i.id}">${i.code ? '[' + i.code + '] ' : ''}${i.title}</option>`).join('');
+    if (currentDoc) {
+      docSelect.value = currentDoc;
+    }
+  }
+
+  if (filterDoc) {
+    const currentFilter = filterDoc.value;
+    filterDoc.innerHTML = '<option value="all">Semua Dokumen SOP</option>' +
+      items.map(i => `<option value="${i.id}">${i.code ? '[' + i.code + '] ' : ''}${i.title}</option>`).join('');
+    if (currentFilter) {
+      filterDoc.value = currentFilter;
+    }
+  }
+}
+
+function updateWeGrowDocPreview() {
+  const select = document.getElementById('wgSelectDoc');
+  const box = document.getElementById('wgDocPreviewBox');
+  if (!select || !box) return;
+
+  const docId = select.value;
+  if (!docId) {
+    box.innerHTML = `
+      <div style="text-align: center; color: #64748B; padding: 0.75rem 0; font-size: 0.875rem;">
+        Silakan pilih dokumen SOP / IOC di atas untuk membaca materi.
+      </div>
+    `;
+    return;
+  }
+
+  const item = (typeof itemList !== 'undefined') ? itemList.find(i => i.id === docId) : null;
+  if (!item) return;
+
+  const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
+  let btnText = '📖 Buka &amp; Baca SOP ➔';
+  if (hasDriveUrl) {
+    const urlLower = item.driveUrl.toLowerCase();
+    if (urlLower.includes('.pdf')) btnText = '📄 Buka File PDF Dokumen ➔';
+    else if (urlLower.includes('spreadsheet') || urlLower.includes('sheets')) btnText = '📊 Buka Google Sheets ➔';
+    else if (urlLower.includes('script.google.com')) btnText = '🚀 Buka Aplikasi Web ➔';
+    else btnText = '🔗 Buka Dokumen ➔';
+  }
+
+  box.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div style="flex: 1; min-width: 220px;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+          <span style="background: #0F172A; color: #FFFFFF; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
+          <span style="font-size: 0.775rem; font-weight: 700; color: #0D9488;">Dokumen Terpilih</span>
+        </div>
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 0 0 0.25rem 0;">${item.title}</h4>
+        <p style="font-size: 0.8rem; color: #64748B; margin: 0; line-height: 1.4;">${item.summary || 'Pelajari materi ketentuan sebelum konfirmasi.'}</p>
+      </div>
+      <div>
+        <button type="button" class="btn-wegrow-read-doc" id="btnWgOpenDocNow">
+          <span>${btnText}</span>
+        </button>
+      </div>
+    </div>
+  `;
+
+  const btnOpen = document.getElementById('btnWgOpenDocNow');
+  if (btnOpen) {
+    btnOpen.addEventListener('click', () => {
+      if (item.driveUrl && item.driveUrl.length > 5) {
+        window.open(item.driveUrl, '_blank');
+        if (typeof showToast === 'function') showToast(`📂 Membuka dokumen: ${item.title}`);
+      } else if (typeof openSopModal === 'function') {
+        openSopModal(item.id);
+      }
+    });
+  }
+}
+
+function renderWeGrowDashboardTable() {
+  const container = document.getElementById('wgTableContainer');
+  const statTotal = document.getElementById('wgStatTotal');
+  const statBranches = document.getElementById('wgStatBranches');
+  const statDocs = document.getElementById('wgStatDocs');
+  const filterBranch = document.getElementById('wgFilterBranch');
+  const filterDoc = document.getElementById('wgFilterDoc');
+  if (!container) return;
+
+  const acks = (typeof getReadAcknowledgments === 'function') ? getReadAcknowledgments() : [];
+  const selectedBranch = filterBranch ? filterBranch.value : 'all';
+  const selectedDoc = filterDoc ? filterDoc.value : 'all';
+
+  let filtered = [...acks];
+  if (selectedBranch !== 'all') {
+    filtered = filtered.filter(a => a.branch === selectedBranch);
+  }
+  if (selectedDoc !== 'all') {
+    filtered = filtered.filter(a => a.itemId === selectedDoc);
+  }
+
+  // Update Stats
+  const uniqueBranches = new Set(acks.map(a => a.branch));
+  const uniqueDocs = new Set(acks.map(a => a.itemId));
+  if (statTotal) statTotal.textContent = acks.length;
+  if (statBranches) statBranches.textContent = uniqueBranches.size;
+  if (statDocs) statDocs.textContent = uniqueDocs.size;
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 2.5rem 1rem; color: #64748B;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+        <strong style="display: block; color: #334155; margin-bottom: 0.25rem;">Belum Ada Data Konfirmasi yang Cocok</strong>
+        <span style="font-size: 0.85rem;">Nama staf FO akan muncul di sini setelah membaca SOP &amp; klik Submit.</span>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `
+    <table class="ack-log-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+      <thead>
+        <tr style="background: #F8FAFC; border-bottom: 2px solid #E2E8F0; color: #475569; font-size: 0.8rem; text-transform: uppercase;">
+          <th style="padding: 0.75rem 1rem; width: 35px;">No</th>
+          <th style="padding: 0.75rem 1rem;">Nama Staf FO</th>
+          <th style="padding: 0.75rem 1rem;">Posisi</th>
+          <th style="padding: 0.75rem 1rem;">Cabang</th>
+          <th style="padding: 0.75rem 1rem;">Dokumen SOP / Ketentuan</th>
+          <th style="padding: 0.75rem 1rem;">Waktu Konfirmasi</th>
+          <th style="padding: 0.75rem 1rem;">Status / Catatan</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${filtered.map((entry, idx) => `
+          <tr style="border-bottom: 1px solid #F1F5F9; transition: background 0.15s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">
+            <td style="padding: 0.75rem 1rem; color: #64748B; font-weight: 600;">${idx + 1}</td>
+            <td style="padding: 0.75rem 1rem;"><strong style="color: #0F172A;">${entry.staffName}</strong></td>
+            <td style="padding: 0.75rem 1rem; color: #475569;">${entry.position || 'Front Office'}</td>
+            <td style="padding: 0.75rem 1rem;">
+              <span style="background: #F1F5F9; padding: 2px 7px; border-radius: 6px; font-weight: 600; color: #334155; font-size: 0.785rem;">${entry.branch}</span>
+            </td>
+            <td style="padding: 0.75rem 1rem;">
+              <div style="font-weight: 700; color: #0F172A;">${entry.itemTitle || 'SOP'}</div>
+              ${entry.itemCode ? `<span style="font-size: 0.725rem; color: #0D9488; font-weight: 700;">${entry.itemCode}</span>` : ''}
+            </td>
+            <td style="padding: 0.75rem 1rem; color: #64748B; font-size: 0.8rem;">${entry.formattedDate || ''}</td>
+            <td style="padding: 0.75rem 1rem;">
+              <span class="ack-badge-verified">✅ Selesai Baca</span>
+              ${entry.notes ? `<div style="font-size: 0.75rem; color: #64748B; margin-top: 3px; font-style: italic;">"${entry.notes}"</div>` : ''}
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderWeGrowBookletGrid() {
+  const container = document.getElementById('wgBookletGrid');
+  if (!container) return;
+
+  const items = getSosialisasiItems();
+  const allAcks = (typeof getReadAcknowledgments === 'function') ? getReadAcknowledgments() : [];
+
+  if (items.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 1rem; color: #64748B;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📚</div>
+        <strong>Belum ada dokumen SOP yang didaftarkan ke WeGrow.</strong>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = items.map(item => {
+    const itemAcks = allAcks.filter(a => a.itemId === item.id);
+    const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
+    let driveBtnText = '📖 Buka SOP';
+    if (hasDriveUrl) {
+      const urlLower = item.driveUrl.toLowerCase();
+      if (urlLower.includes('.pdf')) driveBtnText = '📄 Buka File PDF';
+      else if (urlLower.includes('spreadsheet') || urlLower.includes('sheets')) driveBtnText = '📊 Buka Sheets';
+      else if (urlLower.includes('script.google.com')) driveBtnText = '🚀 Buka Web App';
+    }
+
+    return `
+      <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 16px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="background: #0F172A; color: #FFFFFF; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
+            <span style="background: #FEF3C7; color: #92400E; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">📢 WAJIB BACA</span>
+          </div>
+          <h4 style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 0 0 0.35rem 0;">${item.title}</h4>
+          <p style="font-size: 0.8rem; color: #64748B; margin: 0 0 0.85rem 0; line-height: 1.4;">${item.summary || 'Pelajari ketentuan operasional ini.'}</p>
+        </div>
+
+        <div>
+          <div style="background: #F1F5F9; border-radius: 8px; padding: 0.4rem 0.6rem; font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 0.85rem; text-align: center;">
+            👥 <strong>${itemAcks.length}</strong> Staf FO Sudah Baca
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+            <button type="button" class="btn-wg-booklet-open" data-id="${item.id}" style="background: #F1F5F9; border: 1px solid #CBD5E1; color: #0F172A; border-radius: 8px; padding: 0.55rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+              ${driveBtnText}
+            </button>
+            <button type="button" class="btn-wg-booklet-confirm" data-id="${item.id}" style="background: #E0692D; color: #FFFFFF; border: none; border-radius: 8px; padding: 0.55rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+              ✍️ Konfirmasi
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Event handlers for booklet buttons
+  container.querySelectorAll('.btn-wg-booklet-open').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = e.currentTarget.getAttribute('data-id');
+      const item = itemList.find(i => i.id === id);
+      if (!item) return;
+      if (item.driveUrl && item.driveUrl.length > 5) {
+        window.open(item.driveUrl, '_blank');
+        if (typeof showToast === 'function') showToast(`📂 Membuka: ${item.title}`);
+      } else if (typeof openSopModal === 'function') {
+        openSopModal(item.id);
+      }
+    });
+  });
+
+  container.querySelectorAll('.btn-wg-booklet-confirm').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = e.currentTarget.getAttribute('data-id');
+      openWeGrowModal('form', id);
+    });
+  });
+}
+
+function initWeGrowEvents() {
+  // Shortcut portal buttons on homepage
+  const btnPortalWeGrow = document.getElementById('btnOpenWeGrowPortal');
+  const btnPortalSosialisasi = document.getElementById('btnOpenSosialisasiPortal');
+  if (btnPortalWeGrow) btnPortalWeGrow.addEventListener('click', () => openWeGrowModal('menu'));
+  if (btnPortalSosialisasi) btnPortalSosialisasi.addEventListener('click', () => openWeGrowModal('menu'));
+
+  // Other portals
+  const btnPortalManpower = document.getElementById('btnOpenManpowerPortal');
+  if (btnPortalManpower) {
+    btnPortalManpower.addEventListener('click', () => {
+      if (typeof showToast === 'function') showToast('👥 Membuka Portal Manpower Request...');
+      window.open('https://docs.google.com/forms/', '_blank');
+    });
+  }
+
+  const btnPortalGa = document.getElementById('btnOpenGaPortal');
+  if (btnPortalGa) {
+    btnPortalGa.addEventListener('click', () => {
+      if (typeof showToast === 'function') showToast('📦 Membuka Form Permintaan & Perbaikan Barang GA...');
+      window.open('https://docs.google.com/forms/', '_blank');
+    });
+  }
+
+  const btnPortalBukuSaku = document.getElementById('btnOpenBukuSakuPortal');
+  if (btnPortalBukuSaku) {
+    btnPortalBukuSaku.addEventListener('click', () => {
+      const bukuSakuItem = (typeof itemList !== 'undefined') ? itemList.find(i => (i.title || '').toLowerCase().includes('buku saku')) : null;
+      if (bukuSakuItem && bukuSakuItem.driveUrl) {
+        window.open(bukuSakuItem.driveUrl, '_blank');
+      } else {
+        if (typeof showToast === 'function') showToast('📱 Membuka Buku Saku FO...');
+      }
+    });
+  }
+
+  // Close modal button
+  const btnClose = document.getElementById('btnWeGrowModalClose');
+  const overlay = document.getElementById('weGrowModalOverlay');
+  if (btnClose) btnClose.addEventListener('click', closeWeGrowModal);
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeWeGrowModal();
+    });
+  }
+
+  // Menu Hub Navigation Buttons (Screenshot 3)
+  const btnNavDash = document.getElementById('btnWeGrowNavDash');
+  const btnNavForm = document.getElementById('btnWeGrowNavForm');
+  const btnNavBooklet = document.getElementById('btnWeGrowNavBooklet');
+  if (btnNavDash) btnNavDash.addEventListener('click', () => switchWeGrowView('dashboard'));
+  if (btnNavForm) btnNavForm.addEventListener('click', () => switchWeGrowView('form'));
+  if (btnNavBooklet) btnNavBooklet.addEventListener('click', () => switchWeGrowView('booklet'));
+
+  // Back to Menu buttons
+  document.querySelectorAll('.btn-wegrow-to-menu').forEach(btn => {
+    btn.addEventListener('click', () => switchWeGrowView('menu'));
+  });
+
+  const btnBookletGoForm = document.getElementById('btnWgBookletGoForm');
+  if (btnBookletGoForm) btnBookletGoForm.addEventListener('click', () => switchWeGrowView('form'));
+
+  // Document select dynamic preview
+  const selectDoc = document.getElementById('wgSelectDoc');
+  if (selectDoc) {
+    selectDoc.addEventListener('change', updateWeGrowDocPreview);
+  }
+
+  // Dashboard Filters
+  const filterBranch = document.getElementById('wgFilterBranch');
+  const filterDoc = document.getElementById('wgFilterDoc');
+  if (filterBranch) filterBranch.addEventListener('change', renderWeGrowDashboardTable);
+  if (filterDoc) filterDoc.addEventListener('change', renderWeGrowDashboardTable);
+
+  // Download CSV
+  const btnDownload = document.getElementById('btnWgDownloadCsv');
+  if (btnDownload) {
+    btnDownload.addEventListener('click', () => {
+      if (typeof downloadAcksCsv === 'function') {
+        downloadAcksCsv('all');
+      }
+    });
+  }
+
+  // Form Submit (CRITICAL FLOW: Staff name ONLY appears in Dashboard AFTER clicking submit)
+  const form = document.getElementById('weGrowReadingForm');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const staffNameInput = document.getElementById('wgStaffName');
+      const staffPosInput = document.getElementById('wgStaffPos');
+      const branchSelect = document.getElementById('wgStaffBranch');
+      const docSelect = document.getElementById('wgSelectDoc');
+      const agreeCheck = document.getElementById('wgCheckAgree');
+      const notesInput = document.getElementById('wgNotes');
+
+      const sName = staffNameInput ? staffNameInput.value.trim() : '';
+      const sPos = staffPosInput ? staffPosInput.value.trim() || 'Front Office' : 'Front Office';
+      const sBranch = branchSelect ? branchSelect.value : 'WM Center - Head Office';
+      const docId = docSelect ? docSelect.value : '';
+      const sNotes = notesInput ? notesInput.value.trim() : '';
+
+      if (!sName) {
+        alert('Silakan masukkan nama lengkap staf FO!');
+        if (staffNameInput) staffNameInput.focus();
+        return;
+      }
+
+      if (!docId) {
+        alert('Silakan pilih dokumen SOP yang dibaca!');
+        return;
+      }
+
+      if (!agreeCheck || !agreeCheck.checked) {
+        alert('Silakan centang pernyataan pemahaman sebelum mengirim konfirmasi!');
+        return;
+      }
+
+      const item = (typeof itemList !== 'undefined') ? itemList.find(i => i.id === docId) : null;
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ', ' + 
+                            now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+
+      const entry = {
+        id: "ack_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
+        itemId: docId,
+        itemTitle: item ? item.title : 'Dokumen SOP',
+        itemCode: item ? item.code : 'SOP',
+        staffName: sName,
+        position: sPos,
+        branch: sBranch,
+        notes: sNotes,
+        timestamp: now.toISOString(),
+        formattedDate: formattedDate
+      };
+
+      if (typeof saveReadAcknowledgment === 'function') {
+        saveReadAcknowledgment(entry);
+      }
+
+      if (typeof showToast === 'function') {
+        showToast(`🎉 Luar biasa ${sName}! Konfirmasi baca telah berhasil dicatat.`);
+      }
+
+      // Reset form
+      if (staffNameInput) staffNameInput.value = '';
+      if (notesInput) notesInput.value = '';
+
+      // Switch directly to Dashboard so staff can see their name listed!
+      switchWeGrowView('dashboard');
+    });
+  }
+}
+
+
 </script>
+
+    <!-- ======================================================== -->
+    <!-- WEGROW MODAL HUB (DASHBOARD, FORM, BOOKLET)               -->
+    <!-- ======================================================== -->
+    <div class="wegrow-modal-overlay" id="weGrowModalOverlay">
+      <div class="wegrow-modal-container" id="weGrowModalContainer">
+        <button class="wegrow-modal-close-btn" id="btnWeGrowModalClose" title="Tutup Modal">✕</button>
+
+        <!-- VIEW 1: HUB MENU (Matching Screenshot 3) -->
+        <div class="wegrow-view active" id="weGrowMenuView">
+          <div class="wegrow-hub-header">
+            <div class="wegrow-hub-logo-badge">🌱</div>
+            <h2 class="wegrow-hub-title" id="weGrowHubMainTitle">WE Grow</h2>
+            <p class="wegrow-hub-subtitle" id="weGrowHubMainSubtitle">Grow with every move</p>
+          </div>
+
+          <div class="wegrow-hub-buttons-grid">
+            <button type="button" class="btn-wegrow-nav btn-wegrow-nav-dash" id="btnWeGrowNavDash">
+              <span>🏆</span> <span>Lihat Dashboard</span>
+            </button>
+            <button type="button" class="btn-wegrow-nav btn-wegrow-nav-form" id="btnWeGrowNavForm">
+              <span>🌾</span> <span>Formulir Baca &amp; Konfirmasi</span>
+            </button>
+            <button type="button" class="btn-wegrow-nav btn-wegrow-nav-booklet" id="btnWeGrowNavBooklet">
+              <span>📚</span> <span>Booklet WE Grow</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- VIEW 2: FORMULIR BACA & KONFIRMASI (Matching Screenshot 4) -->
+        <div class="wegrow-view" id="weGrowFormView">
+          <div class="wegrow-subnav-bar">
+            <button type="button" class="btn-wegrow-back btn-wegrow-to-menu">
+              <span>⬅</span> <span>Kembali</span>
+            </button>
+            <h3 class="wegrow-view-title">Formulir Konfirmasi Baca FO</h3>
+            <div style="width: 70px;"></div>
+          </div>
+
+          <form id="weGrowReadingForm" novalidate>
+            <!-- SECTION 1: DATA STAF -->
+            <div class="wegrow-section-heading">DATA STAF</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div class="wegrow-form-group" style="margin-bottom: 0;">
+                <label class="wegrow-form-label" for="wgStaffName">Nama staf <span class="req">*</span></label>
+                <input type="text" id="wgStaffName" class="wegrow-form-input" placeholder="Nama lengkap kamu" required />
+              </div>
+              <div class="wegrow-form-group" style="margin-bottom: 0;">
+                <label class="wegrow-form-label" for="wgStaffPos">Posisi <span class="req">*</span></label>
+                <input type="text" id="wgStaffPos" class="wegrow-form-input" placeholder="Posisi kamu di WM Center" value="Front Office" required />
+              </div>
+            </div>
+
+            <div class="wegrow-form-group">
+              <label class="wegrow-form-label" for="wgStaffBranch">Cabang <span class="req">*</span></label>
+              <select id="wgStaffBranch" class="wegrow-form-select" required>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+
+            <!-- SECTION 2: PILIHAN SOP / IOC -->
+            <div class="wegrow-section-heading">PILIHAN SOP / IOC YANG MAU DIBACA</div>
+
+            <div class="wegrow-form-group">
+              <label class="wegrow-form-label" for="wgSelectDoc">Pilih SOP / IOC yang Mau Dibaca <span class="req">*</span></label>
+              <select id="wgSelectDoc" class="wegrow-form-select" required>
+                <option value="">-- Pilih Dokumen Ketentuan / SOP --</option>
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+
+            <!-- DYNAMIC PREVIEW & READ SOP BUTTON BOX -->
+            <div id="wgDocPreviewBox" class="wegrow-doc-box">
+              <div style="text-align: center; color: #64748B; padding: 0.75rem 0; font-size: 0.875rem;">
+                Silakan pilih dokumen SOP / IOC di atas untuk membaca materi.
+              </div>
+            </div>
+
+            <!-- SECTION 3: PERNYATAAN & SUBMIT -->
+            <div class="wegrow-section-heading">PERNYATAAN PEMAHAMAN &amp; SUBMIT</div>
+
+            <div style="background: #ECFDF5; border: 1.5px solid #A7F3D0; border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem;">
+              <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; margin: 0;">
+                <input type="checkbox" id="wgCheckAgree" checked required style="margin-top: 3px; width: 18px; height: 18px; accent-color: #0D9488; cursor: pointer;" />
+                <span style="font-size: 0.85rem; color: #065F46; font-weight: 600; line-height: 1.4;">
+                  Saya menyatakan telah membaca, memahami secara menyeluruh, dan siap menjalankan isi SOP / ketentuan ini dalam tugas harian Front Office.
+                </span>
+              </label>
+            </div>
+
+            <div class="wegrow-form-group">
+              <label class="wegrow-form-label" for="wgNotes">Catatan / Hal yang Ingin Ditanyakan (Opsional)</label>
+              <textarea id="wgNotes" class="wegrow-form-textarea" placeholder="Tulis catatan jika ada pertanyaan atau saran..." style="min-height: 55px;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+              <button type="submit" class="btn-wegrow-submit" id="btnSubmitWeGrowAck">
+                <span>🚀</span> <span>Submit Konfirmasi Baca</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- VIEW 3: DASHBOARD PEMBACA (Rekapitulasi Staf FO) -->
+        <div class="wegrow-view" id="weGrowDashView">
+          <div class="wegrow-subnav-bar">
+            <button type="button" class="btn-wegrow-back btn-wegrow-to-menu">
+              <span>⬅</span> <span>Kembali</span>
+            </button>
+            <h3 class="wegrow-view-title">🏆 Dashboard Pembaca SOP</h3>
+            <button type="button" id="btnWgDownloadCsv" style="background: #0F172A; color: #FFFFFF; border: none; border-radius: 8px; padding: 0.45rem 0.9rem; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+              <span>📥</span> <span>Download CSV</span>
+            </button>
+          </div>
+
+          <!-- Stat Cards -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 1rem; text-align: center;">
+              <div id="wgStatTotal" style="font-size: 1.75rem; font-weight: 800; color: #0F172A; line-height: 1;">0</div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; margin-top: 4px;">Total Baca</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 1rem; text-align: center;">
+              <div id="wgStatBranches" style="font-size: 1.75rem; font-weight: 800; color: #0D9488; line-height: 1;">0</div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; margin-top: 4px;">Cabang Aktif</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 1rem; text-align: center;">
+              <div id="wgStatDocs" style="font-size: 1.75rem; font-weight: 800; color: #D97706; line-height: 1;">0</div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; margin-top: 4px;">Dokumen SOP</div>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; background: #FFFFFF; padding: 0.75rem; border-radius: 10px; border: 1.5px solid #E2E8F0;">
+            <div style="flex: 1; min-width: 180px;">
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #64748B; margin-bottom: 3px;">Filter Cabang</label>
+              <select id="wgFilterBranch" style="width: 100%; padding: 0.45rem 0.6rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.825rem;">
+                <option value="all">Semua Cabang (All)</option>
+              </select>
+            </div>
+            <div style="flex: 1; min-width: 180px;">
+              <label style="display: block; font-size: 0.75rem; font-weight: 700; color: #64748B; margin-bottom: 3px;">Filter SOP / IOC</label>
+              <select id="wgFilterDoc" style="width: 100%; padding: 0.45rem 0.6rem; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 0.825rem;">
+                <option value="all">Semua Dokumen SOP</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div id="wgTableContainer" style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; overflow-x: auto; max-height: 380px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- VIEW 4: BOOKLET WE GROW (Daftar SOP/IOC) -->
+        <div class="wegrow-view" id="weGrowBookletView">
+          <div class="wegrow-subnav-bar">
+            <button type="button" class="btn-wegrow-back btn-wegrow-to-menu">
+              <span>⬅</span> <span>Kembali</span>
+            </button>
+            <h3 class="wegrow-view-title">📚 Booklet Ketentuan &amp; SOP Wajib Baca</h3>
+            <button type="button" class="btn-wegrow-back" id="btnWgBookletGoForm" style="background: #E0692D; color: #FFFFFF; border: none;">
+              <span>✍️</span> <span>Buka Formulir</span>
+            </button>
+          </div>
+
+          <div id="wgBookletGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
 </body>
 </html>
