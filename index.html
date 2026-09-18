@@ -1979,12 +1979,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260918_v1') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260918_v2') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260918_v1');
+    localStorage.setItem('wmcenter_build_version', 'v20260918_v2');
   }
 
   const defaultRoles = [
@@ -2076,6 +2076,25 @@ document.addEventListener('DOMContentLoaded', () => {
 };
 
   const defaultItems = [
+    {
+    "summary": "Aplikasi web interaktif kamus istilah klinis, informasi pelayanan, dan modul latihan acak untuk Front Office.",
+    "id": "fo_buku_saku",
+    "details": "<h4>Aplikasi Interaktif Buku Saku FO:</h4><p>Portal web apps script interaktif yang berisi kamus istilah medis/klinis fisioterapi, informasi pelayanan, serta modul kuis/latihan acak untuk mengasah pemahaman tim Front Office.</p><hr style=\"margin:12px 0; border:0; border-top:1px solid #E2E8F0;\"><h5>Fitur Aplikasi:</h5><ul><li><strong>Kamus Klinis:</strong> Pencarian cepat istilah medis dan penjelasan mudah untuk pasien.</li><li><strong>Filter Kategori:</strong> Pengelompokan istilah berdasarkan tindakan klinis dan alur FO.</li><li><strong>Latihan Acak:</strong> Kuis tanya jawab interaktif untuk pelatihan mandiri staf.</li></ul>",
+    "driveUrl": "https://script.google.com/macros/s/AKfycbxONa6o2Kg6_jaK1KByrlHR3bpToa8F3jVQKgwo5sbFlEbQXYrmY8LNEYp2wG84gC-Waw/exec",
+    "module": "mod_mtmfs2ka",
+    "code": "FO-BUKU-SAKU",
+    "title": "Buku Saku FO (Kamus Klinis & Latihan)",
+    "icon": "&#128214;",
+    "modules": [
+      "mod_mtmfs2ka",
+      "dailytask"
+    ],
+    "categories": [
+      "fo",
+      "management"
+    ],
+    "isFeatured": true
+  },
   {
     "summary": "Link Google Sheets checklist pembukaan kasir, pendaftaran pasien, dan tugas rutin harian FO.",
     "id": "fo_01",
@@ -3551,7 +3570,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     contentGrid.innerHTML = filtered.map(item => {
       const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
-      const driveBtnText = hasDriveUrl ? '\uD83D\uDD17 Buka di Google Drive / Spreadsheet \u2794' : '\uD83D\uDCD6 Baca Detail SOP \u2794';
+            let driveBtnText = '\uD83D\uDCD6 Baca Detail SOP \u2794';
+      if (hasDriveUrl) {
+        const urlLower = (item.driveUrl || '').toLowerCase();
+        if (urlLower.includes('.pdf')) driveBtnText = '\uD83D\uDCC4 Buka File PDF \u2794';
+        else if (urlLower.includes('script.google.com')) driveBtnText = '\uD83D\uDE80 Buka Aplikasi Web \u2794';
+        else if (urlLower.includes('spreadsheet') || urlLower.includes('sheets')) driveBtnText = '\uD83D\uDCCA Buka Google Sheets \u2794';
+        else driveBtnText = '\uD83D\uDD17 Buka Dokumen / Link \u2794';
+      }
 
       let icon = item.icon || '&#128196;';
       if (!item.icon) {
