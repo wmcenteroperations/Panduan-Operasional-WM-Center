@@ -1979,12 +1979,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260917_v7') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260918_v1') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260917_v7');
+    localStorage.setItem('wmcenter_build_version', 'v20260918_v1');
   }
 
   const defaultRoles = [
@@ -3209,7 +3209,28 @@ document.addEventListener('DOMContentLoaded', () => {
       "quicklink"
     ],
     "isFeatured": false
-  }
+  },
+  {
+    "summary": "IOC Kerja Sama Layanan Penjualan Voucher Fisioterapi WM Center di Platform Blibli & Alur Verifikasi.",
+    "id": "ioc_0017_blibli",
+    "category": "fo",
+    "details": "<h4>Informasi Dokumen:</h4><p><strong>Nomor:</strong> 26.001/WMC-IOC/BD/X/2026</p><p><strong>Tanggal:</strong> 16 September 2026</p><p><strong>Divisi Terkait:</strong> Business Development, Front Office, Fisioterapi &amp; Operasional</p><p><strong>File Dokumen:</strong> IOC- WM Center X Blibli.pdf</p><hr style=\"margin:12px 0; border:0; border-top:1px solid #E2E8F0;\"><h5>Ringkasan Ketentuan:</h5><ul><li><strong>Produk:</strong> Physiotherapy Regular Single Visit &amp; 4 Sessions.</li><li><strong>Kode Voucher:</strong> <code>WMxBlibliS-XXX</code> (Single Visit) &amp; <code>WMxBlibliP-XXX</code> (4 Sessions Event Package).</li><li><strong>Ketentuan:</strong> Digunakan mulai H+1 setelah konfirmasi. Non-refundable. Wajib reservasi via WA dan diverifikasi ke tim Operasional/Seller Blibli.</li><li><strong>PIC Internal:</strong> Grace - Business Development (082256974124).</li></ul>",
+    "driveUrl": "docs/IOC-%20WM%20Center%20X%20Blibli.pdf",
+    "code": "26.001/WMC-IOC/BD/X/2026",
+    "module": "quicklink",
+    "categories": [
+      "fo",
+      "physio",
+      "management"
+    ],
+    "title": "Kerja Sama Layanan WM Center X Blibli",
+    "icon": "&#128722;",
+    "modules": [
+      "quicklink",
+      "mod_mtmfs2ka"
+    ],
+    "isFeatured": true
+  },
 ];
 
   function loadState(key, fallback) {
