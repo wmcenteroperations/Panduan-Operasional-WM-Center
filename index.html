@@ -4193,9 +4193,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Helper to extract categories assigned to an item
   function getItemCategories(item) {
     if (Array.isArray(item.categories) && item.categories.length > 0) {
+      if (item.categories.includes('all')) return ['all', 'fo', 'physio', 'doctor', 'management'];
       return item.categories;
     }
-    return [item.category || 'fo'];
+    if (item.category === 'all') return ['all', 'fo', 'physio', 'doctor', 'management'];
+    if (item.category) return [item.category, 'all'];
+    return ['all', 'fo', 'physio', 'doctor', 'management'];
   }
 
   // Load State

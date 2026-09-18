@@ -4021,13 +4021,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Helper to extract categories assigned to an item
   function getItemCategories(item) {
     if (Array.isArray(item.categories) && item.categories.length > 0) {
+      if (item.categories.includes('all')) return ['all', 'fo', 'physio', 'doctor', 'management'];
       return item.categories;
     }
-    return [item.category || 'fo'];
+    if (item.category === 'all') return ['all', 'fo', 'physio', 'doctor', 'management'];
+    if (item.category) return [item.category, 'all'];
+    return ['all', 'fo', 'physio', 'doctor', 'management'];
   }
 
   // Draft State (loads published if available, then draft, then default)
   let appSettings = loadState('wmcenter_published_settings_v5', loadState('wmcenter_draft_settings_v5', defaultSettings));
+  window.getItemModules = getItemModules;
   let itemList = loadState('wmcenter_published_items_v5', loadState('wmcenter_draft_items_v5', defaultItems));
 
   // Auto-migrate roles if missing
@@ -4507,7 +4511,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentSubCategory === roleId) currentSubCategory = 'all';
 
       persistSettings(appSettings);
-      persistItems(itemList);
+      window.itemList = itemList;
+    persistItems(itemList);
       applySettingsUI();
       renderContent();
     initWeGrowEvents();
@@ -4688,7 +4693,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentModule === modId) currentModule = fallbackModId;
 
       persistSettings(appSettings);
-      persistItems(itemList);
+      window.itemList = itemList;
+    persistItems(itemList);
       renderModuleTabs();
       renderContent();
     initWeGrowEvents();
@@ -4738,7 +4744,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnPublish) {
     btnPublish.addEventListener('click', () => {
       persistSettings(appSettings);
-      persistItems(itemList);
+      window.itemList = itemList;
+    persistItems(itemList);
       showToast('🚀 BERHASIL! Seluruh perubahan tersinkronisasi ke index.html!');
     });
   }
@@ -4809,18 +4816,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const item = itemList.find(i => i.id === id);
         if (item) {
           item.isFeatured = false;
-          persistItems(itemList);
+          window.itemList = itemList;
+    persistItems(itemList);
           renderLatestInfoSection();
-
-    if (currentModule === 'mod_sosialisasi') {
-      if (sectionTitleHeading) {
-        sectionTitleHeading.textContent = '📢 Pusat Sosialisasi Ketentuan & Log Baca FO';
-      }
-      contentGrid.innerHTML = renderSosialisasiHub();
-      setupHubEventListeners();
-      switchHubView(activeHubView || 'form');
-      return;
-    }
 
           renderContent();
     initWeGrowEvents();
@@ -5339,17 +5337,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCategoryTabs();
     renderLatestInfoSection();
 
-    if (currentModule === 'mod_sosialisasi') {
-      if (sectionTitleHeading) {
-        sectionTitleHeading.textContent = '📢 Pusat Sosialisasi Ketentuan & Log Baca FO';
-      }
-      contentGrid.innerHTML = renderSosialisasiHub();
-      setupHubEventListeners();
-      switchHubView(activeHubView || 'form');
-      return;
-    }
-
-
     const filtered = itemList.filter(item => {
       const mods = getItemModules(item);
       const matchModule = (currentModule === 'all') || mods.includes(currentModule);
@@ -5374,6 +5361,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sectionTitleHeading.textContent = `\uD83D\uDCC2 Seluruh Dokumen & SOP Operasional ${appSettings.brandTitle}`;
       } else if (currentModule === 'sop') {
         sectionTitleHeading.textContent = `\uD83D\uDCC4 Daftar ${appSettings.moduleTab1 || 'SOP & Product Knowledge'} ${appSettings.brandTitle}`;
+      } else if (currentModule === 'mod_sosialisasi') {
+        sectionTitleHeading.textContent = `ðŸ“¢ Sosialisasi & Ketentuan Baca FO (${filtered.length} Dokumen Aktif)`;
       } else if (currentModule === 'dailytask') {
         sectionTitleHeading.textContent = `\uD83D\uDCC5 Link ${appSettings.moduleTab2 || 'Spreadsheet Daily Tasks & Jadwal Cabang'}`;
       } else {
@@ -5469,18 +5458,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const item = itemList.find(i => i.id === id);
         if (item) {
           item.isFeatured = !item.isFeatured;
-          persistItems(itemList);
+          window.itemList = itemList;
+    persistItems(itemList);
           renderLatestInfoSection();
-
-    if (currentModule === 'mod_sosialisasi') {
-      if (sectionTitleHeading) {
-        sectionTitleHeading.textContent = '📢 Pusat Sosialisasi Ketentuan & Log Baca FO';
-      }
-      contentGrid.innerHTML = renderSosialisasiHub();
-      setupHubEventListeners();
-      switchHubView(activeHubView || 'form');
-      return;
-    }
 
           renderContent();
     initWeGrowEvents();
@@ -5953,18 +5933,9 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast(`\u2728 Item Baru [${code}] berhasil ditambahkan!`);
     }
 
+    window.itemList = itemList;
     persistItems(itemList);
     renderLatestInfoSection();
-
-    if (currentModule === 'mod_sosialisasi') {
-      if (sectionTitleHeading) {
-        sectionTitleHeading.textContent = '📢 Pusat Sosialisasi Ketentuan & Log Baca FO';
-      }
-      contentGrid.innerHTML = renderSosialisasiHub();
-      setupHubEventListeners();
-      switchHubView(activeHubView || 'form');
-      return;
-    }
 
     renderCategoryTabs();
     renderContent();
@@ -5992,18 +5963,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (confirm(`Apakah Anda yakin ingin menghapus: [${item.code}] ${item.title}?`)) {
       itemList = itemList.filter(i => i.id !== id);
-      persistItems(itemList);
+      window.itemList = itemList;
+    persistItems(itemList);
       renderLatestInfoSection();
-
-    if (currentModule === 'mod_sosialisasi') {
-      if (sectionTitleHeading) {
-        sectionTitleHeading.textContent = '📢 Pusat Sosialisasi Ketentuan & Log Baca FO';
-      }
-      contentGrid.innerHTML = renderSosialisasiHub();
-      setupHubEventListeners();
-      switchHubView(activeHubView || 'form');
-      return;
-    }
 
       renderCategoryTabs();
       renderContent();
@@ -6146,21 +6108,12 @@ document.addEventListener('DOMContentLoaded', () => {
         itemList = [...defaultItems];
         appSettings = { ...defaultSettings };
 
-        persistItems(itemList);
+        window.itemList = itemList;
+    persistItems(itemList);
         persistSettings(appSettings);
 
         applySettingsUI();
         renderLatestInfoSection();
-
-    if (currentModule === 'mod_sosialisasi') {
-      if (sectionTitleHeading) {
-        sectionTitleHeading.textContent = '📢 Pusat Sosialisasi Ketentuan & Log Baca FO';
-      }
-      contentGrid.innerHTML = renderSosialisasiHub();
-      setupHubEventListeners();
-      switchHubView(activeHubView || 'form');
-      return;
-    }
 
         renderContent();
     initWeGrowEvents();
@@ -6244,7 +6197,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnPublish) {
     btnPublish.addEventListener('click', () => {
       persistSettings(appSettings);
-      persistItems(itemList);
+      window.itemList = itemList;
+    persistItems(itemList);
       showToast('🚀 Perubahan berhasil dipublikasikan ke Staf (LocalStorage Aktif)!');
       setTimeout(() => {
         if (confirm('Perubahan Anda telah disimpan ke portal!\n\nApakah Anda ingin membuka tampilan Staf (index.html) sekarang untuk melihat hasilnya?')) {
