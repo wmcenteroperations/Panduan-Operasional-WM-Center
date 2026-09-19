@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -2042,10 +2042,16 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.75rem;
-  padding-bottom: 1rem;
+  margin: -1.25rem -1.25rem 1.75rem -1.25rem;
+  padding: 1rem 1.25rem;
   border-bottom: 1.5px solid #E2E8F0;
   flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  background: #F8FAFC;
+  z-index: 20;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
 }
 
 .btn-wegrow-back {
@@ -5712,6 +5718,7 @@ function switchWeGrowView(viewName) {
 
   const container = document.getElementById('weGrowModalContainer');
   if (container) {
+    container.scrollTop = 0;
     if (viewName === 'dashboard' || viewName === 'booklet') {
       container.classList.add('wide');
     } else {
@@ -6126,17 +6133,28 @@ function initWeGrowEvents() {
 
       if (!sName) {
         alert('Silakan masukkan nama lengkap staf FO!');
-        if (staffNameInput) staffNameInput.focus();
+        if (staffNameInput) {
+          staffNameInput.focus();
+          staffNameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         return;
       }
 
       if (!docId) {
         alert('Silakan pilih dokumen SOP yang dibaca!');
+        if (docSelect) {
+          docSelect.focus();
+          docSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         return;
       }
 
       if (!agreeCheck || !agreeCheck.checked) {
         alert('Silakan centang pernyataan pemahaman sebelum mengirim konfirmasi!');
+        if (agreeCheck) {
+          agreeCheck.focus();
+          agreeCheck.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         return;
       }
 
@@ -6271,8 +6289,11 @@ function initWeGrowEvents() {
               <textarea id="wgNotes" class="wegrow-form-textarea" placeholder="Tulis catatan jika ada pertanyaan atau saran..." style="min-height: 55px;"></textarea>
             </div>
 
-            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
-              <button type="submit" class="btn-wegrow-submit" id="btnSubmitWeGrowAck">
+            <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
+              <button type="button" class="btn-wegrow-back btn-wegrow-to-menu" style="flex: 1; min-width: 140px; padding: 0.85rem 1.25rem; font-size: 0.95rem; justify-content: center; background: #FFFFFF;">
+                <span>⬅</span> <span>Kembali ke Menu</span>
+              </button>
+              <button type="submit" class="btn-wegrow-submit" id="btnSubmitWeGrowAck" style="flex: 2; min-width: 200px;">
                 <span>🚀</span> <span>Submit Konfirmasi Baca</span>
               </button>
             </div>
@@ -6326,6 +6347,12 @@ function initWeGrowEvents() {
           <!-- Table Container -->
           <div id="wgTableContainer" style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; overflow-x: auto; max-height: 380px;">
             <!-- Rendered by JS -->
+          </div>
+
+          <div style="margin-top: 1.25rem; display: flex; justify-content: flex-start;">
+            <button type="button" class="btn-wegrow-back btn-wegrow-to-menu" style="padding: 0.75rem 1.25rem; font-size: 0.9rem; background: #FFFFFF;">
+              <span>⬅</span> <span>Kembali ke Menu</span>
+            </button>
           </div>
         </div>
 
