@@ -2878,12 +2878,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260918_v13') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260920_v1') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260918_v13');
+    localStorage.setItem('wmcenter_build_version', 'v20260920_v1');
   }
 
   const defaultRoles = [
@@ -2991,10 +2991,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "icon": "&#128214;",
     "modules": [
       "mod_mtmfs2ka",
-      "dailytask",
-      "mod_sosialisasi"
+      "dailytask"
     ],
-    "requireAck": true,
+    
     "categories": [
       "fo",
       "management"
@@ -3194,10 +3193,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Catatan Penyesuaian - Daily Income (All Cabang)",
     "icon": "&#128202;",
     "modules": [
-      "mod_mtmfs2ka",
-      "mod_sosialisasi"
+      "mod_mtmfs2ka"
     ],
-    "requireAck": true,
+    
     "isFeatured": false
   },
   {
@@ -3205,10 +3203,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "isFeatured": false,
     "modules": [
       "mod_mtmfs2ka",
-      "dailytask",
-      "mod_sosialisasi"
+      "dailytask"
     ],
-    "requireAck": true,
+    
     "module": "mod_mtmfs2ka",
     "categories": [
       "all"
@@ -4156,10 +4153,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "icon": "&#128722;",
     "modules": [
       "quicklink",
-      "mod_mtmfs2ka",
-      "mod_sosialisasi"
+      "mod_mtmfs2ka"
     ],
-    "requireAck": true,
+    
     "isFeatured": true
   },
 ];
@@ -5022,23 +5018,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const summaryText = item.summary || 'Klik tombol di bawah untuk membuka dokumen ini.';
-      const mods = getItemModules(item);
-      const moduleNames = mods.map(mId => {
-        const mObj = getAppModules().find(x => x.id === mId);
-        return mObj ? mObj.name : mId;
-      }).join(', ');
-
-      const isAckDoc = mods.includes('mod_sosialisasi') || item.requireAck === true;
-      const acks = isAckDoc ? getAcksForItem(item.id) : [];
 
       return `
         <div class="item-card" tabindex="0">
           <div class="card-top">
-            <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
-              <span class="card-top-tag">${item.code || 'DOC'}</span>
-              ${isAckDoc ? `<span class="badge-ack-req">📢 WAJIB BACA &amp; KONFIRMASI</span>` : ''}
-            </div>
-            ${(currentModule === 'all' || searchQuery !== '') ? `<span class="card-module-tag">${moduleNames}</span>` : ''}
+            <span class="card-top-tag">${item.code || 'DOC'}</span>
           </div>
           <div class="card-icon-badge">${icon}</div>
           <h3 class="card-title">${item.title}</h3>
@@ -5047,27 +5031,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <p style="margin:0; opacity:0.95;">${summaryText}</p>
           </div>
 
-          ${isAckDoc ? `
-            <div class="ack-status-bar">
-              <span class="ack-counter-pill">👥 <strong>${acks.length}</strong> Staf FO Sudah Baca</span>
-              <button class="btn-ack-viewlog btn-open-reader-log" data-id="${item.id}" style="width:auto; padding:2px 8px; font-size:0.72rem;">Lihat Rekap</button>
-            </div>
-          ` : ''}
-
           <div class="card-actions-grid">
             <button class="btn-open-link btn-open-item" data-id="${item.id}">
               ${driveBtnText}
             </button>
-            ${isAckDoc ? `
-              <button class="btn-ack-confirm btn-open-ack" data-id="${item.id}">
-                ✍️ Konfirmasi Sudah Membaca (FO)
-              </button>
-              ${item.ackUrl ? `
-                <a href="${item.ackUrl}" target="_blank" class="btn-ack-gform">
-                  📋 Buka Google Form HR ➔
-                </a>
-              ` : ''}
-            ` : ''}
           </div>
         </div>
       `;

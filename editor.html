@@ -2698,12 +2698,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Studio Editor Script (Internal Admin Edit Mode)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260918_v13') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v20260920_v1') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260918_v13');
+    localStorage.setItem('wmcenter_build_version', 'v20260920_v1');
   }
 
   const defaultRoles = [
@@ -2811,10 +2811,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "icon": "&#128214;",
     "modules": [
       "mod_mtmfs2ka",
-      "dailytask",
-      "mod_sosialisasi"
+      "dailytask"
     ],
-    "requireAck": true,
+    
     "categories": [
       "fo",
       "management"
@@ -3014,10 +3013,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Catatan Penyesuaian - Daily Income (All Cabang)",
     "icon": "&#128202;",
     "modules": [
-      "mod_mtmfs2ka",
-      "mod_sosialisasi"
+      "mod_mtmfs2ka"
     ],
-    "requireAck": true,
+    
     "isFeatured": false
   },
   {
@@ -3025,10 +3023,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "isFeatured": false,
     "modules": [
       "mod_mtmfs2ka",
-      "dailytask",
-      "mod_sosialisasi"
+      "dailytask"
     ],
-    "requireAck": true,
+    
     "module": "mod_mtmfs2ka",
     "categories": [
       "all"
@@ -3976,10 +3973,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "icon": "&#128722;",
     "modules": [
       "quicklink",
-      "mod_mtmfs2ka",
-      "mod_sosialisasi"
+      "mod_mtmfs2ka"
     ],
-    "requireAck": true,
+    
     "isFeatured": true
   },
 ];
@@ -4667,59 +4663,31 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (confirm(`Apakah Anda yakin ingin menghapus modul \"${modObj.icon || ''} ${modObj.name}\"?\\nItem yang hanya ada di modul ini akan dialihkan ke modul lain.`)) {
+    if (confirm(`Apakah Anda yakin ingin menghapus modul "${modObj.icon || ''} ${modObj.name}"?\nItem yang hanya ada di modul ini akan dialihkan ke modul lain.`)) {
       modulesList = modulesList.filter(m => m.id !== modId);
       appSettings.modules = modulesList;
       const fallbackModId = modulesList[0].id;
 
       itemList.forEach(item => {
-        const mods = getItemModules(item);
+        let mods = getItemModules(item);
         if (mods.includes(modId)) {
-          const updatedMods = mods.filter(m => m !== modId);
-          item.modules = updatedMods.length > 0 ? updatedMods : [fallbackModId];
-          item.module = item.modules[0];
+          mods = mods.filter(m => m !== modId);
+          if (mods.length === 0) mods.push(fallbackModId);
+          item.modules = mods;
+          item.module = mods[0];
         }
       });
 
-      if (currentModule === modId) currentModule = fallbackModId;
-
       persistSettings(appSettings);
       persistItems(itemList);
+      if (currentModule === modId) currentModule = fallbackModId;
       renderModuleTabs();
       renderContent();
-    initWeGrowEvents();
-      renderModuleManagerList();
-      showToast(`\uD83D\uDDD1\uFE0F Modul \"${modObj.name}\" berhasil dihapus.`);
+      initWeGrowEvents();
+      renderModuleManagerList(fallbackModId);
+      showToast(`🗑️ Modul "${modObj.icon || ''} ${modObj.name}" berhasil dihapus.`);
     }
   }
-
-  if (btnAddNewModule) {
-    btnAddNewModule.addEventListener('click', () => {
-      const icon = newModuleIconInput ? newModuleIconInput.value.trim() || '\uD83D\uDCC4' : '\uD83D\uDCC4';
-      const name = newModuleNameInput ? newModuleNameInput.value.trim() : '';
-
-      if (!name) {
-        alert('Silakan masukkan nama modul baru!');
-        return;
-      }
-
-      const modulesList = getAppModules();
-      const newId = 'mod_' + Date.now().toString(36);
-      modulesList.push({ id: newId, icon, name });
-      appSettings.modules = modulesList;
-
-      if (newModuleNameInput) newModuleNameInput.value = '';
-
-      persistSettings(appSettings);
-      renderModuleTabs();
-      renderContent();
-      renderModuleManagerList(newId);
-      showToast(`✨ Modul Baru "${icon} ${name}" berhasil ditambahkan!`);
-    });
-  }
-
-  if (moduleManagerModalClose) moduleManagerModalClose.addEventListener('click', () => moduleManagerModalOverlay.classList.remove('active'));
-  if (btnCloseModuleManager) btnCloseModuleManager.addEventListener('click', () => moduleManagerModalOverlay.classList.remove('active'));
 
   function renderLatestInfoSection() {
     const section = document.getElementById('latestInfoSection');
@@ -4727,14 +4695,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container || !section) return;
 
     const featuredItems = itemList.filter(i => i.isFeatured === true);
-
     if (featuredItems.length === 0) {
       section.style.display = 'block';
       container.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; padding: 1.5rem; background: #F8FAFC; border: 1.5px dashed #CBD5E1; border-radius: 12px; color: #64748B;">
-          <div style="font-size: 1.5rem; margin-bottom: 0.35rem;">\uD83D\uDCCD</div>
+          <div style="font-size: 1.5rem; margin-bottom: 0.35rem;">📍</div>
           <strong style="font-size: 0.95rem; display: block; margin-bottom: 0.25rem; color: #334155;">Belum Ada Info Terbaru Yang Dipin</strong>
-          <span style="font-size: 0.825rem;">Klik \uD83D\uDCCC Pin pada kartu SOP/IOC di bawah atau centang saat edit item untuk menampilkannya di sini!</span>
+          <span style="font-size: 0.825rem;">Klik 📌 Pin pada kartu SOP/IOC di bawah atau centang saat edit item untuk menampilkannya di sini!</span>
         </div>
       `;
       return;
@@ -4742,20 +4709,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     section.style.display = 'block';
     container.innerHTML = featuredItems.map(item => {
-      const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
       const summaryText = item.summary || 'Klik untuk membuka info terbaru.';
-
-      let icon = '\uD83D\uDCCC';
-      const titleUpper = (item.title || '').toUpperCase();
-      if (titleUpper.includes('INCOME') || titleUpper.includes('REKAP') || titleUpper.includes('SPREADSHEET')) icon = '\uD83D\uDCCA';
-      else if (titleUpper.includes('WA') || titleUpper.includes('CHAT') || titleUpper.includes('KOMUNIKASI') || titleUpper.includes('WHATSAPP')) icon = '\uD83D\uDCAC';
-      else if (titleUpper.includes('JADWAL') || titleUpper.includes('SHIFT') || titleUpper.includes('EVENT')) icon = '\uD83D\uDCC5';
-      else if (titleUpper.includes('PROMO') || titleUpper.includes('VOUCHER') || titleUpper.includes('DISCOUNT') || titleUpper.includes('PRICELIST') || titleUpper.includes('KATALOG')) icon = '\uD83C\uDFF7\uFE0F';
-      else if (titleUpper.includes('MEDAL') || titleUpper.includes('MONDAY')) icon = '\uD83C\uDFC5';
-      else if (titleUpper.includes('UNIFORM') || titleUpper.includes('SERAGAM')) icon = '\uD83D\uDC54';
-      else if (titleUpper.includes('CEKAT') || titleUpper.includes('AI')) icon = '\uD83E\uDD16';
-      else if (titleUpper.includes('TUTOR') || titleUpper.includes('TRAINING') || titleUpper.includes('VIDEO')) icon = '\uD83C\uDF93';
-
+      let icon = item.icon || '📌';
       return `
         <div class="latest-info-card" tabindex="0">
           <div class="latest-info-card-top">
@@ -4763,19 +4718,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display:flex; align-items:center; gap:0.4rem;">
               <span class="latest-info-pill">HIGHLIGHT</span>
               <button class="btn-unpin-featured" data-id="${item.id}" style="background: #FEE2E2; color: #DC2626; border: none; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; cursor: pointer;" title="Keluarkan dari Info Terbaru">
-                \uD83D\uDCCD Unpin
+                📌 Unpin
               </button>
             </div>
           </div>
           <h3 class="latest-info-title">${item.title}</h3>
           <p class="latest-info-desc">${summaryText}</p>
-          <div>
-            ${hasDriveUrl ? `
-              <a href="${item.driveUrl}" target="_blank" class="btn-latest-info">\uD83D\uDD17 Buka Dokumen \u2794</a>
-            ` : `
-              <button class="btn-latest-info btn-read-sop" data-id="${item.id}">\uD83D\uDCD6 Baca Detail \u2794</button>
-            `}
-          </div>
         </div>
       `;
     }).join('');
@@ -4783,42 +4731,22 @@ document.addEventListener('DOMContentLoaded', () => {
     container.querySelectorAll('.btn-unpin-featured').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const id = btn.getAttribute('data-id');
+        const id = e.currentTarget.getAttribute('data-id');
         const item = itemList.find(i => i.id === id);
         if (item) {
           item.isFeatured = false;
           persistItems(itemList);
           renderLatestInfoSection();
-
           renderContent();
-          initWeGrowEvents();
-          showToast(`\uD83D\uDCCC Item [${item.code}] dikeluarkan dari Info Terbaru.`);
-        }
-      });
-    });
-
-    container.querySelectorAll('.btn-read-sop').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-id');
-        const item = itemList.find(i => i.id === id);
-        if (item) {
-          modalTitle.textContent = `[${item.code}] ${item.title}`;
-          modalBody.innerHTML = item.details || `<p>${item.summary}</p>`;
-          sopModalOverlay.classList.add('active');
+          showToast(`📌 Item [${item.code}] dikeluarkan dari Info Terbaru.`);
         }
       });
     });
   }
 
-    // Render Content
-
   function renderContent() {
     renderCategoryTabs();
     renderLatestInfoSection();
-
-    // If in editor, mod_sosialisasi items can be edited directly in the grid
-
-
 
     const filtered = itemList.filter(item => {
       const mods = getItemModules(item);
@@ -4839,16 +4767,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if (searchQuery !== '') {
         const activeModObj = getAppModules().find(m => m.id === currentModule);
         const modLabel = currentModule === 'all' ? 'Semua Dokumen' : (activeModObj ? activeModObj.name : 'Modul');
-        sectionTitleHeading.textContent = `\uD83D\uDD0D Hasil Pencarian: "${searchQuery}" (${filtered.length} ditemukan di ${modLabel})`;
+        sectionTitleHeading.textContent = `🔍 Hasil Pencarian: "${searchQuery}" (${filtered.length} ditemukan di ${modLabel})`;
       } else if (currentModule === 'all') {
-        sectionTitleHeading.textContent = `\uD83D\uDCC2 Seluruh Dokumen & SOP Operasional ${appSettings.brandTitle}`;
+        sectionTitleHeading.textContent = `📁 Seluruh Dokumen & SOP Operasional ${appSettings.brandTitle}`;
       } else if (currentModule === 'sop') {
-        sectionTitleHeading.textContent = `\uD83D\uDCC4 Daftar ${appSettings.moduleTab1 || 'SOP & Product Knowledge'} ${appSettings.brandTitle}`;
+        sectionTitleHeading.textContent = `📄 Daftar ${appSettings.moduleTab1 || 'SOP & Product Knowledge'} ${appSettings.brandTitle}`;
       } else if (currentModule === 'dailytask') {
-        sectionTitleHeading.textContent = `\uD83D\uDCC5 Link ${appSettings.moduleTab2 || 'Spreadsheet Daily Tasks & Jadwal Cabang'}`;
+        sectionTitleHeading.textContent = `📅 Link ${appSettings.moduleTab2 || 'Spreadsheet Daily Tasks & Jadwal Cabang'}`;
       } else {
         const activeModObj = getAppModules().find(m => m.id === currentModule);
-        sectionTitleHeading.textContent = `${activeModObj ? (activeModObj.icon || '\u26A1') : '\u26A1'} ${activeModObj ? activeModObj.name : 'Akses Cepat'}`;
+        sectionTitleHeading.textContent = `${activeModObj ? (activeModObj.icon || '⚡') : '⚡'} ${activeModObj ? activeModObj.name : 'Akses Cepat'}`;
       }
     }
 
@@ -4867,67 +4795,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     contentGrid.innerHTML = filtered.map(item => {
       const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
-      let driveBtnText = '\uD83D\uDCD6 Baca Detail SOP \u2794';
+      let driveBtnText = '📖 Baca Detail SOP ➔';
       if (hasDriveUrl) {
         const urlLower = (item.driveUrl || '').toLowerCase();
-        if (urlLower.includes('.pdf')) driveBtnText = '\uD83D\uDCC4 Buka File PDF \u2794';
-        else if (urlLower.includes('script.google.com')) driveBtnText = '\uD83D\uDE80 Buka Aplikasi Web \u2794';
-        else if (urlLower.includes('spreadsheet') || urlLower.includes('sheets')) driveBtnText = '\uD83D\uDCCA Buka Google Sheets \u2794';
-        else driveBtnText = '\uD83D\uDD17 Buka Dokumen / Link \u2794';
+        if (urlLower.includes('.pdf')) driveBtnText = '📄 Buka File PDF ➔';
+        else if (urlLower.includes('script.google.com')) driveBtnText = '🚀 Buka Aplikasi Web ➔';
+        else if (urlLower.includes('spreadsheet') || urlLower.includes('sheets')) driveBtnText = '📊 Buka Google Sheets ➔';
+        else driveBtnText = '🔗 Buka Dokumen / Link ➔';
       }
-      const mods = getItemModules(item);
-      const moduleNames = mods.map(mId => {
-        const mObj = getAppModules().find(x => x.id === mId);
-        return mObj ? mObj.name : mId;
-      }).join(', ');
 
-      const isAckDoc = mods.includes('mod_sosialisasi') || item.requireAck === true;
-      const acks = isAckDoc ? getAcksForItem(item.id) : [];
+      let icon = item.icon || '&#128196;';
+      if (!item.icon) {
+        const codeUpper = (item.code || '').toUpperCase();
+        const titleUpper = (item.title || '').toUpperCase();
+        if (codeUpper.includes('INC') || titleUpper.includes('INCOME') || titleUpper.includes('REKAP')) icon = '&#128202;';
+        else if (codeUpper.includes('WA') || titleUpper.includes('WHATSAPP') || titleUpper.includes('CHAT')) icon = '&#128172;';
+        else if (codeUpper.includes('JADWAL') || titleUpper.includes('SHIFT') || titleUpper.includes('TASK')) icon = '&#128197;';
+        else if (codeUpper.includes('PL') || titleUpper.includes('PRICELIST') || titleUpper.includes('KATALOG') || titleUpper.includes('VOUCHER')) icon = '&#127991;&#65039;';
+        else if (codeUpper.includes('PHY') || titleUpper.includes('FISIO') || titleUpper.includes('TERAPI')) icon = '&#129658;';
+        else if (codeUpper.includes('TUTOR') || titleUpper.includes('VIDEO') || titleUpper.includes('TRAINING')) icon = '&#127891;';
+        else if (codeUpper.includes('IOC')) icon = '&#9889;';
+        else if (codeUpper.includes('LEGAL') || titleUpper.includes('IZIN')) icon = '&#9878;&#65039;';
+        else if (codeUpper.includes('FEEDBACK') || titleUpper.includes('GREVIEW')) icon = '&#11088;';
+      }
+
+      const summaryText = item.summary || 'Klik tombol di bawah untuk membuka dokumen ini.';
 
       return `
-        <div class="item-card">
-          <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 4px; align-items: center;">
+        <div class="item-card" tabindex="0">
+          <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 4px; align-items: center; z-index: 5;">
             <button class="btn-card-pin btn-toggle-pin ${item.isFeatured ? 'active' : ''}" data-id="${item.id}" title="${item.isFeatured ? 'Keluarkan dari Info Terbaru' : 'Tampilkan di Info Terbaru'}">
-              ${item.isFeatured ? '\uD83D\uDCCC Pinned' : '\uD83D\uDCCC Pin'}
+              ${item.isFeatured ? '📌 Pinned' : '📌 Pin'}
             </button>
-            <button class="btn-inline-edit btn-edit-item" data-id="${item.id}" title="Edit Item" style="position: static;">\u270F\uFE0F</button>
-            <button class="btn-inline-delete btn-delete-item" data-id="${item.id}" title="Hapus Item" style="position: static;">\uD83D\uDDD1\uFE0F</button>
+            <button class="btn-inline-edit btn-edit-item" data-id="${item.id}" title="Edit Item" style="position: static;">✏️</button>
+            <button class="btn-inline-delete btn-delete-item" data-id="${item.id}" title="Hapus Item" style="position: static;">🗑️</button>
           </div>
 
-          <div>
-            <div class="card-top" style="padding-right: 110px;">
-              <div style="display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
-                <span class="card-type-tag">${item.code || 'DOC'}</span>
-                ${isAckDoc ? `<span class="badge-ack-req">📢 WAJIB BACA &amp; KONFIRMASI</span>` : ''}
-              </div>
-              ${(currentModule === 'all' || searchQuery !== '') ? `<span class="card-module-tag">${moduleNames}</span>` : ''}
-            </div>
-            <div class="card-icon-badge" style="width: 38px; height: 38px; background: #F1F5F9; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.65rem;">${item.icon || '&#128196;'}</div>
-            <h3 class="card-title">${item.title}</h3>
-            <p class="card-summary">${item.summary}</p>
+          <div class="card-top" style="padding-right: 110px;">
+            <span class="card-top-tag">${item.code || 'DOC'}</span>
           </div>
-
-          ${isAckDoc ? `
-            <div class="ack-status-bar">
-              <span class="ack-counter-pill">👥 <strong>${acks.length}</strong> Staf FO Sudah Baca</span>
-              <button class="btn-ack-viewlog btn-open-reader-log" data-id="${item.id}" style="width:auto; padding:2px 8px; font-size:0.72rem;">Lihat Rekap</button>
-            </div>
-          ` : ''}
+          <div class="card-icon-badge">${icon}</div>
+          <h3 class="card-title">${item.title}</h3>
+          
+          <div class="popover-desc">
+            <p style="margin:0; opacity:0.95;">${summaryText}</p>
+          </div>
 
           <div class="card-actions-grid">
             <button class="btn-open-link btn-open-item" data-id="${item.id}">
               ${driveBtnText}
             </button>
-            ${isAckDoc ? `
-              <button class="btn-ack-confirm btn-open-ack" data-id="${item.id}">
-                ✍️ Konfirmasi Sudah Membaca (FO)
-              </button>
-              ${item.ackUrl ? `
-                <a href="${item.ackUrl}" target="_blank" class="btn-ack-gform">
-                  📋 Buka Google Form HR ➔
-                </a>
-              ` : ''}
-            ` : ''}
           </div>
         </div>
       `;
@@ -4941,13 +4858,12 @@ document.addEventListener('DOMContentLoaded', () => {
           item.isFeatured = !item.isFeatured;
           persistItems(itemList);
           renderLatestInfoSection();
-
           renderContent();
           initWeGrowEvents();
           if (item.isFeatured) {
-            showToast(`\uD83D\uDCCC Item [${item.code}] ditambahkan ke Info Terbaru!`);
+            showToast(`📌 Item [${item.code}] ditambahkan ke Info Terbaru!`);
           } else {
-            showToast(`\uD83D\uDCCC Item [${item.code}] dikeluarkan dari Info Terbaru.`);
+            showToast(`📌 Item [${item.code}] dikeluarkan dari Info Terbaru.`);
           }
         }
       });
@@ -4961,28 +4877,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (item.driveUrl && item.driveUrl.length > 5) {
           window.open(item.driveUrl, '_blank');
-          showToast(`\uD83D\uDCCA Membuka Google Drive / Spreadsheet: ${item.title}`);
+          showToast(`📊 Membuka Google Drive / Spreadsheet: ${item.title}`);
         } else {
           modalTitle.textContent = `[${item.code}] ${item.title}`;
           modalBody.innerHTML = item.details || `<p>${item.summary}</p>`;
           sopModalOverlay.classList.add('active');
         }
-      });
-    });
-
-    document.querySelectorAll('.btn-open-ack').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = e.currentTarget.getAttribute('data-id');
-        openAckModal(id);
-      });
-    });
-
-    document.querySelectorAll('.btn-open-reader-log').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = e.currentTarget.getAttribute('data-id');
-        openReaderLogModal(id);
       });
     });
 
@@ -4999,7 +4899,6 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteItem(id);
       });
     });
-
   }
 
   if (modalClose) modalClose.addEventListener('click', () => sopModalOverlay.classList.remove('active'));
@@ -5707,8 +5606,8 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
         indexTemplate = indexTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
         indexTemplate = indexTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
-        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260918_v13');`);
-        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260918_v13'`);
+        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260920_v1');`);
+        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260920_v1'`);
 
         // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
         if ('showSaveFilePicker' in window) {
