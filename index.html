@@ -5148,68 +5148,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3200);
   };
 
-    // --- ACKNOWLEDGMENT & READ LOG SYSTEM (OPSI A + C) ---
+  // --- ACKNOWLEDGMENT & READ LOG SYSTEM (OPSI A + C) ---
   const ACK_STORAGE_KEY = 'wmcenter_read_acknowledgments_v1';
+  window.ACK_STORAGE_KEY = ACK_STORAGE_KEY;
 
   function getReadAcknowledgments() {
     const data = localStorage.getItem(ACK_STORAGE_KEY);
     if (!data) {
-      const defaultAcks = [
-        {
-          id: "ack_seed_1",
-          itemId: "ioc_0017_blibli",
-          itemTitle: "Kerja Sama Layanan WM Center X Blibli",
-          itemCode: "26.001/WMC-IOC/BD/X/2026",
-          staffName: "Siti Rahmawati",
-          branch: "WM Center - Head Office",
-          notes: "Sudah paham alur verifikasi voucher Blibli via WA",
-          timestamp: "2026-09-17T09:15:00.000Z",
-          formattedDate: "17 Sep 2026, 09:15 WIB"
-        },
-        {
-          id: "ack_seed_2",
-          itemId: "ioc_0017_blibli",
-          itemTitle: "Kerja Sama Layanan WM Center X Blibli",
-          itemCode: "26.001/WMC-IOC/BD/X/2026",
-          staffName: "Dimas Prasetyo",
-          branch: "WM Center - Head Office",
-          notes: "Siap terapkan ketentuan ke pasien",
-          timestamp: "2026-09-17T11:40:00.000Z",
-          formattedDate: "17 Sep 2026, 11:40 WIB"
-        },
-        {
-          id: "ack_seed_3",
-          itemId: "ioc_0017_blibli",
-          itemTitle: "Kerja Sama Layanan WM Center X Blibli",
-          itemCode: "26.001/WMC-IOC/BD/X/2026",
-          staffName: "Nadia Putri",
-          branch: "WM Center Surabaya",
-          notes: "Sudah koordinasi dengan terapis cabang",
-          timestamp: "2026-09-17T14:20:00.000Z",
-          formattedDate: "17 Sep 2026, 14:20 WIB"
-        },
-        {
-          id: "ack_seed_4",
-          itemId: "fo_15_adj_income",
-          itemTitle: "Catatan Penyesuaian - Daily Income (All Cabang)",
-          itemCode: "INC-PENYESUAIAN",
-          staffName: "Sarah Annisa",
-          branch: "WM Center Surabaya",
-          notes: "Paham alur input penyesuaian selisih closing harian",
-          timestamp: "2026-09-17T15:10:00.000Z",
-          formattedDate: "17 Sep 2026, 15:10 WIB"
-        }
-      ];
-      return defaultAcks;
+      return [];
     }
     try { return JSON.parse(data); } catch(e) { return []; }
   }
+  window.getReadAcknowledgments = getReadAcknowledgments;
 
   function saveReadAcknowledgment(entry) {
     const list = getReadAcknowledgments();
     list.unshift(entry);
     localStorage.setItem(ACK_STORAGE_KEY, JSON.stringify(list));
   }
+  window.saveReadAcknowledgment = saveReadAcknowledgment;
 
   function getAcksForItem(itemId) {
     const list = getReadAcknowledgments();
@@ -5951,29 +5908,52 @@ function initWeGrowEvents() {
       const docId = docSelect ? docSelect.value : '';
       const sNotes = notesInput ? notesInput.value.trim() : '';
 
+      // Clear previous inline errors
+      const nameErr = document.getElementById('wgStaffNameError');
+      const docErr = document.getElementById('wgSelectDocError');
+      const agreeErr = document.getElementById('wgAgreeError');
+      if (nameErr) nameErr.style.display = 'none';
+      if (docErr) docErr.style.display = 'none';
+      if (agreeErr) agreeErr.style.display = 'none';
+      if (staffNameInput) { staffNameInput.style.borderColor = ''; staffNameInput.style.backgroundColor = ''; }
+      if (docSelect) { docSelect.style.borderColor = ''; docSelect.style.backgroundColor = ''; }
+
       if (!sName) {
-        alert('Silakan masukkan nama lengkap staf FO!');
+        if (nameErr) nameErr.style.display = 'block';
         if (staffNameInput) {
+          staffNameInput.style.borderColor = '#DC2626';
+          staffNameInput.style.backgroundColor = '#FEF2F2';
           staffNameInput.focus();
           staffNameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (typeof showToast === 'function') {
+          showToast('⚠️ Silakan masukkan nama lengkap staf FO!');
         }
         return;
       }
 
       if (!docId) {
-        alert('Silakan pilih dokumen SOP yang dibaca!');
+        if (docErr) docErr.style.display = 'block';
         if (docSelect) {
+          docSelect.style.borderColor = '#DC2626';
+          docSelect.style.backgroundColor = '#FEF2F2';
           docSelect.focus();
           docSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (typeof showToast === 'function') {
+          showToast('⚠️ Silakan pilih dokumen SOP yang dibaca!');
         }
         return;
       }
 
       if (!agreeCheck || !agreeCheck.checked) {
-        alert('Silakan centang pernyataan pemahaman sebelum mengirim konfirmasi!');
+        if (agreeErr) agreeErr.style.display = 'block';
         if (agreeCheck) {
           agreeCheck.focus();
           agreeCheck.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (typeof showToast === 'function') {
+          showToast('⚠️ Silakan centang pernyataan pemahaman sebelum mengirim!');
         }
         return;
       }
@@ -5998,6 +5978,8 @@ function initWeGrowEvents() {
 
       if (typeof saveReadAcknowledgment === 'function') {
         saveReadAcknowledgment(entry);
+      } else if (typeof window.saveReadAcknowledgment === 'function') {
+        window.saveReadAcknowledgment(entry);
       }
 
       if (typeof showToast === 'function') {
@@ -6011,6 +5993,34 @@ function initWeGrowEvents() {
       // Switch directly to Dashboard so staff can see their name listed!
       switchWeGrowView('dashboard');
     });
+
+    const staffNameInput = document.getElementById('wgStaffName');
+    if (staffNameInput) {
+      staffNameInput.addEventListener('input', () => {
+        staffNameInput.style.borderColor = '';
+        staffNameInput.style.backgroundColor = '';
+        const nameErr = document.getElementById('wgStaffNameError');
+        if (nameErr) nameErr.style.display = 'none';
+      });
+    }
+
+    const docSelect = document.getElementById('wgSelectDoc');
+    if (docSelect) {
+      docSelect.addEventListener('change', () => {
+        docSelect.style.borderColor = '';
+        docSelect.style.backgroundColor = '';
+        const docErr = document.getElementById('wgSelectDocError');
+        if (docErr) docErr.style.display = 'none';
+      });
+    }
+
+    const agreeCheck = document.getElementById('wgCheckAgree');
+    if (agreeCheck) {
+      agreeCheck.addEventListener('change', () => {
+        const agreeErr = document.getElementById('wgAgreeError');
+        if (agreeErr) agreeErr.style.display = 'none';
+      });
+    }
   }
 }
 
@@ -6060,6 +6070,7 @@ function initWeGrowEvents() {
               <div class="wegrow-form-group" style="margin-bottom: 0;">
                 <label class="wegrow-form-label" for="wgStaffName">Nama staf <span class="req">*</span></label>
                 <input type="text" id="wgStaffName" class="wegrow-form-input" placeholder="Nama lengkap kamu" required />
+                <div id="wgStaffNameError" style="display:none; color: #DC2626; font-size: 0.775rem; font-weight: 700; margin-top: 4px;">⚠️ Nama staf FO wajib diisi!</div>
               </div>
               <div class="wegrow-form-group" style="margin-bottom: 0;">
                 <label class="wegrow-form-label" for="wgStaffPos">Posisi <span class="req">*</span></label>
@@ -6083,6 +6094,7 @@ function initWeGrowEvents() {
                 <option value="">-- Pilih Dokumen Ketentuan / SOP --</option>
                 <!-- Populated dynamically -->
               </select>
+              <div id="wgSelectDocError" style="display:none; color: #DC2626; font-size: 0.775rem; font-weight: 700; margin-top: 4px;">⚠️ Silakan pilih dokumen SOP yang dibaca!</div>
             </div>
 
             <!-- DYNAMIC PREVIEW & READ SOP BUTTON BOX -->
@@ -6095,13 +6107,14 @@ function initWeGrowEvents() {
             <!-- SECTION 3: PERNYATAAN & SUBMIT -->
             <div class="wegrow-section-heading">PERNYATAAN PEMAHAMAN &amp; SUBMIT</div>
 
-            <div style="background: #ECFDF5; border: 1.5px solid #A7F3D0; border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem;">
+            <div id="wgAgreeBox" style="background: #ECFDF5; border: 1.5px solid #A7F3D0; border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; transition: all 0.2s;">
               <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; margin: 0;">
                 <input type="checkbox" id="wgCheckAgree" checked required style="margin-top: 3px; width: 18px; height: 18px; accent-color: #0D9488; cursor: pointer;" />
                 <span style="font-size: 0.85rem; color: #065F46; font-weight: 600; line-height: 1.4;">
                   Saya menyatakan telah membaca, memahami secara menyeluruh, dan siap menjalankan isi SOP / ketentuan ini dalam tugas harian Front Office.
                 </span>
               </label>
+              <div id="wgAgreeError" style="display:none; color: #DC2626; font-size: 0.775rem; font-weight: 700; margin-top: 6px;">⚠️ Harap centang pernyataan pemahaman sebelum submit!</div>
             </div>
 
             <div class="wegrow-form-group">
