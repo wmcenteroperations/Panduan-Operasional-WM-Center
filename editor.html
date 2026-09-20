@@ -5588,6 +5588,10 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         showToast('⏳ Menyiapkan file web terbaru...');
 
+        // Ensure current state is persisted
+        persistSettings(appSettings);
+        persistItems(itemList);
+
         // Fetch the template index.html
         const response = await fetch('index.html');
         let indexTemplate = await response.text();
@@ -5602,8 +5606,8 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
         indexTemplate = indexTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
         indexTemplate = indexTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
-        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', 'v20260920_v1');`);
-        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== 'v20260920_v1'`);
+        indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', '${newVer}');`);
+        indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== '${newVer}'`);
 
         // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
         if ('showSaveFilePicker' in window) {
@@ -5650,7 +5654,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
       } catch (err) {
         console.error(err);
-        alert('Gagal mendownload otomatis. Pastikan file index.html berada di folder yang sama.');
+        alert('Gagal mendownload otomatis. Pastikan file index.html berada di folder yang sama atau gunakan web server lokal.');
       }
     });
   }
@@ -5845,28 +5849,28 @@ function renderWeGrowManageDocList() {
     const isChecked = !!item.requiresAck;
     const timerVal = (typeof item.readTimer !== 'undefined') ? item.readTimer : 30;
     return `
-      <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border: 1.5px solid ${isChecked ? '#86EFAC' : '#E2E8F0'}; background: ${isChecked ? '#F0FDF4' : '#FFFFFF'}; border-radius: 12px; cursor: pointer; transition: all 0.15s ease; gap: 0.85rem;" class="wg-manage-item-row" data-id="${item.id}">
-        <div style="display: flex; align-items: center; gap: 0.85rem; flex: 1; min-width: 0;">
+      <div class="wg-manage-item-row" data-id="${item.id}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border: 1.5px solid ${isChecked ? '#86EFAC' : '#E2E8F0'}; background: ${isChecked ? '#F0FDF4' : '#FFFFFF'}; border-radius: 12px; transition: all 0.15s ease; gap: 0.85rem;">
+        <label style="display: flex; align-items: center; gap: 0.85rem; flex: 1; min-width: 0; cursor: pointer; margin: 0;">
           <input type="checkbox" class="wg-doc-checkbox" data-id="${item.id}" ${isChecked ? 'checked' : ''} style="width: 20px; height: 20px; accent-color: #0D9488; cursor: pointer; flex-shrink: 0;" />
           <div style="min-width: 0;">
             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-              <span style="font-family: 'Montserrat', monospace; font-size: 0.775rem; font-weight: 700; background: ${isChecked ? '#DCFCE7' : '#F1F5F9'}; color: ${isChecked ? '#166534' : '#475569'}; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
+              <span class="wg-doc-code-badge" style="font-family: 'Montserrat', monospace; font-size: 0.775rem; font-weight: 700; background: ${isChecked ? '#DCFCE7' : '#F1F5F9'}; color: ${isChecked ? '#166534' : '#475569'}; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
               <span style="font-weight: 700; font-size: 0.9rem; color: #0F172A;">${item.title}</span>
             </div>
             ${item.summary ? `<p style="font-size: 0.775rem; color: #64748B; margin: 0.25rem 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.summary}</p>` : ''}
           </div>
-        </div>
+        </label>
         <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
           <div style="display: flex; align-items: center; gap: 4px; font-size: 0.775rem; color: #475569;" title="Durasi Wajib Baca (Detik)">
             <span>⏳</span>
-            <input type="number" class="wg-doc-timer-input" data-id="${item.id}" value="${timerVal}" min="0" max="600" step="5" style="width: 52px; padding: 2px 4px; border: 1px solid #CBD5E1; border-radius: 6px; text-align: center; font-weight: 700; font-size: 0.775rem;" />
+            <input type="number" class="wg-doc-timer-input" data-id="${item.id}" value="${timerVal}" min="0" max="600" step="5" style="width: 54px; padding: 3px 4px; border: 1px solid #CBD5E1; border-radius: 6px; text-align: center; font-weight: 700; font-size: 0.8rem; background: #FFFFFF;" />
             <span>dtk</span>
           </div>
-          <span style="font-size: 0.75rem; font-weight: 700; color: ${isChecked ? '#15803D' : '#94A3B8'}; min-width: 65px; text-align: right;">
+          <span class="wg-doc-status-badge" style="font-size: 0.75rem; font-weight: 700; color: ${isChecked ? '#15803D' : '#94A3B8'}; min-width: 75px; text-align: right;">
             ${isChecked ? '✓ Wajib Baca' : 'Tidak Aktif'}
           </span>
         </div>
-      </label>
+      </div>
     `;
   }).join('');
 
@@ -5880,10 +5884,15 @@ function renderWeGrowManageDocList() {
         if (row) {
           row.style.border = item.requiresAck ? '1.5px solid #86EFAC' : '1.5px solid #E2E8F0';
           row.style.background = item.requiresAck ? '#F0FDF4' : '#FFFFFF';
-          const statusText = row.querySelector('div:last-child span:last-child');
-          if (statusText) {
-            statusText.textContent = item.requiresAck ? '✓ Wajib Baca' : 'Tidak Aktif';
-            statusText.style.color = item.requiresAck ? '#15803D' : '#94A3B8';
+          const codeBadge = row.querySelector('.wg-doc-code-badge');
+          if (codeBadge) {
+            codeBadge.style.background = item.requiresAck ? '#DCFCE7' : '#F1F5F9';
+            codeBadge.style.color = item.requiresAck ? '#166534' : '#475569';
+          }
+          const statusBadge = row.querySelector('.wg-doc-status-badge');
+          if (statusBadge) {
+            statusBadge.textContent = item.requiresAck ? '✓ Wajib Baca' : 'Tidak Aktif';
+            statusBadge.style.color = item.requiresAck ? '#15803D' : '#94A3B8';
           }
         }
         const updatedCount = itemList.filter(i => !!i.requiresAck).length;
@@ -5893,18 +5902,32 @@ function renderWeGrowManageDocList() {
   });
 
   container.querySelectorAll('.wg-doc-timer-input').forEach(inp => {
-    inp.addEventListener('click', (e) => e.stopPropagation());
-    inp.addEventListener('change', (e) => {
+    const updateTimer = (e) => {
       const id = e.target.getAttribute('data-id');
       const item = itemList.find(i => i.id === id);
       if (item) {
         item.readTimer = Math.max(0, parseInt(e.target.value, 10) || 0);
       }
-    });
+    };
+    inp.addEventListener('input', updateTimer);
+    inp.addEventListener('change', updateTimer);
   });
 }
 
 function saveWeGrowDocManagement() {
+  const container = document.getElementById('wgManageDocListContainer');
+  if (container) {
+    container.querySelectorAll('.wg-manage-item-row').forEach(row => {
+      const id = row.getAttribute('data-id');
+      const item = itemList.find(i => i.id === id);
+      if (item) {
+        const cb = row.querySelector('.wg-doc-checkbox');
+        const timerInp = row.querySelector('.wg-doc-timer-input');
+        if (cb) item.requiresAck = cb.checked;
+        if (timerInp) item.readTimer = Math.max(0, parseInt(timerInp.value, 10) || 0);
+      }
+    });
+  }
   persistItems(itemList);
   populateWeGrowDocs();
   renderContent();
