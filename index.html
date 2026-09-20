@@ -941,6 +941,34 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Toast Notification */
+.toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: #0F172A;
+  color: #FFFFFF;
+  padding: 1rem 1.75rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.925rem;
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45), 0 0 0 1.5px rgba(255, 255, 255, 0.15);
+  border-left: 5px solid #10B981;
+  z-index: 9999999 !important;
+  opacity: 0;
+  transform: translateY(-25px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
 /* Quick Emoji Picker & Module Tabs Button */
 .btn-quick-emoji {
   background: #FFFFFF;
@@ -5405,6 +5433,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Toast Notification System
+  let toastTimer = null;
+  window.showToast = function(msg, duration = 3500) {
+    let toast = document.getElementById('appToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'appToast';
+      toast.className = 'toast';
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = msg;
+    toast.classList.add('show');
+
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, duration);
+  };
 
   function syncAndRefresh() {
     appSettings = getActiveSettings();

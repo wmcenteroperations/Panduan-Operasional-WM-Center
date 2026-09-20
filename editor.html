@@ -940,27 +940,32 @@ h1, h2, h3, h4, h5, h6 {
   text-decoration: underline;
 }
 
-/* Toast */
+/* Toast Notification */
 .toast {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background: var(--secondary);
+  top: 1.5rem;
+  right: 1.5rem;
+  background: #0F172A;
   color: #FFFFFF;
-  padding: 0.85rem 1.5rem;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  font-size: 0.875rem;
-  box-shadow: var(--shadow-lg);
-  z-index: 300;
+  padding: 1rem 1.75rem;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.925rem;
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45), 0 0 0 1.5px rgba(255, 255, 255, 0.15);
+  border-left: 5px solid #10B981;
+  z-index: 9999999 !important;
   opacity: 0;
-  transform: translateY(20px);
-  transition: var(--transition);
+  transform: translateY(-25px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .toast.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
 /* Responsive */
@@ -5241,7 +5246,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleSaveItem(e) {
     if (e) e.preventDefault();
 
-    const id = formItemId.value.trim();
+    const id = formItemId ? formItemId.value.trim() : '';
     const isFeatured = formItemIsFeatured ? formItemIsFeatured.checked : false;
     const requiresAck = formItemRequireAck ? formItemRequireAck.checked : false;
     const ackUrl = formItemAckUrl ? formItemAckUrl.value.trim() : '';
@@ -5256,12 +5261,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const primaryModule = selectedModules[0];
     const selectedCategories = ['all'];
 
-    const icon = formItemIcon ? formItemIcon.value.trim() || '\uD83D\uDCC4' : '\uD83D\uDCC4';
-    const code = formItemCode.value.trim() || 'DOC';
-    const title = formItemTitle.value.trim() || 'Item Baru';
-    const driveUrl = formItemDriveUrl.value.trim();
-    const summary = formItemSummary.value.trim() || 'Deskripsi panduan...';
-    const details = formItemDetails.value.trim();
+    const icon = formItemIcon ? formItemIcon.value.trim() || '📄' : '📄';
+    const code = formItemCode ? formItemCode.value.trim() || 'DOC' : 'DOC';
+    const title = formItemTitle ? formItemTitle.value.trim() || 'Item Baru' : 'Item Baru';
+    const driveUrl = formItemDriveUrl ? formItemDriveUrl.value.trim() : '';
+    const summary = formItemSummary ? formItemSummary.value.trim() || 'Deskripsi panduan...' : 'Deskripsi panduan...';
+    const details = formItemDetails ? formItemDetails.value.trim() : '';
 
     if (id) {
       const idx = itemList.findIndex(i => i.id === id);
@@ -5284,10 +5289,10 @@ document.addEventListener('DOMContentLoaded', () => {
           summary,
           details
         };
-        showToast(`\u2705 Item [${code}] berhasil disimpan!`);
+        showToast(`✅ Dokumen <strong>[${code}] ${title}</strong> berhasil diperbarui!`, 4000);
       }
     } else {
-      itemList.unshift({
+      const newItem = {
         id: `item_${Date.now()}`,
         isFeatured,
         requiresAck,
@@ -5303,32 +5308,31 @@ document.addEventListener('DOMContentLoaded', () => {
         driveUrl,
         summary,
         details
-      });
-      showToast(`\u2728 Item Baru [${code}] berhasil ditambahkan!`);
+      };
+      itemList.unshift(newItem);
+      showToast(`✨ Dokumen Baru <strong>[${code}] ${title}</strong> berhasil ditambahkan!`, 4000);
     }
 
     persistItems(itemList);
     renderLatestInfoSection();
-
     renderCategoryTabs();
     renderContent();
     populateWeGrowDocs();
-    initWeGrowEvents();
     itemFormModalOverlay.classList.remove('active');
   }
 
   if (btnSaveItemForm) {
-    btnSaveItemForm.addEventListener('click', (e) => {
+    btnSaveItemForm.onclick = (e) => {
       e.preventDefault();
       handleSaveItem(e);
-    });
+    };
   }
 
   if (itemForm) {
-    itemForm.addEventListener('submit', (e) => {
+    itemForm.onsubmit = (e) => {
       e.preventDefault();
       handleSaveItem(e);
-    });
+    };
   }
 
   function deleteItem(id) {
@@ -5541,8 +5545,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Toast Function
-  window.showToast = function(msg) {
+  // Toast Function with High-Visibility Overlay
+  let toastTimer = null;
+  window.showToast = function(msg, duration = 3500) {
     let toast = document.getElementById('appToast');
     if (!toast) {
       toast = document.createElement('div');
@@ -5550,12 +5555,13 @@ document.addEventListener('DOMContentLoaded', () => {
       toast.className = 'toast';
       document.body.appendChild(toast);
     }
-    toast.textContent = msg;
+    toast.innerHTML = msg;
     toast.classList.add('show');
 
-    setTimeout(() => {
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
       toast.classList.remove('show');
-    }, 3200);
+    }, duration);
   };
 
   // Publish Handler
@@ -5914,7 +5920,7 @@ function renderWeGrowManageDocList() {
   });
 }
 
-function saveWeGrowDocManagement() {
+function saveWeGrowDocManagement(triggerBtn = null) {
   const container = document.getElementById('wgManageDocListContainer');
   if (container) {
     container.querySelectorAll('.wg-manage-item-row').forEach(row => {
@@ -5931,9 +5937,26 @@ function saveWeGrowDocManagement() {
   persistItems(itemList);
   populateWeGrowDocs();
   renderContent();
-  if (typeof showToast === 'function') {
-    showToast('✅ Berhasil menyimpan pengaturan Dokumen Wajib Baca FO!');
+
+  const totalSelected = itemList.filter(i => !!i.requiresAck).length;
+
+  if (triggerBtn) {
+    const origHtml = triggerBtn.innerHTML;
+    triggerBtn.innerHTML = '✅ Berhasil Disimpan!';
+    triggerBtn.style.background = '#059669';
+    setTimeout(() => {
+      triggerBtn.innerHTML = origHtml;
+      triggerBtn.style.background = '#0D9488';
+    }, 2000);
   }
+
+  if (typeof showToast === 'function') {
+    showToast(`✅ <strong>Pengaturan Tersimpan!</strong> (${totalSelected} SOP Wajib Baca FO & Timer telah diperbarui)`, 4000);
+  }
+
+  setTimeout(() => {
+    switchWeGrowView('menu');
+  }, 650);
 }
 
 let weGrowReadingCountdownInterval = null;
@@ -6347,16 +6370,16 @@ function initWeGrowEvents() {
   const btnSaveManageTop = document.getElementById('btnSaveWeGrowDocManageTop');
   const btnSaveManageBottom = document.getElementById('btnSaveWeGrowDocManageBottom');
   if (btnSaveManageTop) {
-    btnSaveManageTop.addEventListener('click', () => {
-      saveWeGrowDocManagement();
-      switchWeGrowView('menu');
-    });
+    btnSaveManageTop.onclick = (e) => {
+      e.preventDefault();
+      saveWeGrowDocManagement(btnSaveManageTop);
+    };
   }
   if (btnSaveManageBottom) {
-    btnSaveManageBottom.addEventListener('click', () => {
-      saveWeGrowDocManagement();
-      switchWeGrowView('menu');
-    });
+    btnSaveManageBottom.onclick = (e) => {
+      e.preventDefault();
+      saveWeGrowDocManagement(btnSaveManageBottom);
+    };
   }
 
   const searchManageInput = document.getElementById('wgManageDocSearch');
