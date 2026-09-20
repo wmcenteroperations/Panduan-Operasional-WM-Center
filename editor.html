@@ -5710,7 +5710,7 @@ function switchWeGrowView(viewName) {
   const container = document.getElementById('weGrowModalContainer');
   if (container) {
     container.scrollTop = 0;
-    if (viewName === 'dashboard' || viewName === 'booklet' || viewName === 'manage') {
+    if (viewName === 'form' || viewName === 'dashboard' || viewName === 'booklet' || viewName === 'manage') {
       container.classList.add('wide');
     } else {
       container.classList.remove('wide');
@@ -6017,6 +6017,33 @@ function startReadingCountdown(durationSeconds) {
   }, 1000);
 }
 
+function getDocEmbedUrl(url) {
+  if (!url) return '';
+  const trimmed = url.trim();
+  
+  // Google Sheets: replace /edit or /view with /preview
+  if (trimmed.includes('docs.google.com/spreadsheets/d/')) {
+    return trimmed.replace(/\/edit(\?.*)?$/, '/preview').replace(/\/view(\?.*)?$/, '/preview');
+  }
+  
+  // Google Docs: replace /edit or /view with /preview
+  if (trimmed.includes('docs.google.com/document/d/')) {
+    return trimmed.replace(/\/edit(\?.*)?$/, '/preview').replace(/\/view(\?.*)?$/, '/preview');
+  }
+  
+  // Google Drive File / PDF: replace /view or /edit with /preview
+  if (trimmed.includes('drive.google.com/file/d/')) {
+    return trimmed.replace(/\/view(\?.*)?$/, '/preview').replace(/\/edit(\?.*)?$/, '/preview');
+  }
+
+  // Google Apps Script Web App
+  if (trimmed.includes('script.google.com/macros/s/')) {
+    return trimmed;
+  }
+
+  return trimmed;
+}
+
 function updateWeGrowDocPreview() {
   const select = document.getElementById('wgSelectDoc');
   const box = document.getElementById('wgDocPreviewBox');
@@ -6025,7 +6052,7 @@ function updateWeGrowDocPreview() {
   const docId = select.value;
   if (!docId) {
     box.innerHTML = `
-      <div style="text-align: center; color: #64748B; padding: 0.75rem 0; font-size: 0.875rem;">
+      <div style="text-align: center; color: #64748B; padding: 1rem 0; font-size: 0.875rem;">
         Silakan pilih dokumen SOP / IOC di atas untuk membaca materi.
       </div>
     `;
@@ -6040,47 +6067,42 @@ function updateWeGrowDocPreview() {
   }
 
   const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
-  let btnText = '📖 Buka &amp; Baca SOP ➔';
-  if (hasDriveUrl) {
-    const urlLower = item.driveUrl.toLowerCase();
-    if (urlLower.includes('.pdf')) btnText = '📄 Buka File PDF Dokumen ➔';
-    else if (urlLower.includes('spreadsheet') || urlLower.includes('sheets')) btnText = '📊 Buka Google Sheets ➔';
-    else if (urlLower.includes('script.google.com')) btnText = '🚀 Buka Aplikasi Web ➔';
-    else btnText = '🔗 Buka Dokumen ➔';
-  }
-
+  const embedUrl = hasDriveUrl ? getDocEmbedUrl(item.driveUrl) : '';
   const duration = (typeof item.readTimer !== 'undefined') ? parseInt(item.readTimer, 10) : 30;
 
   box.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-      <div style="flex: 1; min-width: 220px;">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; flex-wrap: wrap;">
-          <span style="background: #0F172A; color: #FFFFFF; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
-          <span style="font-size: 0.775rem; font-weight: 700; color: #0D9488;">Dokumen Terpilih</span>
-          ${duration > 0 ? `<span style="font-size: 0.725rem; font-weight: 700; background: #FEF3C7; color: #B45309; padding: 2px 7px; border-radius: 6px;">⏳ Timer: ${duration} dtk</span>` : ''}
+    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+      <!-- In-App Reader Header -->
+      <div style="padding: 0.85rem 1.1rem; background: #F8FAFC; border-bottom: 1.5px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem;">
+        <div style="flex: 1; min-width: 220px;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2px;">
+            <span style="background: #0F172A; color: #FFFFFF; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
+            <span style="font-weight: 800; font-size: 0.95rem; color: #0F172A;">${item.title}</span>
+            ${duration > 0 ? `<span style="font-size: 0.725rem; font-weight: 700; background: #FEF3C7; color: #B45309; padding: 2px 7px; border-radius: 6px;">⏳ Timer: ${duration} dtk</span>` : ''}
+          </div>
+          ${item.summary ? `<p style="font-size: 0.775rem; color: #64748B; margin: 0; line-height: 1.4;">${item.summary}</p>` : ''}
         </div>
-        <h4 style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 0 0 0.25rem 0;">${item.title}</h4>
-        <p style="font-size: 0.8rem; color: #64748B; margin: 0; line-height: 1.4;">${item.summary || 'Pelajari materi ketentuan sebelum konfirmasi.'}</p>
+        <div>
+          ${hasDriveUrl ? `
+            <a href="${item.driveUrl}" target="_blank" rel="noopener noreferrer" style="background: #FFFFFF; color: #1E3A5F; border: 1.5px solid #CBD5E1; border-radius: 8px; padding: 0.45rem 0.85rem; font-size: 0.775rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 0.4rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;" title="Buka materi di tab layar penuh baru">
+              <span>Buka di Tab Baru</span> <span>↗️</span>
+            </a>
+          ` : ''}
+        </div>
       </div>
-      <div>
-        <button type="button" class="btn-wegrow-read-doc" id="btnWgOpenDocNow">
-          <span>${btnText}</span>
-        </button>
-      </div>
+
+      <!-- In-App Reader Embedded Frame -->
+      ${embedUrl ? `
+        <div style="position: relative; width: 100%; height: 420px; background: #F1F5F9;">
+          <iframe src="${embedUrl}" style="width: 100%; height: 100%; border: none;" allow="autoplay" loading="lazy" title="Dokumen Preview"></iframe>
+        </div>
+      ` : `
+        <div style="padding: 1.5rem; text-align: left; color: #334155; max-height: 300px; overflow-y: auto;">
+          ${item.details || '<p style="margin:0; color:#64748B; font-size:0.875rem;">Silakan baca ketentuan tugas harian sesuai judul di atas.</p>'}
+        </div>
+      `}
     </div>
   `;
-
-  const btnOpen = document.getElementById('btnWgOpenDocNow');
-  if (btnOpen) {
-    btnOpen.addEventListener('click', () => {
-      if (item.driveUrl && item.driveUrl.length > 5) {
-        window.open(item.driveUrl, '_blank');
-        if (typeof showToast === 'function') showToast(`📂 Membuka dokumen: ${item.title}`);
-      } else if (typeof openSopModal === 'function') {
-        openSopModal(item.id);
-      }
-    });
-  }
 
   // Start reading countdown timer for this document
   startReadingCountdown(duration);
