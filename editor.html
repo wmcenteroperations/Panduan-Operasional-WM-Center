@@ -4050,6 +4050,8 @@ document.addEventListener('DOMContentLoaded', () => {
   window.itemList = itemList;
   window.getItemModules = getItemModules;
   window.getItemCategories = getItemCategories;
+  window.persistSettings = persistSettings;
+  window.persistItems = persistItems;
 
   // Auto-migrate roles if missing
   if (!appSettings.roles || !Array.isArray(appSettings.roles) || appSettings.roles.length === 0) {
@@ -5665,6 +5667,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  window.renderContent = renderContent;
+  window.renderCategoryTabs = renderCategoryTabs;
+  window.renderModuleTabs = renderModuleTabs;
+  window.applySettingsUI = applySettingsUI;
+
   // Initial Load
   applySettingsUI();
   renderModuleTabs();
@@ -5820,143 +5827,173 @@ function populateWeGrowDocs() {
   }
 }
 
+function getActiveEditorItems() {
+  if (typeof window.itemList !== 'undefined' && Array.isArray(window.itemList)) return window.itemList;
+  if (typeof itemList !== 'undefined' && Array.isArray(itemList)) return itemList;
+  return [];
+}
+
 function renderWeGrowManageDocList() {
-  const container = document.getElementById('wgManageDocListContainer');
-  const countBadge = document.getElementById('wgManageDocSelectedCount');
-  const searchInput = document.getElementById('wgManageDocSearch');
-  if (!container) return;
+  try {
+    const container = document.getElementById('wgManageDocListContainer');
+    const countBadge = document.getElementById('wgManageDocSelectedCount');
+    const searchInput = document.getElementById('wgManageDocSearch');
+    if (!container) return;
 
-  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-  const currentItems = (typeof itemList !== 'undefined' && Array.isArray(itemList)) ? itemList : [];
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const currentItems = getActiveEditorItems();
 
-  const filtered = currentItems.filter(item => {
-    if (!query) return true;
-    const code = (item.code || '').toLowerCase();
-    const title = (item.title || '').toLowerCase();
-    const summary = (item.summary || '').toLowerCase();
-    return code.includes(query) || title.includes(query) || summary.includes(query);
-  });
-
-  const totalSelected = currentItems.filter(i => !!i.requiresAck).length;
-  if (countBadge) {
-    countBadge.textContent = `${totalSelected} Terpilih`;
-  }
-
-  if (filtered.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; padding: 2rem; color: #64748B;">
-        <p style="margin: 0; font-size: 0.9rem;">Tidak ada dokumen yang cocok dengan kata kunci "<strong>${query}</strong>".</p>
-      </div>
-    `;
-    return;
-  }
-
-  container.innerHTML = filtered.map(item => {
-    const isChecked = !!item.requiresAck;
-    const timerVal = (typeof item.readTimer !== 'undefined') ? item.readTimer : 30;
-    return `
-      <div class="wg-manage-item-row" data-id="${item.id}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border: 1.5px solid ${isChecked ? '#86EFAC' : '#E2E8F0'}; background: ${isChecked ? '#F0FDF4' : '#FFFFFF'}; border-radius: 12px; transition: all 0.15s ease; gap: 0.85rem;">
-        <label style="display: flex; align-items: center; gap: 0.85rem; flex: 1; min-width: 0; cursor: pointer; margin: 0;">
-          <input type="checkbox" class="wg-doc-checkbox" data-id="${item.id}" ${isChecked ? 'checked' : ''} style="width: 20px; height: 20px; accent-color: #0D9488; cursor: pointer; flex-shrink: 0;" />
-          <div style="min-width: 0;">
-            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-              <span class="wg-doc-code-badge" style="font-family: 'Montserrat', monospace; font-size: 0.775rem; font-weight: 700; background: ${isChecked ? '#DCFCE7' : '#F1F5F9'}; color: ${isChecked ? '#166534' : '#475569'}; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
-              <span style="font-weight: 700; font-size: 0.9rem; color: #0F172A;">${item.title}</span>
-            </div>
-            ${item.summary ? `<p style="font-size: 0.775rem; color: #64748B; margin: 0.25rem 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.summary}</p>` : ''}
-          </div>
-        </label>
-        <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
-          <div style="display: flex; align-items: center; gap: 4px; font-size: 0.775rem; color: #475569;" title="Durasi Wajib Baca (Detik)">
-            <span>⏳</span>
-            <input type="number" class="wg-doc-timer-input" data-id="${item.id}" value="${timerVal}" min="0" max="600" step="5" style="width: 54px; padding: 3px 4px; border: 1px solid #CBD5E1; border-radius: 6px; text-align: center; font-weight: 700; font-size: 0.8rem; background: #FFFFFF;" />
-            <span>dtk</span>
-          </div>
-          <span class="wg-doc-status-badge" style="font-size: 0.75rem; font-weight: 700; color: ${isChecked ? '#15803D' : '#94A3B8'}; min-width: 75px; text-align: right;">
-            ${isChecked ? '✓ Wajib Baca' : 'Tidak Aktif'}
-          </span>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  container.querySelectorAll('.wg-doc-checkbox').forEach(cb => {
-    cb.addEventListener('change', (e) => {
-      const id = e.target.getAttribute('data-id');
-      const item = itemList.find(i => i.id === id);
-      if (item) {
-        item.requiresAck = e.target.checked;
-        const row = e.target.closest('.wg-manage-item-row');
-        if (row) {
-          row.style.border = item.requiresAck ? '1.5px solid #86EFAC' : '1.5px solid #E2E8F0';
-          row.style.background = item.requiresAck ? '#F0FDF4' : '#FFFFFF';
-          const codeBadge = row.querySelector('.wg-doc-code-badge');
-          if (codeBadge) {
-            codeBadge.style.background = item.requiresAck ? '#DCFCE7' : '#F1F5F9';
-            codeBadge.style.color = item.requiresAck ? '#166534' : '#475569';
-          }
-          const statusBadge = row.querySelector('.wg-doc-status-badge');
-          if (statusBadge) {
-            statusBadge.textContent = item.requiresAck ? '✓ Wajib Baca' : 'Tidak Aktif';
-            statusBadge.style.color = item.requiresAck ? '#15803D' : '#94A3B8';
-          }
-        }
-        const updatedCount = itemList.filter(i => !!i.requiresAck).length;
-        if (countBadge) countBadge.textContent = `${updatedCount} Terpilih`;
-      }
+    const filtered = currentItems.filter(item => {
+      if (!query) return true;
+      const code = (item.code || '').toLowerCase();
+      const title = (item.title || '').toLowerCase();
+      const summary = (item.summary || '').toLowerCase();
+      return code.includes(query) || title.includes(query) || summary.includes(query);
     });
-  });
 
-  container.querySelectorAll('.wg-doc-timer-input').forEach(inp => {
-    const updateTimer = (e) => {
-      const id = e.target.getAttribute('data-id');
-      const item = itemList.find(i => i.id === id);
-      if (item) {
-        item.readTimer = Math.max(0, parseInt(e.target.value, 10) || 0);
-      }
-    };
-    inp.addEventListener('input', updateTimer);
-    inp.addEventListener('change', updateTimer);
-  });
+    const totalSelected = currentItems.filter(i => !!i.requiresAck).length;
+    if (countBadge) {
+      countBadge.textContent = `${totalSelected} Terpilih`;
+    }
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: #64748B;">
+          <p style="margin: 0; font-size: 0.9rem;">Tidak ada dokumen yang cocok dengan kata kunci "<strong>${query}</strong>".</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = filtered.map(item => {
+      const isChecked = !!item.requiresAck;
+      const timerVal = (typeof item.readTimer !== 'undefined') ? item.readTimer : 30;
+      return `
+        <div class="wg-manage-item-row" data-id="${item.id}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border: 1.5px solid ${isChecked ? '#86EFAC' : '#E2E8F0'}; background: ${isChecked ? '#F0FDF4' : '#FFFFFF'}; border-radius: 12px; transition: all 0.15s ease; gap: 0.85rem;">
+          <label style="display: flex; align-items: center; gap: 0.85rem; flex: 1; min-width: 0; cursor: pointer; margin: 0;">
+            <input type="checkbox" class="wg-doc-checkbox" data-id="${item.id}" ${isChecked ? 'checked' : ''} style="width: 20px; height: 20px; accent-color: #0D9488; cursor: pointer; flex-shrink: 0;" />
+            <div style="min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <span class="wg-doc-code-badge" style="font-family: 'Montserrat', monospace; font-size: 0.775rem; font-weight: 700; background: ${isChecked ? '#DCFCE7' : '#F1F5F9'}; color: ${isChecked ? '#166534' : '#475569'}; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
+                <span style="font-weight: 700; font-size: 0.9rem; color: #0F172A;">${item.title}</span>
+              </div>
+              ${item.summary ? `<p style="font-size: 0.775rem; color: #64748B; margin: 0.25rem 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.summary}</p>` : ''}
+            </div>
+          </label>
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; gap: 4px; font-size: 0.775rem; color: #475569;" title="Durasi Wajib Baca (Detik)">
+              <span>⏳</span>
+              <input type="number" class="wg-doc-timer-input" data-id="${item.id}" value="${timerVal}" min="0" max="600" step="5" style="width: 54px; padding: 3px 4px; border: 1px solid #CBD5E1; border-radius: 6px; text-align: center; font-weight: 700; font-size: 0.8rem; background: #FFFFFF;" />
+              <span>dtk</span>
+            </div>
+            <span class="wg-doc-status-badge" style="font-size: 0.75rem; font-weight: 700; color: ${isChecked ? '#15803D' : '#94A3B8'}; min-width: 75px; text-align: right;">
+              ${isChecked ? '✓ Wajib Baca' : 'Tidak Aktif'}
+            </span>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    container.querySelectorAll('.wg-doc-checkbox').forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        const id = e.target.getAttribute('data-id');
+        const items = getActiveEditorItems();
+        const item = items.find(i => i.id === id);
+        if (item) {
+          item.requiresAck = e.target.checked;
+          const row = e.target.closest('.wg-manage-item-row');
+          if (row) {
+            row.style.border = item.requiresAck ? '1.5px solid #86EFAC' : '1.5px solid #E2E8F0';
+            row.style.background = item.requiresAck ? '#F0FDF4' : '#FFFFFF';
+            const codeBadge = row.querySelector('.wg-doc-code-badge');
+            if (codeBadge) {
+              codeBadge.style.background = item.requiresAck ? '#DCFCE7' : '#F1F5F9';
+              codeBadge.style.color = item.requiresAck ? '#166534' : '#475569';
+            }
+            const statusBadge = row.querySelector('.wg-doc-status-badge');
+            if (statusBadge) {
+              statusBadge.textContent = item.requiresAck ? '✓ Wajib Baca' : 'Tidak Aktif';
+              statusBadge.style.color = item.requiresAck ? '#15803D' : '#94A3B8';
+            }
+          }
+          const updatedCount = items.filter(i => !!i.requiresAck).length;
+          if (countBadge) countBadge.textContent = `${updatedCount} Terpilih`;
+        }
+      });
+    });
+
+    container.querySelectorAll('.wg-doc-timer-input').forEach(inp => {
+      const updateTimer = (e) => {
+        const id = e.target.getAttribute('data-id');
+        const items = getActiveEditorItems();
+        const item = items.find(i => i.id === id);
+        if (item) {
+          item.readTimer = Math.max(0, parseInt(e.target.value, 10) || 0);
+        }
+      };
+      inp.addEventListener('input', updateTimer);
+      inp.addEventListener('change', updateTimer);
+    });
+  } catch (err) {
+    console.error('Error in renderWeGrowManageDocList:', err);
+  }
 }
 
 function saveWeGrowDocManagement(triggerBtn = null) {
-  const container = document.getElementById('wgManageDocListContainer');
-  if (container) {
-    container.querySelectorAll('.wg-manage-item-row').forEach(row => {
-      const id = row.getAttribute('data-id');
-      const item = itemList.find(i => i.id === id);
-      if (item) {
-        const cb = row.querySelector('.wg-doc-checkbox');
-        const timerInp = row.querySelector('.wg-doc-timer-input');
-        if (cb) item.requiresAck = cb.checked;
-        if (timerInp) item.readTimer = Math.max(0, parseInt(timerInp.value, 10) || 0);
-      }
-    });
-  }
-  persistItems(itemList);
-  populateWeGrowDocs();
-  renderContent();
+  try {
+    const container = document.getElementById('wgManageDocListContainer');
+    const items = getActiveEditorItems();
 
-  const totalSelected = itemList.filter(i => !!i.requiresAck).length;
+    if (container) {
+      container.querySelectorAll('.wg-manage-item-row').forEach(row => {
+        const id = row.getAttribute('data-id');
+        const item = items.find(i => i.id === id);
+        if (item) {
+          const cb = row.querySelector('.wg-doc-checkbox');
+          const timerInp = row.querySelector('.wg-doc-timer-input');
+          if (cb) item.requiresAck = cb.checked;
+          if (timerInp) item.readTimer = Math.max(0, parseInt(timerInp.value, 10) || 0);
+        }
+      });
+    }
 
-  if (triggerBtn) {
-    const origHtml = triggerBtn.innerHTML;
-    triggerBtn.innerHTML = '✅ Berhasil Disimpan!';
-    triggerBtn.style.background = '#059669';
+    // Persist to storage
+    if (typeof window.persistItems === 'function') {
+      window.persistItems(items);
+    } else if (typeof persistItems === 'function') {
+      persistItems(items);
+    } else {
+      localStorage.setItem('wmcenter_draft_items_v5', JSON.stringify(items));
+      localStorage.setItem('wmcenter_published_items_v5', JSON.stringify(items));
+    }
+
+    if (typeof populateWeGrowDocs === 'function') populateWeGrowDocs();
+    if (typeof window.renderContent === 'function') window.renderContent();
+    else if (typeof renderContent === 'function') renderContent();
+
+    const totalSelected = items.filter(i => !!i.requiresAck).length;
+
+    if (triggerBtn) {
+      const origHtml = triggerBtn.innerHTML;
+      triggerBtn.innerHTML = '✅ Berhasil Disimpan!';
+      triggerBtn.style.background = '#059669';
+      setTimeout(() => {
+        triggerBtn.innerHTML = origHtml;
+        triggerBtn.style.background = '#0D9488';
+      }, 2000);
+    }
+
+    if (typeof showToast === 'function') {
+      showToast(`✅ <strong>Pengaturan Tersimpan!</strong> (${totalSelected} SOP Wajib Baca FO &amp; Timer telah aktif)`, 4500);
+    }
+
     setTimeout(() => {
-      triggerBtn.innerHTML = origHtml;
-      triggerBtn.style.background = '#0D9488';
-    }, 2000);
+      switchWeGrowView('menu');
+    }, 700);
+  } catch (err) {
+    console.error('Error saving WeGrow doc management:', err);
+    alert('Terjadi kesalahan saat menyimpan: ' + err.message);
   }
-
-  if (typeof showToast === 'function') {
-    showToast(`✅ <strong>Pengaturan Tersimpan!</strong> (${totalSelected} SOP Wajib Baca FO & Timer telah diperbarui)`, 4000);
-  }
-
-  setTimeout(() => {
-    switchWeGrowView('menu');
-  }, 650);
 }
 
 let weGrowReadingCountdownInterval = null;
@@ -6389,9 +6426,10 @@ function initWeGrowEvents() {
 
   const btnSelectAll = document.getElementById('btnWgSelectAllDocs');
   if (btnSelectAll) {
-    btnSelectAll.addEventListener('click', () => {
+    btnSelectAll.onclick = () => {
       const query = searchManageInput ? searchManageInput.value.toLowerCase().trim() : '';
-      itemList.forEach(item => {
+      const items = getActiveEditorItems();
+      items.forEach(item => {
         if (!query) {
           item.requiresAck = true;
         } else {
@@ -6404,14 +6442,15 @@ function initWeGrowEvents() {
         }
       });
       renderWeGrowManageDocList();
-    });
+    };
   }
 
   const btnDeselectAll = document.getElementById('btnWgDeselectAllDocs');
   if (btnDeselectAll) {
-    btnDeselectAll.addEventListener('click', () => {
+    btnDeselectAll.onclick = () => {
       const query = searchManageInput ? searchManageInput.value.toLowerCase().trim() : '';
-      itemList.forEach(item => {
+      const items = getActiveEditorItems();
+      items.forEach(item => {
         if (!query) {
           item.requiresAck = false;
         } else {
@@ -6424,7 +6463,7 @@ function initWeGrowEvents() {
         }
       });
       renderWeGrowManageDocList();
-    });
+    };
   }
 
   // Back to Menu buttons
@@ -6803,7 +6842,7 @@ function initWeGrowEvents() {
               <span>⬅</span> <span>Kembali</span>
             </button>
             <h3 class="wegrow-view-title">⚙️ Kelola SOP Wajib Baca FO</h3>
-            <button type="button" id="btnSaveWeGrowDocManageTop" style="background: #0D9488; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+            <button type="button" id="btnSaveWeGrowDocManageTop" onclick="saveWeGrowDocManagement(this)" style="background: #0D9488; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
               💾 Simpan
             </button>
           </div>
@@ -6830,7 +6869,7 @@ function initWeGrowEvents() {
             <button type="button" class="btn-wegrow-back btn-wegrow-to-menu" style="background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
               ⬅ Kembali ke Menu
             </button>
-            <button type="button" id="btnSaveWeGrowDocManageBottom" style="background: #0D9488; color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 700; font-size: 0.875rem; cursor: pointer; box-shadow: 0 2px 6px rgba(13, 148, 136, 0.25);">
+            <button type="button" id="btnSaveWeGrowDocManageBottom" onclick="saveWeGrowDocManagement(this)" style="background: #0D9488; color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 700; font-size: 0.875rem; cursor: pointer; box-shadow: 0 2px 6px rgba(13, 148, 136, 0.25);">
               💾 Simpan Pengaturan Dokumen Wajib Baca
             </button>
           </div>
