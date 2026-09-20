@@ -2819,7 +2819,7 @@ h1, h2, h3, h4, h5, h6 {
 
             <div class="form-group" style="background: #ECFDF5; border: 1.5px solid #A7F3D0; padding: 0.85rem; border-radius: 10px; margin-top: 0.5rem;">
               <label style="display: flex; align-items: flex-start; gap: 0.6rem; cursor: pointer; font-size: 0.85rem; color: #065F46; font-weight: 600; margin: 0;">
-                <input type="checkbox" id="ackAgreeCheck" checked required style="margin-top: 2px; width: 18px; height: 18px; accent-color: #0D9488; cursor: pointer;" />
+                <input type="checkbox" id="ackAgreeCheck" required style="margin-top: 2px; width: 18px; height: 18px; accent-color: #0D9488; cursor: pointer;" />
                 <span>Saya menyatakan telah membaca, memahami, dan siap menjalankan isi ketentuan / SOP ini dalam operasional harian klinik.</span>
               </label>
             </div>
@@ -4565,7 +4565,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="hub-section-heading">PERNYATAAN PEMAHAMAN & SUBMIT</div>
             <div class="form-group" style="background: #ECFDF5; border: 1.5px solid #A7F3D0; padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem;">
               <label style="display: flex; align-items: flex-start; gap: 0.65rem; cursor: pointer; font-size: 0.875rem; color: #065F46; font-weight: 600; margin: 0;">
-                <input type="checkbox" id="hubCheckAgree" checked required style="margin-top: 3px; width: 18px; height: 18px; accent-color: #0D9488; cursor: pointer;" />
+                <input type="checkbox" id="hubCheckAgree" required style="margin-top: 3px; width: 18px; height: 18px; accent-color: #0D9488; cursor: pointer;" />
                 <span>Saya menyatakan dengan sesungguhnya telah membaca, memahami, dan siap menerapkan seluruh isi ketentuan / SOP ini dalam tugas operasional harian.</span>
               </label>
             </div>
@@ -5287,7 +5287,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ackItemId) ackItemId.value = item.id;
     if (ackStaffName) ackStaffName.value = '';
     if (ackNotes) ackNotes.value = '';
-    if (ackAgreeCheck) ackAgreeCheck.checked = true;
+    if (ackAgreeCheck) ackAgreeCheck.checked = false;
 
     if (ackBranch) {
       const branches = appSettings.branches && appSettings.branches.length > 0 ? appSettings.branches : ['WM Center - Head Office'];
@@ -5612,6 +5612,8 @@ function switchWeGrowView(viewName) {
   if (viewName === 'dashboard') {
     renderWeGrowDashboardTable();
   } else if (viewName === 'form') {
+    const agreeCheck = document.getElementById('wgCheckAgree');
+    if (agreeCheck) agreeCheck.checked = false;
     updateWeGrowDocPreview();
   } else if (viewName === 'booklet') {
     renderWeGrowBookletGrid();
@@ -6228,6 +6230,7 @@ function initWeGrowEvents() {
       // Reset form
       if (staffNameInput) staffNameInput.value = '';
       if (notesInput) notesInput.value = '';
+      if (agreeCheck) agreeCheck.checked = false;
 
       // Switch directly to Dashboard so staff can see their name listed!
       switchWeGrowView('dashboard');
@@ -6287,6 +6290,9 @@ function initWeGrowEvents() {
             </button>
             <button type="button" class="btn-wegrow-nav btn-wegrow-nav-form" id="btnWeGrowNavForm">
               <span>✍️</span> <span>Formulir Baca &amp; Konfirmasi</span>
+            </button>
+            <button type="button" class="btn-wegrow-nav btn-wegrow-nav-booklet" id="btnWeGrowNavBooklet">
+              <span>📖</span> <span>Booklet Ketentuan &amp; SOP</span>
             </button>
           </div>
         </div>
@@ -6364,7 +6370,7 @@ function initWeGrowEvents() {
 
             <div id="wgAgreeBox" style="background: #ECFDF5; border: 1.5px solid #A7F3D0; border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; transition: all 0.2s;">
               <label style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; margin: 0;">
-                <input type="checkbox" id="wgCheckAgree" checked required style="margin-top: 3px; width: 18px; height: 18px; accent-color: #0D9488; cursor: pointer;" />
+                <input type="checkbox" id="wgCheckAgree" required style="margin-top: 3px; width: 18px; height: 18px; accent-color: #0D9488; cursor: pointer;" />
                 <span style="font-size: 0.85rem; color: #065F46; font-weight: 600; line-height: 1.4;">
                   Saya menyatakan telah membaca, memahami secara menyeluruh, dan siap menjalankan isi SOP / ketentuan ini dalam tugas harian Front Office.
                 </span>
