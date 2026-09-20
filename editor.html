@@ -2499,6 +2499,19 @@ h1, h2, h3, h4, h5, h6 {
               <span style="font-size: 0.75rem; color: #64748B;">Opsional: Jika Anda memiliki Google Form khusus rekap HR, masukkan link di sini.</span>
             </div>
 
+            <div class="form-group" id="formItemReadTimerGroup" style="background: #FFFBEB; border: 1.5px solid #FCD34D; padding: 0.85rem; border-radius: 10px; margin-bottom: 1.25rem;">
+              <label class="form-label" for="formItemReadTimer" style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: #92400E; margin-bottom: 0.35rem;">
+                <span>⏳ Durasi Wajib Membaca (Detik)</span>
+              </label>
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <input type="number" id="formItemReadTimer" class="form-input" min="0" max="600" step="5" placeholder="30" style="max-width: 120px; font-weight: 700; font-size: 1rem; text-align: center; border: 1.5px solid #F59E0B; background: #FFFFFF;" />
+                <span style="font-size: 0.85rem; color: #78350F; font-weight: 600;">Detik (contoh: 15 untuk 15 dtk, 60 untuk 1 mnt)</span>
+              </div>
+              <p style="font-size: 0.775rem; color: #B45309; margin-top: 0.35rem; margin-bottom: 0;">
+                Tombol submit di formulir konfirmasi akan terkunci dan menghitung mundur sesuai durasi ini sebelum terbuka. Isi <code>0</code> jika tanpa timer.
+              </p>
+            </div>
+
             <div class="form-group">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
                 <label class="form-label" style="margin-bottom:0;">Tampil di Modul Mana Saja (Bisa Pilih Lebih Dari 1):</label>
@@ -2824,7 +2837,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "management"
     ],
     "isFeatured": true,
-    "requiresAck": true
+    "requiresAck": true,
+    "readTimer": 30
   },
   {
     "summary": "Link Google Sheets checklist pembukaan kasir, pendaftaran pasien, dan tugas rutin harian FO.",
@@ -4140,6 +4154,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const formItemDriveUrl = document.getElementById('formItemDriveUrl');
   const formItemRequireAck = document.getElementById('formItemRequireAck');
   const formItemAckUrl = document.getElementById('formItemAckUrl');
+  const formItemReadTimer = document.getElementById('formItemReadTimer');
   const formItemSummary = document.getElementById('formItemSummary');
   const formItemDetails = document.getElementById('formItemDetails');
 
@@ -5174,6 +5189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (formItemIsFeatured) formItemIsFeatured.checked = false;
     if (formItemRequireAck) formItemRequireAck.checked = false;
     if (formItemAckUrl) formItemAckUrl.value = '';
+    if (formItemReadTimer) formItemReadTimer.value = '30';
 
     // Check currently active module by default
     populateItemFormModuleCheckboxes([currentModule || 'sop']);
@@ -5204,6 +5220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (formItemIsFeatured) formItemIsFeatured.checked = !!item.isFeatured;
     if (formItemRequireAck) formItemRequireAck.checked = !!item.requiresAck;
     if (formItemAckUrl) formItemAckUrl.value = item.ackUrl || '';
+    if (formItemReadTimer) formItemReadTimer.value = (typeof item.readTimer !== 'undefined') ? item.readTimer : 30;
     
     const selectedMods = getItemModules(item);
     populateItemFormModuleCheckboxes(selectedMods);
@@ -5228,6 +5245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isFeatured = formItemIsFeatured ? formItemIsFeatured.checked : false;
     const requiresAck = formItemRequireAck ? formItemRequireAck.checked : false;
     const ackUrl = formItemAckUrl ? formItemAckUrl.value.trim() : '';
+    const readTimer = formItemReadTimer ? Math.max(0, parseInt(formItemReadTimer.value, 10) || 0) : 30;
     
     // Collect all checked module checkboxes
     const checkedModuleCbs = document.querySelectorAll('input[name="item_module_checkbox"]:checked');
@@ -5254,6 +5272,7 @@ document.addEventListener('DOMContentLoaded', () => {
           isFeatured,
           requiresAck,
           ackUrl,
+          readTimer,
           icon,
           modules: selectedModules,
           module: primaryModule,
@@ -5273,6 +5292,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isFeatured,
         requiresAck,
         ackUrl,
+        readTimer,
         icon,
         modules: selectedModules,
         module: primaryModule,
@@ -5823,6 +5843,7 @@ function renderWeGrowManageDocList() {
 
   container.innerHTML = filtered.map(item => {
     const isChecked = !!item.requiresAck;
+    const timerVal = (typeof item.readTimer !== 'undefined') ? item.readTimer : 30;
     return `
       <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border: 1.5px solid ${isChecked ? '#86EFAC' : '#E2E8F0'}; background: ${isChecked ? '#F0FDF4' : '#FFFFFF'}; border-radius: 12px; cursor: pointer; transition: all 0.15s ease; gap: 0.85rem;" class="wg-manage-item-row" data-id="${item.id}">
         <div style="display: flex; align-items: center; gap: 0.85rem; flex: 1; min-width: 0;">
@@ -5835,8 +5856,13 @@ function renderWeGrowManageDocList() {
             ${item.summary ? `<p style="font-size: 0.775rem; color: #64748B; margin: 0.25rem 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.summary}</p>` : ''}
           </div>
         </div>
-        <div style="flex-shrink: 0;">
-          <span style="font-size: 0.75rem; font-weight: 700; color: ${isChecked ? '#15803D' : '#94A3B8'};">
+        <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
+          <div style="display: flex; align-items: center; gap: 4px; font-size: 0.775rem; color: #475569;" title="Durasi Wajib Baca (Detik)">
+            <span>⏳</span>
+            <input type="number" class="wg-doc-timer-input" data-id="${item.id}" value="${timerVal}" min="0" max="600" step="5" style="width: 52px; padding: 2px 4px; border: 1px solid #CBD5E1; border-radius: 6px; text-align: center; font-weight: 700; font-size: 0.775rem;" />
+            <span>dtk</span>
+          </div>
+          <span style="font-size: 0.75rem; font-weight: 700; color: ${isChecked ? '#15803D' : '#94A3B8'}; min-width: 65px; text-align: right;">
             ${isChecked ? '✓ Wajib Baca' : 'Tidak Aktif'}
           </span>
         </div>
@@ -5854,7 +5880,7 @@ function renderWeGrowManageDocList() {
         if (row) {
           row.style.border = item.requiresAck ? '1.5px solid #86EFAC' : '1.5px solid #E2E8F0';
           row.style.background = item.requiresAck ? '#F0FDF4' : '#FFFFFF';
-          const statusText = row.querySelector('div:last-child span');
+          const statusText = row.querySelector('div:last-child span:last-child');
           if (statusText) {
             statusText.textContent = item.requiresAck ? '✓ Wajib Baca' : 'Tidak Aktif';
             statusText.style.color = item.requiresAck ? '#15803D' : '#94A3B8';
@@ -5862,6 +5888,17 @@ function renderWeGrowManageDocList() {
         }
         const updatedCount = itemList.filter(i => !!i.requiresAck).length;
         if (countBadge) countBadge.textContent = `${updatedCount} Terpilih`;
+      }
+    });
+  });
+
+  container.querySelectorAll('.wg-doc-timer-input').forEach(inp => {
+    inp.addEventListener('click', (e) => e.stopPropagation());
+    inp.addEventListener('change', (e) => {
+      const id = e.target.getAttribute('data-id');
+      const item = itemList.find(i => i.id === id);
+      if (item) {
+        item.readTimer = Math.max(0, parseInt(e.target.value, 10) || 0);
       }
     });
   });
@@ -5876,6 +5913,110 @@ function saveWeGrowDocManagement() {
   }
 }
 
+let weGrowReadingCountdownInterval = null;
+
+function formatTimerSeconds(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+}
+
+function startReadingCountdown(durationSeconds) {
+  if (weGrowReadingCountdownInterval) {
+    clearInterval(weGrowReadingCountdownInterval);
+    weGrowReadingCountdownInterval = null;
+  }
+
+  const timerBox = document.getElementById('wgReadingTimerBox');
+  const timerNum = document.getElementById('wgTimerCountdownNum');
+  const timerBadge = document.getElementById('wgTimerBadge');
+  const timerBar = document.getElementById('wgTimerProgressBar');
+  const timerHelper = document.getElementById('wgTimerHelperText');
+  const submitBtn = document.getElementById('btnSubmitWeGrowAck');
+
+  if (!durationSeconds || durationSeconds <= 0) {
+    if (timerBox) timerBox.style.display = 'none';
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = '1';
+      submitBtn.style.cursor = 'pointer';
+      submitBtn.innerHTML = '<span>🚀</span> <span>Submit Konfirmasi Baca</span>';
+    }
+    return;
+  }
+
+  if (timerBox) {
+    timerBox.style.display = 'block';
+    timerBox.style.background = '#FFFBEB';
+    timerBox.style.borderColor = '#FCD34D';
+  }
+  if (timerBadge) {
+    timerBadge.textContent = '🔒 TERKUNCI';
+    timerBadge.style.background = '#FDE68A';
+    timerBadge.style.color = '#92400E';
+  }
+  if (timerBar) {
+    timerBar.style.width = '100%';
+    timerBar.style.background = '#D97706';
+  }
+  if (timerHelper) {
+    timerHelper.textContent = 'Silakan baca materi dokumen di atas. Tombol submit akan terbuka otomatis setelah waktu membaca selesai.';
+    timerHelper.style.color = '#B45309';
+  }
+
+  let remaining = durationSeconds;
+  if (timerNum) timerNum.textContent = formatTimerSeconds(remaining);
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.65';
+    submitBtn.style.cursor = 'not-allowed';
+    submitBtn.innerHTML = `<span>🔒</span> <span>Membaca Materi (${formatTimerSeconds(remaining)})</span>`;
+  }
+
+  weGrowReadingCountdownInterval = setInterval(() => {
+    remaining--;
+    if (timerNum) timerNum.textContent = formatTimerSeconds(remaining);
+    if (timerBar) {
+      const pct = Math.max(0, (remaining / durationSeconds) * 100);
+      timerBar.style.width = `${pct}%`;
+    }
+    if (submitBtn && remaining > 0) {
+      submitBtn.innerHTML = `<span>🔒</span> <span>Membaca Materi (${formatTimerSeconds(remaining)})</span>`;
+    }
+
+    if (remaining <= 0) {
+      clearInterval(weGrowReadingCountdownInterval);
+      weGrowReadingCountdownInterval = null;
+
+      if (timerBox) {
+        timerBox.style.background = '#ECFDF5';
+        timerBox.style.borderColor = '#A7F3D0';
+      }
+      if (timerNum) timerNum.textContent = '00:00';
+      if (timerBadge) {
+        timerBadge.textContent = '✓ SELESAI';
+        timerBadge.style.background = '#DCFCE7';
+        timerBadge.style.color = '#15803D';
+      }
+      if (timerBar) {
+        timerBar.style.width = '0%';
+        timerBar.style.background = '#10B981';
+      }
+      if (timerHelper) {
+        timerHelper.textContent = '✅ Waktu membaca selesai! Silakan periksa pernyataan pemahaman di bawah dan kirim konfirmasi.';
+        timerHelper.style.color = '#15803D';
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+        submitBtn.innerHTML = '<span>🚀</span> <span>Submit Konfirmasi Baca</span>';
+      }
+    }
+  }, 1000);
+}
+
 function updateWeGrowDocPreview() {
   const select = document.getElementById('wgSelectDoc');
   const box = document.getElementById('wgDocPreviewBox');
@@ -5888,11 +6029,15 @@ function updateWeGrowDocPreview() {
         Silakan pilih dokumen SOP / IOC di atas untuk membaca materi.
       </div>
     `;
+    startReadingCountdown(0);
     return;
   }
 
   const item = (typeof itemList !== 'undefined') ? itemList.find(i => i.id === docId) : null;
-  if (!item) return;
+  if (!item) {
+    startReadingCountdown(0);
+    return;
+  }
 
   const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
   let btnText = '📖 Buka &amp; Baca SOP ➔';
@@ -5904,12 +6049,15 @@ function updateWeGrowDocPreview() {
     else btnText = '🔗 Buka Dokumen ➔';
   }
 
+  const duration = (typeof item.readTimer !== 'undefined') ? parseInt(item.readTimer, 10) : 30;
+
   box.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
       <div style="flex: 1; min-width: 220px;">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; flex-wrap: wrap;">
           <span style="background: #0F172A; color: #FFFFFF; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
           <span style="font-size: 0.775rem; font-weight: 700; color: #0D9488;">Dokumen Terpilih</span>
+          ${duration > 0 ? `<span style="font-size: 0.725rem; font-weight: 700; background: #FEF3C7; color: #B45309; padding: 2px 7px; border-radius: 6px;">⏳ Timer: ${duration} dtk</span>` : ''}
         </div>
         <h4 style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 0 0 0.25rem 0;">${item.title}</h4>
         <p style="font-size: 0.8rem; color: #64748B; margin: 0; line-height: 1.4;">${item.summary || 'Pelajari materi ketentuan sebelum konfirmasi.'}</p>
@@ -5933,6 +6081,9 @@ function updateWeGrowDocPreview() {
       }
     });
   }
+
+  // Start reading countdown timer for this document
+  startReadingCountdown(duration);
 }
 
 function renderWeGrowDashboardTable() {
@@ -6456,6 +6607,22 @@ function initWeGrowEvents() {
             <div id="wgDocPreviewBox" class="wegrow-doc-box">
               <div style="text-align: center; color: #64748B; padding: 0.75rem 0; font-size: 0.875rem;">
                 Silakan pilih dokumen SOP / IOC di atas untuk membaca materi.
+              </div>
+            </div>
+
+            <!-- SECTION: TIMER & STATUS MEMBACA -->
+            <div id="wgReadingTimerBox" style="display: none; background: #FFFBEB; border: 1.5px solid #FCD34D; border-radius: 12px; padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; transition: all 0.3s ease;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+                <span id="wgTimerStatusText" style="font-weight: 700; font-size: 0.85rem; color: #92400E; display: flex; align-items: center; gap: 0.4rem;">
+                  ⏳ <span>Waktu Membaca Materi:</span> <strong id="wgTimerCountdownNum" style="font-family: monospace; font-size: 1.05rem; color: #B45309; background: #FEF3C7; padding: 1px 6px; border-radius: 4px;">00:30</strong>
+                </span>
+                <span id="wgTimerBadge" style="font-size: 0.725rem; font-weight: 800; background: #FDE68A; color: #92400E; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.02em;">🔒 TERKUNCI</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: #FDE68A; border-radius: 9999px; overflow: hidden;">
+                <div id="wgTimerProgressBar" style="width: 100%; height: 100%; background: #D97706; transition: width 1s linear;"></div>
+              </div>
+              <div id="wgTimerHelperText" style="font-size: 0.75rem; color: #B45309; margin-top: 0.4rem; font-weight: 500;">
+                Silakan baca materi dokumen di atas. Tombol submit akan terbuka otomatis setelah waktu membaca selesai.
               </div>
             </div>
 

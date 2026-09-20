@@ -3004,7 +3004,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "management"
     ],
     "isFeatured": true,
-    "requiresAck": true
+    "requiresAck": true,
+    "readTimer": 30
   },
   {
     "summary": "Link Google Sheets checklist pembukaan kasir, pendaftaran pasien, dan tugas rutin harian FO.",
@@ -5594,6 +5595,110 @@ function populateWeGrowDocs() {
   }
 }
 
+let weGrowReadingCountdownInterval = null;
+
+function formatTimerSeconds(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+}
+
+function startReadingCountdown(durationSeconds) {
+  if (weGrowReadingCountdownInterval) {
+    clearInterval(weGrowReadingCountdownInterval);
+    weGrowReadingCountdownInterval = null;
+  }
+
+  const timerBox = document.getElementById('wgReadingTimerBox');
+  const timerNum = document.getElementById('wgTimerCountdownNum');
+  const timerBadge = document.getElementById('wgTimerBadge');
+  const timerBar = document.getElementById('wgTimerProgressBar');
+  const timerHelper = document.getElementById('wgTimerHelperText');
+  const submitBtn = document.getElementById('btnSubmitWeGrowAck');
+
+  if (!durationSeconds || durationSeconds <= 0) {
+    if (timerBox) timerBox.style.display = 'none';
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.style.opacity = '1';
+      submitBtn.style.cursor = 'pointer';
+      submitBtn.innerHTML = '<span>🚀</span> <span>Submit Konfirmasi Baca</span>';
+    }
+    return;
+  }
+
+  if (timerBox) {
+    timerBox.style.display = 'block';
+    timerBox.style.background = '#FFFBEB';
+    timerBox.style.borderColor = '#FCD34D';
+  }
+  if (timerBadge) {
+    timerBadge.textContent = '🔒 TERKUNCI';
+    timerBadge.style.background = '#FDE68A';
+    timerBadge.style.color = '#92400E';
+  }
+  if (timerBar) {
+    timerBar.style.width = '100%';
+    timerBar.style.background = '#D97706';
+  }
+  if (timerHelper) {
+    timerHelper.textContent = 'Silakan baca materi dokumen di atas. Tombol submit akan terbuka otomatis setelah waktu membaca selesai.';
+    timerHelper.style.color = '#B45309';
+  }
+
+  let remaining = durationSeconds;
+  if (timerNum) timerNum.textContent = formatTimerSeconds(remaining);
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = '0.65';
+    submitBtn.style.cursor = 'not-allowed';
+    submitBtn.innerHTML = `<span>🔒</span> <span>Membaca Materi (${formatTimerSeconds(remaining)})</span>`;
+  }
+
+  weGrowReadingCountdownInterval = setInterval(() => {
+    remaining--;
+    if (timerNum) timerNum.textContent = formatTimerSeconds(remaining);
+    if (timerBar) {
+      const pct = Math.max(0, (remaining / durationSeconds) * 100);
+      timerBar.style.width = `${pct}%`;
+    }
+    if (submitBtn && remaining > 0) {
+      submitBtn.innerHTML = `<span>🔒</span> <span>Membaca Materi (${formatTimerSeconds(remaining)})</span>`;
+    }
+
+    if (remaining <= 0) {
+      clearInterval(weGrowReadingCountdownInterval);
+      weGrowReadingCountdownInterval = null;
+
+      if (timerBox) {
+        timerBox.style.background = '#ECFDF5';
+        timerBox.style.borderColor = '#A7F3D0';
+      }
+      if (timerNum) timerNum.textContent = '00:00';
+      if (timerBadge) {
+        timerBadge.textContent = '✓ SELESAI';
+        timerBadge.style.background = '#DCFCE7';
+        timerBadge.style.color = '#15803D';
+      }
+      if (timerBar) {
+        timerBar.style.width = '0%';
+        timerBar.style.background = '#10B981';
+      }
+      if (timerHelper) {
+        timerHelper.textContent = '✅ Waktu membaca selesai! Silakan periksa pernyataan pemahaman di bawah dan kirim konfirmasi.';
+        timerHelper.style.color = '#15803D';
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+        submitBtn.innerHTML = '<span>🚀</span> <span>Submit Konfirmasi Baca</span>';
+      }
+    }
+  }, 1000);
+}
+
 function updateWeGrowDocPreview() {
   const select = document.getElementById('wgSelectDoc');
   const box = document.getElementById('wgDocPreviewBox');
@@ -5606,11 +5711,15 @@ function updateWeGrowDocPreview() {
         Silakan pilih dokumen SOP / IOC di atas untuk membaca materi.
       </div>
     `;
+    startReadingCountdown(0);
     return;
   }
 
   const item = (typeof itemList !== 'undefined') ? itemList.find(i => i.id === docId) : null;
-  if (!item) return;
+  if (!item) {
+    startReadingCountdown(0);
+    return;
+  }
 
   const hasDriveUrl = item.driveUrl && item.driveUrl.length > 5;
   let btnText = '📖 Buka &amp; Baca SOP ➔';
@@ -5622,12 +5731,15 @@ function updateWeGrowDocPreview() {
     else btnText = '🔗 Buka Dokumen ➔';
   }
 
+  const duration = (typeof item.readTimer !== 'undefined') ? parseInt(item.readTimer, 10) : 30;
+
   box.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
       <div style="flex: 1; min-width: 220px;">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; flex-wrap: wrap;">
           <span style="background: #0F172A; color: #FFFFFF; font-size: 0.7rem; font-weight: 800; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
           <span style="font-size: 0.775rem; font-weight: 700; color: #0D9488;">Dokumen Terpilih</span>
+          ${duration > 0 ? `<span style="font-size: 0.725rem; font-weight: 700; background: #FEF3C7; color: #B45309; padding: 2px 7px; border-radius: 6px;">⏳ Timer: ${duration} dtk</span>` : ''}
         </div>
         <h4 style="font-size: 0.95rem; font-weight: 700; color: #0F172A; margin: 0 0 0.25rem 0;">${item.title}</h4>
         <p style="font-size: 0.8rem; color: #64748B; margin: 0; line-height: 1.4;">${item.summary || 'Pelajari materi ketentuan sebelum konfirmasi.'}</p>
@@ -5651,6 +5763,9 @@ function updateWeGrowDocPreview() {
       }
     });
   }
+
+  // Start reading countdown timer for this document
+  startReadingCountdown(duration);
 }
 
 function renderWeGrowDashboardTable() {
@@ -6104,6 +6219,22 @@ function initWeGrowEvents() {
             <div id="wgDocPreviewBox" class="wegrow-doc-box">
               <div style="text-align: center; color: #64748B; padding: 0.75rem 0; font-size: 0.875rem;">
                 Silakan pilih dokumen SOP / IOC di atas untuk membaca materi.
+              </div>
+            </div>
+
+            <!-- SECTION: TIMER & STATUS MEMBACA -->
+            <div id="wgReadingTimerBox" style="display: none; background: #FFFBEB; border: 1.5px solid #FCD34D; border-radius: 12px; padding: 0.85rem 1.1rem; margin-bottom: 1.25rem; transition: all 0.3s ease;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+                <span id="wgTimerStatusText" style="font-weight: 700; font-size: 0.85rem; color: #92400E; display: flex; align-items: center; gap: 0.4rem;">
+                  ⏳ <span>Waktu Membaca Materi:</span> <strong id="wgTimerCountdownNum" style="font-family: monospace; font-size: 1.05rem; color: #B45309; background: #FEF3C7; padding: 1px 6px; border-radius: 4px;">00:30</strong>
+                </span>
+                <span id="wgTimerBadge" style="font-size: 0.725rem; font-weight: 800; background: #FDE68A; color: #92400E; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.02em;">🔒 TERKUNCI</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: #FDE68A; border-radius: 9999px; overflow: hidden;">
+                <div id="wgTimerProgressBar" style="width: 100%; height: 100%; background: #D97706; transition: width 1s linear;"></div>
+              </div>
+              <div id="wgTimerHelperText" style="font-size: 0.75rem; color: #B45309; margin-top: 0.4rem; font-weight: 500;">
+                Silakan baca materi dokumen di atas. Tombol submit akan terbuka otomatis setelah waktu membaca selesai.
               </div>
             </div>
 
