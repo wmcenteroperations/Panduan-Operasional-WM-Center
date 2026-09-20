@@ -3003,7 +3003,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "fo",
       "management"
     ],
-    "isFeatured": true
+    "isFeatured": true,
+    "requiresAck": true
   },
   {
     "summary": "Link Google Sheets checklist pembukaan kasir, pendaftaran pasien, dan tugas rutin harian FO.",
@@ -5558,12 +5559,11 @@ function populateWeGrowBranches() {
 
 function getSosialisasiItems() {
   if (typeof itemList === 'undefined' || !Array.isArray(itemList)) return [];
-  // Return items that belong to mod_sosialisasi or all active items if none explicitly tagged
-  const tagged = itemList.filter(i => {
+  // Return items that have requiresAck explicitly enabled or belong to mod_sosialisasi
+  return itemList.filter(i => {
     const mods = (typeof getItemModules === 'function') ? getItemModules(i) : (i.modules || []);
-    return mods.includes('mod_sosialisasi') || i.requiresAck;
+    return i.requiresAck === true || mods.includes('mod_sosialisasi');
   });
-  return tagged.length > 0 ? tagged : itemList.slice(0, 10);
 }
 
 function populateWeGrowDocs() {
@@ -5573,9 +5573,13 @@ function populateWeGrowDocs() {
 
   if (docSelect) {
     const currentDoc = docSelect.value;
-    docSelect.innerHTML = '<option value="">-- Pilih Dokumen Ketentuan / SOP --</option>' +
-      items.map(i => `<option value="${i.id}">${i.code ? '[' + i.code + '] ' : ''}${i.title}</option>`).join('');
-    if (currentDoc) {
+    if (items.length === 0) {
+      docSelect.innerHTML = '<option value="">-- Belum ada SOP yang diatur sebagai Wajib Baca --</option>';
+    } else {
+      docSelect.innerHTML = '<option value="">-- Pilih Dokumen Ketentuan / SOP --</option>' +
+        items.map(i => `<option value="${i.id}">${i.code ? '[' + i.code + '] ' : ''}${i.title}</option>`).join('');
+    }
+    if (currentDoc && items.some(i => i.id === currentDoc)) {
       docSelect.value = currentDoc;
     }
   }

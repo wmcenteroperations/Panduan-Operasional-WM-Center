@@ -2823,7 +2823,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "fo",
       "management"
     ],
-    "isFeatured": true
+    "isFeatured": true,
+    "requiresAck": true
   },
   {
     "summary": "Link Google Sheets checklist pembukaan kasir, pendaftaran pasien, dan tugas rutin harian FO.",
@@ -4838,6 +4839,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <div class="card-top" style="padding-right: 110px;">
             <span class="card-top-tag">${item.code || 'DOC'}</span>
+            ${item.requiresAck ? '<span class="card-top-tag" style="background: #DCFCE7; color: #15803D; margin-left: 4px;" title="Wajib Konfirmasi Baca FO">📢 Wajib Baca</span>' : ''}
           </div>
           <div class="card-icon-badge">${icon}</div>
           <h3 class="card-title">${item.title}</h3>
@@ -5170,6 +5172,8 @@ document.addEventListener('DOMContentLoaded', () => {
     formModalTitle.textContent = '➕ Tambah Item / Link Drive Baru';
     formItemId.value = '';
     if (formItemIsFeatured) formItemIsFeatured.checked = false;
+    if (formItemRequireAck) formItemRequireAck.checked = false;
+    if (formItemAckUrl) formItemAckUrl.value = '';
 
     // Check currently active module by default
     populateItemFormModuleCheckboxes([currentModule || 'sop']);
@@ -5198,6 +5202,8 @@ document.addEventListener('DOMContentLoaded', () => {
     formModalTitle.textContent = `✏️ Edit Item: [${item.code}]`;
     formItemId.value = item.id;
     if (formItemIsFeatured) formItemIsFeatured.checked = !!item.isFeatured;
+    if (formItemRequireAck) formItemRequireAck.checked = !!item.requiresAck;
+    if (formItemAckUrl) formItemAckUrl.value = item.ackUrl || '';
     
     const selectedMods = getItemModules(item);
     populateItemFormModuleCheckboxes(selectedMods);
@@ -5220,6 +5226,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const id = formItemId.value.trim();
     const isFeatured = formItemIsFeatured ? formItemIsFeatured.checked : false;
+    const requiresAck = formItemRequireAck ? formItemRequireAck.checked : false;
+    const ackUrl = formItemAckUrl ? formItemAckUrl.value.trim() : '';
     
     // Collect all checked module checkboxes
     const checkedModuleCbs = document.querySelectorAll('input[name="item_module_checkbox"]:checked');
@@ -5241,8 +5249,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const idx = itemList.findIndex(i => i.id === id);
       if (idx !== -1) {
         itemList[idx] = { 
+          ...itemList[idx],
           id, 
           isFeatured,
+          requiresAck,
+          ackUrl,
           icon,
           modules: selectedModules,
           module: primaryModule,
@@ -5260,8 +5271,10 @@ document.addEventListener('DOMContentLoaded', () => {
       itemList.unshift({
         id: `item_${Date.now()}`,
         isFeatured,
-          icon,
-          modules: selectedModules,
+        requiresAck,
+        ackUrl,
+        icon,
+        modules: selectedModules,
         module: primaryModule,
         categories: selectedCategories,
         category: selectedCategories[0],
@@ -5279,6 +5292,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderCategoryTabs();
     renderContent();
+    populateWeGrowDocs();
     initWeGrowEvents();
     itemFormModalOverlay.classList.remove('active');
   }
@@ -5664,18 +5678,19 @@ function closeWeGrowModal() {
 }
 
 function switchWeGrowView(viewName) {
-  const views = ['menu', 'form', 'dashboard', 'booklet'];
+  const views = ['menu', 'form', 'dashboard', 'booklet', 'manage'];
   const viewMap = {
     'menu': document.getElementById('weGrowMenuView'),
     'form': document.getElementById('weGrowFormView'),
     'dashboard': document.getElementById('weGrowDashView'),
-    'booklet': document.getElementById('weGrowBookletView')
+    'booklet': document.getElementById('weGrowBookletView'),
+    'manage': document.getElementById('weGrowManageView')
   };
 
   const container = document.getElementById('weGrowModalContainer');
   if (container) {
     container.scrollTop = 0;
-    if (viewName === 'dashboard' || viewName === 'booklet') {
+    if (viewName === 'dashboard' || viewName === 'booklet' || viewName === 'manage') {
       container.classList.add('wide');
     } else {
       container.classList.remove('wide');
@@ -5694,6 +5709,8 @@ function switchWeGrowView(viewName) {
     updateWeGrowDocPreview();
   } else if (viewName === 'booklet') {
     renderWeGrowBookletGrid();
+  } else if (viewName === 'manage') {
+    renderWeGrowManageDocList();
   }
 }
 
@@ -5738,12 +5755,11 @@ function populateWeGrowBranches() {
 
 function getSosialisasiItems() {
   if (typeof itemList === 'undefined' || !Array.isArray(itemList)) return [];
-  // Return items that belong to mod_sosialisasi or all active items if none explicitly tagged
-  const tagged = itemList.filter(i => {
+  // Return items that have requiresAck explicitly enabled or belong to mod_sosialisasi
+  return itemList.filter(i => {
     const mods = (typeof getItemModules === 'function') ? getItemModules(i) : (i.modules || []);
-    return mods.includes('mod_sosialisasi') || i.requiresAck;
+    return i.requiresAck === true || mods.includes('mod_sosialisasi');
   });
-  return tagged.length > 0 ? tagged : itemList.slice(0, 10);
 }
 
 function populateWeGrowDocs() {
@@ -5753,9 +5769,13 @@ function populateWeGrowDocs() {
 
   if (docSelect) {
     const currentDoc = docSelect.value;
-    docSelect.innerHTML = '<option value="">-- Pilih Dokumen Ketentuan / SOP --</option>' +
-      items.map(i => `<option value="${i.id}">${i.code ? '[' + i.code + '] ' : ''}${i.title}</option>`).join('');
-    if (currentDoc) {
+    if (items.length === 0) {
+      docSelect.innerHTML = '<option value="">-- Belum ada SOP yang diatur sebagai Wajib Baca --</option>';
+    } else {
+      docSelect.innerHTML = '<option value="">-- Pilih Dokumen Ketentuan / SOP --</option>' +
+        items.map(i => `<option value="${i.id}">${i.code ? '[' + i.code + '] ' : ''}${i.title}</option>`).join('');
+    }
+    if (currentDoc && items.some(i => i.id === currentDoc)) {
       docSelect.value = currentDoc;
     }
   }
@@ -5767,6 +5787,92 @@ function populateWeGrowDocs() {
     if (currentFilter) {
       filterDoc.value = currentFilter;
     }
+  }
+}
+
+function renderWeGrowManageDocList() {
+  const container = document.getElementById('wgManageDocListContainer');
+  const countBadge = document.getElementById('wgManageDocSelectedCount');
+  const searchInput = document.getElementById('wgManageDocSearch');
+  if (!container) return;
+
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  const currentItems = (typeof itemList !== 'undefined' && Array.isArray(itemList)) ? itemList : [];
+
+  const filtered = currentItems.filter(item => {
+    if (!query) return true;
+    const code = (item.code || '').toLowerCase();
+    const title = (item.title || '').toLowerCase();
+    const summary = (item.summary || '').toLowerCase();
+    return code.includes(query) || title.includes(query) || summary.includes(query);
+  });
+
+  const totalSelected = currentItems.filter(i => !!i.requiresAck).length;
+  if (countBadge) {
+    countBadge.textContent = `${totalSelected} Terpilih`;
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 2rem; color: #64748B;">
+        <p style="margin: 0; font-size: 0.9rem;">Tidak ada dokumen yang cocok dengan kata kunci "<strong>${query}</strong>".</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const isChecked = !!item.requiresAck;
+    return `
+      <label style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border: 1.5px solid ${isChecked ? '#86EFAC' : '#E2E8F0'}; background: ${isChecked ? '#F0FDF4' : '#FFFFFF'}; border-radius: 12px; cursor: pointer; transition: all 0.15s ease; gap: 0.85rem;" class="wg-manage-item-row" data-id="${item.id}">
+        <div style="display: flex; align-items: center; gap: 0.85rem; flex: 1; min-width: 0;">
+          <input type="checkbox" class="wg-doc-checkbox" data-id="${item.id}" ${isChecked ? 'checked' : ''} style="width: 20px; height: 20px; accent-color: #0D9488; cursor: pointer; flex-shrink: 0;" />
+          <div style="min-width: 0;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <span style="font-family: 'Montserrat', monospace; font-size: 0.775rem; font-weight: 700; background: ${isChecked ? '#DCFCE7' : '#F1F5F9'}; color: ${isChecked ? '#166534' : '#475569'}; padding: 2px 7px; border-radius: 6px;">${item.code || 'DOC'}</span>
+              <span style="font-weight: 700; font-size: 0.9rem; color: #0F172A;">${item.title}</span>
+            </div>
+            ${item.summary ? `<p style="font-size: 0.775rem; color: #64748B; margin: 0.25rem 0 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.summary}</p>` : ''}
+          </div>
+        </div>
+        <div style="flex-shrink: 0;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: ${isChecked ? '#15803D' : '#94A3B8'};">
+            ${isChecked ? '✓ Wajib Baca' : 'Tidak Aktif'}
+          </span>
+        </div>
+      </label>
+    `;
+  }).join('');
+
+  container.querySelectorAll('.wg-doc-checkbox').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      const id = e.target.getAttribute('data-id');
+      const item = itemList.find(i => i.id === id);
+      if (item) {
+        item.requiresAck = e.target.checked;
+        const row = e.target.closest('.wg-manage-item-row');
+        if (row) {
+          row.style.border = item.requiresAck ? '1.5px solid #86EFAC' : '1.5px solid #E2E8F0';
+          row.style.background = item.requiresAck ? '#F0FDF4' : '#FFFFFF';
+          const statusText = row.querySelector('div:last-child span');
+          if (statusText) {
+            statusText.textContent = item.requiresAck ? '✓ Wajib Baca' : 'Tidak Aktif';
+            statusText.style.color = item.requiresAck ? '#15803D' : '#94A3B8';
+          }
+        }
+        const updatedCount = itemList.filter(i => !!i.requiresAck).length;
+        if (countBadge) countBadge.textContent = `${updatedCount} Terpilih`;
+      }
+    });
+  });
+}
+
+function saveWeGrowDocManagement() {
+  persistItems(itemList);
+  populateWeGrowDocs();
+  renderContent();
+  if (typeof showToast === 'function') {
+    showToast('✅ Berhasil menyimpan pengaturan Dokumen Wajib Baca FO!');
   }
 }
 
@@ -6035,9 +6141,72 @@ function initWeGrowEvents() {
   const btnNavDash = document.getElementById('btnWeGrowNavDash');
   const btnNavForm = document.getElementById('btnWeGrowNavForm');
   const btnNavBooklet = document.getElementById('btnWeGrowNavBooklet');
+  const btnNavManage = document.getElementById('btnWeGrowNavManage');
   if (btnNavDash) btnNavDash.addEventListener('click', () => switchWeGrowView('dashboard'));
   if (btnNavForm) btnNavForm.addEventListener('click', () => switchWeGrowView('form'));
   if (btnNavBooklet) btnNavBooklet.addEventListener('click', () => switchWeGrowView('booklet'));
+  if (btnNavManage) btnNavManage.addEventListener('click', () => switchWeGrowView('manage'));
+
+  // Manage View Listeners (Editor only)
+  const btnSaveManageTop = document.getElementById('btnSaveWeGrowDocManageTop');
+  const btnSaveManageBottom = document.getElementById('btnSaveWeGrowDocManageBottom');
+  if (btnSaveManageTop) {
+    btnSaveManageTop.addEventListener('click', () => {
+      saveWeGrowDocManagement();
+      switchWeGrowView('menu');
+    });
+  }
+  if (btnSaveManageBottom) {
+    btnSaveManageBottom.addEventListener('click', () => {
+      saveWeGrowDocManagement();
+      switchWeGrowView('menu');
+    });
+  }
+
+  const searchManageInput = document.getElementById('wgManageDocSearch');
+  if (searchManageInput) {
+    searchManageInput.addEventListener('input', renderWeGrowManageDocList);
+  }
+
+  const btnSelectAll = document.getElementById('btnWgSelectAllDocs');
+  if (btnSelectAll) {
+    btnSelectAll.addEventListener('click', () => {
+      const query = searchManageInput ? searchManageInput.value.toLowerCase().trim() : '';
+      itemList.forEach(item => {
+        if (!query) {
+          item.requiresAck = true;
+        } else {
+          const code = (item.code || '').toLowerCase();
+          const title = (item.title || '').toLowerCase();
+          const summary = (item.summary || '').toLowerCase();
+          if (code.includes(query) || title.includes(query) || summary.includes(query)) {
+            item.requiresAck = true;
+          }
+        }
+      });
+      renderWeGrowManageDocList();
+    });
+  }
+
+  const btnDeselectAll = document.getElementById('btnWgDeselectAllDocs');
+  if (btnDeselectAll) {
+    btnDeselectAll.addEventListener('click', () => {
+      const query = searchManageInput ? searchManageInput.value.toLowerCase().trim() : '';
+      itemList.forEach(item => {
+        if (!query) {
+          item.requiresAck = false;
+        } else {
+          const code = (item.code || '').toLowerCase();
+          const title = (item.title || '').toLowerCase();
+          const summary = (item.summary || '').toLowerCase();
+          if (code.includes(query) || title.includes(query) || summary.includes(query)) {
+            item.requiresAck = false;
+          }
+        }
+      });
+      renderWeGrowManageDocList();
+    });
+  }
 
   // Back to Menu buttons
   document.querySelectorAll('.btn-wegrow-to-menu').forEach(btn => {
@@ -6228,6 +6397,13 @@ function initWeGrowEvents() {
             <button type="button" class="btn-wegrow-nav btn-wegrow-nav-form" id="btnWeGrowNavForm">
               <span>✍️</span> <span>Formulir Baca &amp; Konfirmasi</span>
             </button>
+            <button type="button" class="btn-wegrow-nav btn-wegrow-nav-manage" id="btnWeGrowNavManage" style="grid-column: 1 / -1; background: #F0FDF4; border: 2px dashed #86EFAC; color: #166534; padding: 1rem 1.25rem;">
+              <span style="font-size: 1.5rem;">⚙️</span>
+              <div style="text-align: left;">
+                <div style="font-weight: 800; font-size: 0.95rem; color: #15803D;">Kelola Daftar SOP Wajib Baca FO (Pilih Cepat)</div>
+                <div style="font-size: 0.775rem; color: #166534; font-weight: 500;">Pilih &amp; centang dokumen apa saja yang harus dibaca oleh Front Office</div>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -6382,6 +6558,46 @@ function initWeGrowEvents() {
 
           <div id="wgBookletGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
             <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- VIEW 5: KELOLA DAFTAR DOKUMEN WAJIB BACA FO (Khusus Editor) -->
+        <div class="wegrow-view" id="weGrowManageView">
+          <div class="wegrow-subnav-bar">
+            <button type="button" class="btn-wegrow-back btn-wegrow-to-menu">
+              <span>⬅</span> <span>Kembali</span>
+            </button>
+            <h3 class="wegrow-view-title">⚙️ Kelola SOP Wajib Baca FO</h3>
+            <button type="button" id="btnSaveWeGrowDocManageTop" style="background: #0D9488; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">
+              💾 Simpan
+            </button>
+          </div>
+
+          <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem;">
+            <p style="margin: 0 0 0.75rem 0; font-size: 0.85rem; color: #334155; line-height: 1.4;">
+              Centang dokumen SOP di bawah ini untuk menampilkannya di pilihan <strong>"Formulir Konfirmasi Baca FO"</strong> dan <strong>"Dashboard Pendataan"</strong>. Staf FO hanya akan melihat dokumen yang dicentang di sini.
+            </p>
+            <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+              <input type="text" id="wgManageDocSearch" placeholder="🔍 Cari judul atau kode SOP..." style="flex: 1; min-width: 200px; padding: 0.55rem 0.85rem; border: 1.5px solid #CBD5E1; border-radius: 8px; font-size: 0.85rem;" />
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <button type="button" id="btnWgSelectAllDocs" style="background: #EEF2FF; color: #4338CA; border: 1px solid #C7D2FE; padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.775rem; font-weight: 700; cursor: pointer;">Pilih Semua</button>
+                <button type="button" id="btnWgDeselectAllDocs" style="background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.775rem; font-weight: 700; cursor: pointer;">Kosongkan</button>
+                <span id="wgManageDocSelectedCount" style="background: #DCFCE7; color: #166534; padding: 4px 10px; border-radius: 9999px; font-size: 0.8rem; font-weight: 800;">0 Terpilih</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="wgManageDocListContainer" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 380px; overflow-y: auto; padding-right: 4px; margin-bottom: 1.25rem;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 0.75rem; border-top: 1px solid #E2E8F0;">
+            <button type="button" class="btn-wegrow-back btn-wegrow-to-menu" style="background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">
+              ⬅ Kembali ke Menu
+            </button>
+            <button type="button" id="btnSaveWeGrowDocManageBottom" style="background: #0D9488; color: white; border: none; padding: 0.65rem 1.5rem; border-radius: 8px; font-weight: 700; font-size: 0.875rem; cursor: pointer; box-shadow: 0 2px 6px rgba(13, 148, 136, 0.25);">
+              💾 Simpan Pengaturan Dokumen Wajib Baca
+            </button>
           </div>
         </div>
 
