@@ -5713,39 +5713,53 @@ document.addEventListener('DOMContentLoaded', () => {
     return window.btoa(unescape(encodeURIComponent(str)));
   }
 
+  function b64_to_utf8(str) {
+    return decodeURIComponent(escape(window.atob(str)));
+  }
+
   if (btnPublishToGithub) {
     btnPublishToGithub.addEventListener('click', async () => {
       const token = localStorage.getItem('wmcenter_github_token');
       if (!token) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Token Belum Diatur',
-          text: 'Harap atur GitHub Personal Access Token terlebih dahulu di menu Config GitHub.',
-          confirmButtonText: 'Pengaturan',
-          confirmButtonColor: '#2563EB'
-        }).then((result) => {
-          if (result.isConfirmed) openGithubConfigModal();
-        });
+        const confirmGo = confirm('Token Belum Diatur\n\nHarap atur GitHub Personal Access Token terlebih dahulu di menu Config GitHub. Klik OK untuk mengatur token.');
+        if (confirmGo) openGithubConfigModal();
         return;
       }
 
-      Swal.fire({
-        title: 'Memublikasikan...',
-        text: 'Sedang memaketkan data dan mengirim ke GitHub.',
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
+      showToast('⏳ Memublikasikan... Sedang mengambil data dari GitHub.');
 
       try {
         // Ensure current state is persisted
         persistSettings(appSettings);
         persistItems(itemList);
 
-        // Fetch the template index.html (we read our current local copy to use as template)
-        const response = await fetch('index.html');
-        let indexTemplate = await response.text();
+        // GitHub Repo Info
+        const owner = 'wmcenteroperations';
+        const repo = 'Panduan-Operasional-WM-Center';
+        const path = 'index.html';
+        const branch = 'main';
+
+        // 1. Get current index.html from GitHub (Solves "Failed to fetch" file:// error)
+        const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+        const getRes = await fetch(getUrl, {
+          headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        
+        if (!getRes.ok) {
+          throw new Error('Gagal mengambil file dari GitHub. Token mungkin salah atau API limit.');
+        }
+        
+        const getResData = await getRes.json();
+        const sha = getResData.sha;
+        
+        // Decode base64 content from GitHub
+        const base64ContentFromGithub = getResData.content.replace(/\n/g, '');
+        let indexTemplate = b64_to_utf8(base64ContentFromGithub);
+
+        showToast('⏳ Mengemas data terbaru...');
 
         // Prepare updated data strings
         const jsonSettings = JSON.stringify(appSettings, null, 2);
@@ -5760,29 +5774,9 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', '${newVer}');`);
         indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== '${newVer}'`);
 
-        const b64Content = utf8_to_b64(indexTemplate);
+        const b64ContentToPush = utf8_to_b64(indexTemplate);
         
-        // GitHub Repo Info
-        const owner = 'wmcenteroperations';
-        const repo = 'Panduan-Operasional-WM-Center';
-        const path = 'index.html';
-        const branch = 'main';
-
-        // 1. Get current file SHA
-        const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
-        const getRes = await fetch(getUrl, {
-          headers: {
-            'Authorization': `token ${token}`,
-            'Accept': 'application/vnd.github.v3+json'
-          }
-        });
-        
-        if (!getRes.ok) {
-          throw new Error('Gagal mengambil file SHA. Token mungkin salah, tidak punya akses, atau API limit.');
-        }
-        
-        const getResData = await getRes.json();
-        const sha = getResData.sha;
+        showToast('⏳ Mengirim pembaruan ke GitHub...');
 
         // 2. Put updated file
         const putUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
@@ -5795,7 +5789,7 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: JSON.stringify({
             message: `Auto-publish content update via Editor ${newVer}`,
-            content: b64Content,
+            content: b64ContentToPush,
             sha: sha,
             branch: branch
           })
@@ -5806,21 +5800,14 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error(putErrData.message || 'Gagal menyimpan (push) file ke GitHub.');
         }
 
-        Swal.fire({
-          icon: 'success',
-          title: 'Berhasil Dipublikasikan!',
-          text: 'Perubahan telah dikirim ke GitHub. Dalam hitungan detik atau menit, perubahan akan muncul di website.',
-          confirmButtonColor: '#059669'
-        });
+        showToast('✅ Berhasil Dipublikasikan!');
+        setTimeout(() => {
+          alert('✅ Berhasil Dipublikasikan!\n\nPerubahan telah dikirim ke GitHub. Dalam hitungan detik atau menit, perubahan akan muncul di website.');
+        }, 500);
 
       } catch (err) {
         console.error(err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Gagal Memublikasikan',
-          text: err.message,
-          confirmButtonColor: '#DC2626'
-        });
+        alert('❌ Gagal Memublikasikan\n\n' + err.message);
       }
     });
   }
