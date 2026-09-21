@@ -5185,15 +5185,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3200);
   };
 
-  // --- ACKNOWLEDGMENT & READ LOG SYSTEM (OPSI A + C) ---
+  // --- ACKNOWLEDGMENT & READ LOG SYSTEM (Real-time with Google Apps Script) ---
   const ACK_STORAGE_KEY = 'wmcenter_read_acknowledgments_v1';
   window.ACK_STORAGE_KEY = ACK_STORAGE_KEY;
+  
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwlmuzChKwTg84-JzYPBXbkHHRJXgSdEohV65j-0u48UR97RfVsXnTnYO7Q8vj8ByEp/exec';
 
   function getReadAcknowledgments() {
     const data = localStorage.getItem(ACK_STORAGE_KEY);
-    if (!data) {
-      return [];
-    }
+    if (!data) return [];
     try { return JSON.parse(data); } catch(e) { return []; }
   }
   window.getReadAcknowledgments = getReadAcknowledgments;
@@ -5202,8 +5202,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = getReadAcknowledgments();
     list.unshift(entry);
     localStorage.setItem(ACK_STORAGE_KEY, JSON.stringify(list));
+    
+    // Background sync to GAS
+    fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(entry)
+    }).catch(e => console.error('Failed to sync to GAS:', e));
   }
   window.saveReadAcknowledgment = saveReadAcknowledgment;
+
+  async function syncAcksFromGAS() {
+    try {
+      const res = await fetch(GAS_URL);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          localStorage.setItem(ACK_STORAGE_KEY, JSON.stringify(data));
+          // Refresh UI if functions are available
+          if (typeof renderContent === 'function') renderContent();
+          if (typeof window.renderReaderLogTable === 'function') window.renderReaderLogTable();
+          if (typeof window.renderSosialisasiHub === 'function') window.renderSosialisasiHub();
+        }
+      }
+    } catch (e) {
+      console.error('Failed to pull from GAS:', e);
+    }
+  }
+  
+  // Sync real-time data automatically on background 1 second after load
+  setTimeout(syncAcksFromGAS, 1000);
 
   function getAcksForItem(itemId) {
     const list = getReadAcknowledgments();

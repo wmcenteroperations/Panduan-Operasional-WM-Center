@@ -2221,8 +2221,11 @@ h1, h2, h3, h4, h5, h6 {
       <button id="btnOpenSettings" class="btn-editor-action btn-preview" title="Pengaturan Foto, Brand, & Lokasi Cabang">
         ⚙️ Pengaturan Foto & Brand
       </button>
-      <button id="btnDownloadUpdatedIndex" class="btn-editor-action" style="background:#2563EB; color:#FFFFFF; border:none; box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);" title="Download file index.html terbaru yang sudah berisi semua data baru Anda">
-        💾 Download File Web Terbaru
+      <button id="btnOpenGithubConfig" class="btn-editor-action btn-preview" title="Pengaturan Token GitHub">
+        🔑 Config GitHub
+      </button>
+      <button id="btnPublishToGithub" class="btn-editor-action" style="background:#2563EB; color:#FFFFFF; border:none; box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);" title="Push file index.html terbaru langsung ke repositori GitHub">
+        🌐 Publikasikan ke Website
       </button>
       <button id="btnOpenMasterLog" class="btn-editor-action" style="background:#0F766E; color:#FFFFFF;" title="Lihat rekap seluruh staf FO yang telah membaca SOP di seluruh cabang">👥 Rekap Log Baca FO</button>
       <button id="btnPublish" class="btn-editor-action btn-publish" title="Publikasikan semua perubahan ke Tampilan Staf (index.html)">
@@ -2633,6 +2636,30 @@ h1, h2, h3, h4, h5, h6 {
               <button type="button" id="btnSaveSettingsForm" class="btn-save">&#128190; Simpan Pengaturan</button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Modal: GitHub Config -->
+    <div class="modal-overlay" id="githubConfigModalOverlay">
+      <div class="modal-box" style="max-width: 500px;">
+        <div class="modal-header">
+          <h3 style="font-size: 1.15rem; color: #0F172A;">🔑 Konfigurasi GitHub</h3>
+          <button class="modal-close" id="githubConfigModalClose">✕</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size:0.85rem; color:#64748B; margin-bottom:1rem;">
+            Masukkan GitHub Personal Access Token (PAT) kamu di sini. Token ini akan disimpan di browser untuk publikasi langsung.
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="githubTokenInput">GitHub Personal Access Token</label>
+            <input type="password" id="githubTokenInput" class="form-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+            <small style="color: #64748B; margin-top: 0.25rem; display: block;">Pastikan token memiliki scope <b>repo</b>.</small>
+          </div>
+          <div class="modal-footer" style="padding: 0; border: none; margin-top: 1.5rem;">
+            <button type="button" id="btnCancelGithubConfig" class="btn-cancel">Batal</button>
+            <button type="button" id="btnSaveGithubConfig" class="btn-save">💾 Simpan Token</button>
+          </div>
         </div>
       </div>
     </div>
@@ -4941,15 +4968,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (modalClose) modalClose.addEventListener('click', () => sopModalOverlay.classList.remove('active'));
 
 
-  // --- ACKNOWLEDGMENT & READ LOG SYSTEM (OPSI A + C) ---
+  // --- ACKNOWLEDGMENT & READ LOG SYSTEM (Real-time with Google Apps Script) ---
   const ACK_STORAGE_KEY = 'wmcenter_read_acknowledgments_v1';
   window.ACK_STORAGE_KEY = ACK_STORAGE_KEY;
+  
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwlmuzChKwTg84-JzYPBXbkHHRJXgSdEohV65j-0u48UR97RfVsXnTnYO7Q8vj8ByEp/exec';
 
   function getReadAcknowledgments() {
     const data = localStorage.getItem(ACK_STORAGE_KEY);
-    if (!data) {
-      return [];
-    }
+    if (!data) return [];
     try { return JSON.parse(data); } catch(e) { return []; }
   }
   window.getReadAcknowledgments = getReadAcknowledgments;
@@ -4958,8 +4985,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const list = getReadAcknowledgments();
     list.unshift(entry);
     localStorage.setItem(ACK_STORAGE_KEY, JSON.stringify(list));
+    
+    // Background sync to GAS
+    fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(entry)
+    }).catch(e => console.error('Failed to sync to GAS:', e));
   }
   window.saveReadAcknowledgment = saveReadAcknowledgment;
+
+  async function syncAcksFromGAS() {
+    try {
+      const res = await fetch(GAS_URL);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          localStorage.setItem(ACK_STORAGE_KEY, JSON.stringify(data));
+          // Refresh UI if functions are available
+          if (typeof renderContent === 'function') renderContent();
+          if (typeof window.renderReaderLogTable === 'function') window.renderReaderLogTable();
+          if (typeof window.renderMasterLogTable === 'function') window.renderMasterLogTable();
+        }
+      }
+    } catch (e) {
+      console.error('Failed to pull from GAS:', e);
+    }
+  }
+  
+  // Sync real-time data automatically on background 1 second after load
+  setTimeout(syncAcksFromGAS, 1000);
 
   function getAcksForItem(itemId) {
     const list = getReadAcknowledgments();
@@ -5645,20 +5699,94 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // Download Updated index.html Handler
-  const btnDownloadUpdatedIndex = document.getElementById('btnDownloadUpdatedIndex');
-  if (btnDownloadUpdatedIndex) {
-    btnDownloadUpdatedIndex.addEventListener('click', async () => {
-      try {
-        showToast('⏳ Menyiapkan file web terbaru...');
+  // GitHub Configuration & Publishing Handler
+  const githubConfigModalOverlay = document.getElementById('githubConfigModalOverlay');
+  const btnOpenGithubConfig = document.getElementById('btnOpenGithubConfig');
+  const btnCancelGithubConfig = document.getElementById('btnCancelGithubConfig');
+  const btnSaveGithubConfig = document.getElementById('btnSaveGithubConfig');
+  const githubConfigModalClose = document.getElementById('githubConfigModalClose');
+  const githubTokenInput = document.getElementById('githubTokenInput');
+  const btnPublishToGithub = document.getElementById('btnPublishToGithub');
 
+  const openGithubConfigModal = () => {
+    githubTokenInput.value = localStorage.getItem('wmcenter_github_token') || '';
+    githubConfigModalOverlay.classList.add('active');
+  };
+
+  const closeGithubConfigModal = () => {
+    githubConfigModalOverlay.classList.remove('active');
+  };
+
+  if (btnOpenGithubConfig) btnOpenGithubConfig.addEventListener('click', openGithubConfigModal);
+  if (btnCancelGithubConfig) btnCancelGithubConfig.addEventListener('click', closeGithubConfigModal);
+  if (githubConfigModalClose) githubConfigModalClose.addEventListener('click', closeGithubConfigModal);
+
+  if (btnSaveGithubConfig) {
+    btnSaveGithubConfig.addEventListener('click', () => {
+      const token = githubTokenInput.value.trim();
+      if (token) {
+        localStorage.setItem('wmcenter_github_token', token);
+        showToast('✅ Token GitHub berhasil disimpan!');
+        closeGithubConfigModal();
+      } else {
+        localStorage.removeItem('wmcenter_github_token');
+        showToast('⚠️ Token GitHub dihapus.');
+        closeGithubConfigModal();
+      }
+    });
+  }
+
+  function utf8_to_b64(str) {
+    return window.btoa(unescape(encodeURIComponent(str)));
+  }
+
+  function b64_to_utf8(str) {
+    return decodeURIComponent(escape(window.atob(str)));
+  }
+
+  if (btnPublishToGithub) {
+    btnPublishToGithub.addEventListener('click', async () => {
+      const token = localStorage.getItem('wmcenter_github_token');
+      if (!token) {
+        const confirmGo = confirm('Token Belum Diatur\n\nHarap atur GitHub Personal Access Token terlebih dahulu di menu Config GitHub. Klik OK untuk mengatur token.');
+        if (confirmGo) openGithubConfigModal();
+        return;
+      }
+
+      showToast('⏳ Memublikasikan... Sedang mengambil data dari GitHub.');
+
+      try {
         // Ensure current state is persisted
         persistSettings(appSettings);
         persistItems(itemList);
 
-        // Fetch the template index.html
-        const response = await fetch('index.html');
-        let indexTemplate = await response.text();
+        // GitHub Repo Info
+        const owner = 'wmcenteroperations';
+        const repo = 'Panduan-Operasional-WM-Center';
+        const path = 'index.html';
+        const branch = 'main';
+
+        // 1. Get current index.html from GitHub (Solves "Failed to fetch" file:// error)
+        const getUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
+        const getRes = await fetch(getUrl, {
+          headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        
+        if (!getRes.ok) {
+          throw new Error('Gagal mengambil file dari GitHub. Token mungkin salah atau API limit.');
+        }
+        
+        const getResData = await getRes.json();
+        const sha = getResData.sha;
+        
+        // Decode base64 content from GitHub
+        const base64ContentFromGithub = getResData.content.replace(/\n/g, '');
+        let indexTemplate = b64_to_utf8(base64ContentFromGithub);
+
+        showToast('⏳ Mengemas data terbaru...');
 
         // Prepare updated data strings
         const jsonSettings = JSON.stringify(appSettings, null, 2);
@@ -5673,52 +5801,40 @@ document.addEventListener('DOMContentLoaded', () => {
         indexTemplate = indexTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', '${newVer}');`);
         indexTemplate = indexTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== '${newVer}'`);
 
-        // Try Modern File System Access API (Opens "Save As" window to directly overwrite file)
-        if ('showSaveFilePicker' in window) {
-          try {
-            const handle = await window.showSaveFilePicker({
-              suggestedName: 'index.html',
-              types: [{
-                description: 'HTML Document (*.html)',
-                accept: { 'text/html': ['.html'] }
-              }]
-            });
-            const writable = await handle.createWritable();
-            await writable.write(indexTemplate);
-            await writable.close();
+        const b64ContentToPush = utf8_to_b64(indexTemplate);
+        
+        showToast('⏳ Mengirim pembaruan ke GitHub...');
 
-            showToast('✅ Berhasil menyimpan index.html langsung!');
-            setTimeout(() => {
-              alert('🎉 Berhasil!\n\nFile "index.html" sudah berhasil disimpan langsung ke komputermu (tanpa index(1), index(2)).\n\nLangkah terakhir:\nUpload file "index.html" tersebut ke GitHub agar seluruh staf bisa langsung melihat update barunya!');
-            }, 400);
-            return;
-          } catch (pickerErr) {
-            if (pickerErr.name === 'AbortError') {
-              showToast('ℹ️ Penyimpanan dibatalkan.');
-              return;
-            }
-            console.warn('showSaveFilePicker error, falling back to download:', pickerErr);
-          }
+        // 2. Put updated file
+        const putUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+        const putRes = await fetch(putUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Auto-publish content update via Editor ${newVer}`,
+            content: b64ContentToPush,
+            sha: sha,
+            branch: branch
+          })
+        });
+
+        if (!putRes.ok) {
+          const putErrData = await putRes.json();
+          throw new Error(putErrData.message || 'Gagal menyimpan (push) file ke GitHub.');
         }
 
-        // Fallback standard browser download
-        const blob = new Blob([indexTemplate], { type: 'text/html;charset=utf-8' });
-        const downloadUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = 'index.html';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(downloadUrl);
-
-        showToast('✅ Berhasil download index.html terbaru!');
+        showToast('✅ Berhasil Dipublikasikan!');
         setTimeout(() => {
-          alert('🎉 File "index.html" terbaru berhasil didownload!\n\n⚠️ PENTING SOAL NAMA FILE:\nJika di folder Downloads filenya bernama "index (1).html" atau "index (2).html", pastikan kamu GANTI NAMA (Rename) file tersebut menjadi "index.html" sebelum di-upload ke GitHub, agar website utama bisa membacanya!');
+          alert('✅ Berhasil Dipublikasikan!\n\nPerubahan telah dikirim ke GitHub. Dalam hitungan detik atau menit, perubahan akan muncul di website.');
         }, 500);
+
       } catch (err) {
         console.error(err);
-        alert('Gagal mendownload otomatis. Pastikan file index.html berada di folder yang sama atau gunakan web server lokal.');
+        alert('❌ Gagal Memublikasikan\n\n' + err.message);
       }
     });
   }
