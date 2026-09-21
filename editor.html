@@ -2620,6 +2620,10 @@ h1, h2, h3, h4, h5, h6 {
               <input type="text" id="settingsBranches" class="form-input" placeholder="WM Center - Head Office" />
             </div>
             <div class="form-group">
+              <label class="form-label" for="settingsPositions">Daftar Posisi Staf (Pisahkan dengan koma)</label>
+              <input type="text" id="settingsPositions" class="form-input" placeholder="Front Office, Cleaning Service, Fisioterapis" />
+            </div>
+            <div class="form-group">
               <label class="form-label" for="settingsLogoUrl">Link URL / Path Foto Logo Brand</label>
               <input type="text" id="settingsLogoUrl" class="form-input" placeholder="assets/logo.jpg atau URL gambar" />
             </div>
@@ -4989,7 +4993,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Background sync to GAS
     fetch(GAS_URL, {
       method: 'POST',
-      body: JSON.stringify(entry)
+      body: JSON.stringify({ ...entry, role: entry.position })
     }).catch(e => console.error('Failed to sync to GAS:', e));
   }
   window.saveReadAcknowledgment = saveReadAcknowledgment;
@@ -5000,7 +5004,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) {
-          localStorage.setItem(ACK_STORAGE_KEY, JSON.stringify(data));
+          const mappedData = data.map(item => ({ ...item, position: item.position || item.role }));
+          localStorage.setItem(ACK_STORAGE_KEY, JSON.stringify(mappedData));
           // Refresh UI if functions are available
           if (typeof renderContent === 'function') renderContent();
           if (typeof window.renderReaderLogTable === 'function') window.renderReaderLogTable();
@@ -5514,6 +5519,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const elBrandTitle = document.getElementById('settingsBrandTitle');
       const elBrandSubtitle = document.getElementById('settingsBrandSubtitle');
       const elBranches = document.getElementById('settingsBranches');
+      const elPositions = document.getElementById('settingsPositions');
       const elBannerUrl = document.getElementById('settingsBannerUrl');
       const elLogoUrl = document.getElementById('settingsLogoUrl');
       const elHeroTitle = document.getElementById('settingsHeroTitle');
@@ -5525,6 +5531,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (elBrandTitle) elBrandTitle.value = appSettings.brandTitle || '';
       if (elBrandSubtitle) elBrandSubtitle.value = appSettings.brandSubtitle || '';
       if (elBranches) elBranches.value = (appSettings.branches || []).join(', ');
+      if (elPositions) elPositions.value = (appSettings.positions || []).join(', ');
       if (elBannerUrl) elBannerUrl.value = appSettings.bannerUrl || '';
       if (elLogoUrl) elLogoUrl.value = appSettings.logoUrl || '';
       if (elHeroTitle) elHeroTitle.value = appSettings.heroTitle || '';
@@ -5546,6 +5553,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const elBrandTitle = document.getElementById('settingsBrandTitle');
     const elBrandSubtitle = document.getElementById('settingsBrandSubtitle');
     const elBranches = document.getElementById('settingsBranches');
+      const elPositions = document.getElementById('settingsPositions');
     const elBannerUrl = document.getElementById('settingsBannerUrl');
     const elLogoUrl = document.getElementById('settingsLogoUrl');
     const elHeroTitle = document.getElementById('settingsHeroTitle');
@@ -5559,6 +5567,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elBranches && elBranches.value.trim()) {
       const branchesVal = elBranches.value.split(',').map(b => b.trim()).filter(b => b.length > 0);
       if (branchesVal.length > 0) appSettings.branches = branchesVal;
+    }
+    if (elPositions && elPositions.value.trim()) {
+      const positionsVal = elPositions.value.split(',').map(p => p.trim()).filter(p => p.length > 0);
+      if (positionsVal.length > 0) appSettings.positions = positionsVal;
+    } else {
+      appSettings.positions = [];
     }
     if (elBannerUrl && elBannerUrl.value.trim()) appSettings.bannerUrl = elBannerUrl.value.trim();
     if (elLogoUrl && elLogoUrl.value.trim()) appSettings.logoUrl = elLogoUrl.value.trim();
@@ -6862,7 +6876,9 @@ function initWeGrowEvents() {
               </div>
               <div class="wegrow-form-group" style="margin-bottom: 0;">
                 <label class="wegrow-form-label" for="wgStaffPos">Posisi <span class="req">*</span></label>
-                <input type="text" id="wgStaffPos" class="wegrow-form-input" placeholder="Posisi kamu di WM Center" value="Front Office" required />
+                <select id="wgStaffPos" class="wegrow-form-input" required>
+                  ${(appSettings.positions && appSettings.positions.length > 0 ? appSettings.positions : ['Front Office', 'Cleaning Service', 'Perawat', 'Dokter', 'Fisioterapis', 'Apoteker', 'Kasir']).map(p => `<option value="${p}">${p}</option>`).join('')}
+                </select>
               </div>
             </div>
 
