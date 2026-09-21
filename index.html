@@ -2919,12 +2919,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v20260920_v1') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v1789975575198') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v20260920_v1');
+    localStorage.setItem('wmcenter_build_version', 'v1789975575198');
   }
 
   const defaultRoles = [
@@ -2937,7 +2937,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const defaultModules = [
   {
     "id": "mod_mtmfs2ka",
-    "icon": "💼",
+    "icon": "📑",
     "name": "Front Office"
   },
   {
@@ -2954,11 +2954,6 @@ document.addEventListener('DOMContentLoaded', () => {
     "id": "dailytask",
     "icon": "📅",
     "name": "Modul Training"
-  },
-  {
-    "id": "mod_sosialisasi",
-    "icon": "📢",
-    "name": "Sosialisasi & Log Baca FO"
   }
 ];
 
@@ -3021,7 +3016,7 @@ document.addEventListener('DOMContentLoaded', () => {
 };
 
   const defaultItems = [
-    {
+  {
     "summary": "Aplikasi web interaktif kamus istilah klinis, informasi pelayanan, dan modul latihan acak untuk Front Office.",
     "id": "fo_buku_saku",
     "details": "<h4>Aplikasi Interaktif Buku Saku FO:</h4><p>Portal web apps script interaktif yang berisi kamus istilah medis/klinis fisioterapi, informasi pelayanan, serta modul kuis/latihan acak untuk mengasah pemahaman tim Front Office.</p><hr style=\"margin:12px 0; border:0; border-top:1px solid #E2E8F0;\"><h5>Fitur Aplikasi:</h5><ul><li><strong>Kamus Klinis:</strong> Pencarian cepat istilah medis dan penjelasan mudah untuk pasien.</li><li><strong>Filter Kategori:</strong> Pengelompokan istilah berdasarkan tindakan klinis dan alur FO.</li><li><strong>Latihan Acak:</strong> Kuis tanya jawab interaktif untuk pelatihan mandiri staf.</li></ul>",
@@ -3034,7 +3029,6 @@ document.addEventListener('DOMContentLoaded', () => {
       "mod_mtmfs2ka",
       "dailytask"
     ],
-    
     "categories": [
       "fo",
       "management"
@@ -3054,7 +3048,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": true,
+    "requiresAck": true,
+    "readTimer": 30
   },
   {
     "summary": "Rekapan pencapaian dan monitoring target harian Front Office seluruh cabang WM Center.",
@@ -3067,7 +3063,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap gabungan komplain pasien, rating Google Review, voucher diskon, dan klaim asuransi.",
@@ -3080,7 +3078,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Pemuda.",
@@ -3093,7 +3093,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang BSD.",
@@ -3106,7 +3108,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Kemang.",
@@ -3119,7 +3123,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Bandung.",
@@ -3132,7 +3138,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Cibubur.",
@@ -3145,7 +3153,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Kebayoran.",
@@ -3158,7 +3168,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Puri.",
@@ -3171,7 +3183,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Surabaya.",
@@ -3184,7 +3198,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Kuningan.",
@@ -3197,7 +3213,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Alam Sutera.",
@@ -3210,9 +3228,11 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
-    {
+  {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Sunter.",
     "id": "fo_14_sunter",
     "details": "<p>Spreadsheet input transaksi dan omset harian cabang Sunter.</p>",
@@ -3224,7 +3244,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Spreadsheet catatan dan log penyesuaian/revisi daily income seluruh cabang WM Center.",
@@ -3238,8 +3260,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "fo_14",
@@ -3248,7 +3271,6 @@ document.addEventListener('DOMContentLoaded', () => {
       "mod_mtmfs2ka",
       "dailytask"
     ],
-    
     "module": "mod_mtmfs2ka",
     "categories": [
       "all"
@@ -3258,7 +3280,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Template Balasan WhatsApp Admin FO",
     "driveUrl": "https://docs.google.com/spreadsheets/d/1_qGAfx7Ai0-g1IwBxa6Keoc2KX-twHn2DlLLYVRPvUQ/edit?usp=sharing",
     "summary": "Kumpulan template chat quick-reply WhatsApp admin untuk greeting, jadwal, dan reservasi.",
-    "details": "<p>Daftar template balas cepat WhatsApp resmi untuk admin FO.</p>"
+    "details": "<p>Daftar template balas cepat WhatsApp resmi untuk admin FO.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Folder Google Drive database pasien seluruh program event dan paket khusus WM Center.",
@@ -3271,7 +3295,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Spreadsheet monitoring dan database pasien loyal serta tracking reward referral.",
@@ -3284,11 +3310,13 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "fo_17",
-    "isFeatured": true,
+    "isFeatured": false,
     "modules": [
       "mod_mtmfs2ka",
       "sop"
@@ -3302,7 +3330,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Template Jadwal Kosong Terbaru (Story WhatsApp)",
     "driveUrl": "https://datastudio.google.com/reporting/4daf9b2c-214b-4771-9c20-e2dff78b6e91",
     "summary": "Note: Link ini sudah bisa kalian pakai, agar tidak perlu manual edit di Story WA Cabang. \n\nJangan lupa pilih Cabang terlebih dahulu ya Team 🙏\nPilihannya ada: Today Slot (4-12 kolom) dan Tomorrow/Besok Slot (4-12 kolom). \n\nApabila jumlah slot kosong ganjil, Team FO bisa pilih draft yang jumlah kolomnya terdekat 🙏",
-    "details": "<p>Asset grafis story WhatsApp slot kosong harian.</p>"
+    "details": "<p>Asset grafis story WhatsApp slot kosong harian.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Materi promosi Free Consultation khusus posting hari Selasa - Kamis.",
@@ -3315,7 +3345,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Materi promosi diskon lansia (Senior Friday) posting hari Kamis - Jumat.",
@@ -3328,7 +3360,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Materi visual edukasi klaim asuransi Meditap untuk posting harian di WhatsApp story.",
@@ -3341,7 +3375,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Materi promosi kemitraan komunitas lari Social Run (dibagikan melalui ketua komunitas).",
@@ -3354,7 +3390,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Daftar kode kupon, potongan diskon, dan promo aktif pendaftaran website WM Center.",
@@ -3367,7 +3405,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "fo_23",
@@ -3384,7 +3424,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Kumpulan Konten Story WM Center",
     "driveUrl": "https://drive.google.com/drive/folders/1WvERV3we2BpCSQXJRNptA3-4UmTvLeyV?usp=drive_link",
     "summary": "Folder Google Drive kumpulan aset konten foto dan video resmi WM Center.",
-    "details": "<p>Aset foto, video, dan infografis resmi WM Center.</p>"
+    "details": "<p>Aset foto, video, dan infografis resmi WM Center.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "fo_24",
@@ -3401,7 +3443,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Rekap Jumlah Pasien Bulanan (All Cabang)",
     "driveUrl": "https://drive.google.com/drive/folders/1mOm4I1O-SGzqK8fAwPkr4funSWzJ2M1x?usp=drive_link",
     "summary": "Rekapitulasi jumlah penanganan pasien bulanan seluruh fisioterapis cabang WM Center.",
-    "details": "<p>Laporan produktivitas dan jumlah sesi tindakan per terapis.</p>"
+    "details": "<p>Laporan produktivitas dan jumlah sesi tindakan per terapis.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Folder arsip dokumentasi dan tangkapan layar ulasan Google Review dari pasien tiap cabang.",
@@ -3414,7 +3458,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_01",
@@ -3432,7 +3478,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Jadwal Kerja Karyawan ALL Cabang",
     "driveUrl": "https://drive.google.com/drive/folders/1QEASJQ9Ze2o2DoCnxiwDmy7FLCT4V6tg?usp=drive_link",
     "summary": "Master jadwal shift gabungan Fisioterapis, Front Office, dan tim Operations seluruh cabang.",
-    "details": "<p>Folder master jadwal kerja shift karyawan seluruh cabang WM Center.</p>"
+    "details": "<p>Folder master jadwal kerja shift karyawan seluruh cabang WM Center.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Spreadsheet jadwal penugasan, roster on-call, dan jadwal shift tim fisioterapis.",
@@ -3445,7 +3493,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Spreadsheet jadwal shift tim Front Office dan Customer Service seluruh cabang.",
@@ -3458,7 +3508,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Rekap harian daily income dan jumlah kunjungan pasien seluruh cabang WM Center.",
@@ -3471,7 +3523,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Katalog visual daftar harga tindakan dan paket fisioterapi format persegi (1:1).",
@@ -3484,7 +3538,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Katalog visual daftar harga tindakan dan paket fisioterapi format A5 untuk cetak dan display.",
@@ -3497,7 +3553,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Asset gambar daftar harga resmi untuk kebutuhan publikasi di WhatsApp Story.",
@@ -3510,7 +3568,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_08",
@@ -3529,7 +3589,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Digital Product Catalogue WM Center",
     "driveUrl": "https://drive.google.com/file/d/1nmfzg8EMeXCtLCpH4nZSV4AMgH_c0zlC/view",
     "summary": "Katalog produk dan layanan lengkap WM Center yang disesuaikan untuk fitur WhatsApp Katalog.",
-    "details": "<p>PDF katalog digital product knowledge dan layanan terapi WM Center.</p>"
+    "details": "<p>PDF katalog digital product knowledge dan layanan terapi WM Center.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_09",
@@ -3547,7 +3609,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "FAQ Layanan WM Center (Merged)",
     "driveUrl": "https://drive.google.com/file/d/1N8K-txDcf6GPqjrid3f49wn2QsuaHbQR/view?usp=sharing",
     "summary": "Panduan tanya-jawab lengkap seputar layanan klinik, konsultasi medis, dan fisioterapi.",
-    "details": "<p>Dokumen kompilasi FAQ pertanyaan umum pasien tentang tindakan dan biaya.</p>"
+    "details": "<p>Dokumen kompilasi FAQ pertanyaan umum pasien tentang tindakan dan biaya.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_10",
@@ -3565,7 +3629,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "FAQ Kebijakan Layanan WM (Internal)",
     "driveUrl": "https://docs.google.com/presentation/d/1JxpbfbMd02hJ9YKUIpqooOthMmKruR3C/edit?usp=sharing",
     "summary": "Presentasi kebijakan operasional, hak pasien, dan SOP internal bagi seluruh karyawan.",
-    "details": "<p>Slide presentasi kebijakan layanan internal WM Center.</p>"
+    "details": "<p>Slide presentasi kebijakan layanan internal WM Center.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_11",
@@ -3582,7 +3648,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Kumpulan Materi Konten WA Story",
     "driveUrl": "https://drive.google.com/drive/folders/1WvERV3we2BpCSQXJRNptA3-4UmTvLeyV?usp=sharing",
     "summary": "Folder materi grafis harian dan permohonan aset desain story WhatsApp ke tim Operations.",
-    "details": "<p>Folder request dan arsip konten WhatsApp story harian admin.</p>"
+    "details": "<p>Folder request dan arsip konten WhatsApp story harian admin.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Master template respon cepat chat WhatsApp untuk seluruh alur layanan pasien.",
@@ -3595,7 +3663,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Panduan alur verifikasi data pendaftaran dan reservasi website dari sisi admin klinik.",
@@ -3608,7 +3678,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Panduan edukasi pasien tentang cara pendaftaran mandiri dan booking sesi via website.",
@@ -3621,7 +3693,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_15",
@@ -3638,7 +3712,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Video Tutorial: Sign Up Akun Website",
     "driveUrl": "https://drive.google.com/file/d/1KvaK9C_LFJgrJhVMbznIn6dIu6GyuZHZ/view?usp=sharing",
     "summary": "Video tutorial panduan langkah pembuatan akun baru di portal website WM Center.",
-    "details": "<p>Video tutorial panduan pendaftaran akun website.</p>"
+    "details": "<p>Video tutorial panduan pendaftaran akun website.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_16",
@@ -3655,7 +3731,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Video Tutorial: Login Akun Website",
     "driveUrl": "https://drive.google.com/file/d/1qPqZc4wzYo29yq8QofbUuVDVK9yuk9be/view?usp=sharing",
     "summary": "Video tutorial panduan login dan verifikasi akun pasien di website WM Center.",
-    "details": "<p>Video tutorial panduan login akun website.</p>"
+    "details": "<p>Video tutorial panduan login akun website.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_17",
@@ -3672,7 +3750,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Video Tutorial: Reservasi Jadwal Website",
     "driveUrl": "https://drive.google.com/file/d/1HUCFBB5y1P-DRCyeEYzQ2fBcK_gP9SdZ/view?usp=sharing",
     "summary": "Video tutorial alur pemilihan cabang, jadwal, dan booking fisioterapis via website.",
-    "details": "<p>Video tutorial booking reservasi online pasien.</p>"
+    "details": "<p>Video tutorial booking reservasi online pasien.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Buku panduan operasional FO dalam memanfaatkan integrasi chatbot cerdas Cekat.AI.",
@@ -3685,7 +3765,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Folder Google Drive aset gambar profil resmi WhatsApp Business untuk seluruh cabang.",
@@ -3698,7 +3780,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_20",
@@ -3715,7 +3799,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Master Folder Drive ALL IOC - WM Center",
     "driveUrl": "https://drive.google.com/drive/folders/1xN7DHdUV0cRRCy82p3rbM-Wrjp4augSK?usp=drive_link",
     "summary": "Akses langsung ke folder master Google Drive seluruh dokumen IOC resmi WM Center.",
-    "details": "<p>Pusat arsip file PDF dokumen IOC resmi yang telah terbit.</p>"
+    "details": "<p>Pusat arsip file PDF dokumen IOC resmi yang telah terbit.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Folder Google Drive arsip izin operasional klinik, STR/SIP tenaga medis, dan berkas legal.",
@@ -3728,7 +3814,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Kumpulan materi program Senior Physio mencakup SOP, slide presentasi, dan pedoman tindakan.",
@@ -3741,7 +3829,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_24",
@@ -3759,7 +3849,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "SOP Permintaan Titik Tambahan Terapi",
     "driveUrl": "https://drive.google.com/file/d/1CdVqmfQI-DOp91Mji3EQJRZX2m0i3SkB/view",
     "summary": "Standar operasional penanganan permintaan tambahan titik area terapi pasien di cabang.",
-    "details": "<p>SOP regulasi dan alur biaya penambahan titik area tindakan.</p>"
+    "details": "<p>SOP regulasi dan alur biaya penambahan titik area tindakan.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_25",
@@ -3777,7 +3869,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Komunikasi Penambahan Area Keluhan (Extra Point)",
     "driveUrl": "https://docs.google.com/presentation/d/1be8iGCAidDvy5z8jJ11pTbmBMTuAmPSBQsRVMolQ2bY/edit?slide=id.p1#slide=id.p1",
     "summary": "Panduan komunikasi tim Fisioterapis dan Front Office saat pasien meminta penambahan area terapi.",
-    "details": "<p>Slide panduan percakapan dan edukasi pasien untuk extra point request.</p>"
+    "details": "<p>Slide panduan percakapan dan edukasi pasien untuk extra point request.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Folder Google Drive video profil, edukasi kesehatan, dan materi promo untuk layar TV lobby.",
@@ -3790,7 +3884,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Spreadsheet evaluasi kepuasan pasien, kritik saran, dan rekap survei pelayanan klinik.",
@@ -3803,7 +3899,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_28",
@@ -3821,7 +3919,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "SOP Penanganan Barang Tertinggal (Lost & Found)",
     "driveUrl": "https://drive.google.com/file/d/1iMVVyg1lZzW0b0txdhGP7Ya8Fn4nFw2p/view?usp=sharing",
     "summary": "Prosedur pencatatan, penyimpanan, dan penyerahan barang milik pasien yang tertinggal di klinik.",
-    "details": "<p>SOP resmi penanganan dan inventarisasi barang tertinggal pasien.</p>"
+    "details": "<p>SOP resmi penanganan dan inventarisasi barang tertinggal pasien.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "gops_29",
@@ -3840,7 +3940,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "SOP Standar Komunikasi Front Office",
     "driveUrl": "https://drive.google.com/file/d/1qBE0CY_mUha2DhnyfZDIsuuyifaxTP1a/view",
     "summary": "Standar etika komunikasi tatap muka, via telepon, dan pesan digital bagi resepsionis FO.",
-    "details": "<p>Panduan etika berbicara, greeting, dan penanganan percakapan staf FO.</p>"
+    "details": "<p>Panduan etika berbicara, greeting, dan penanganan percakapan staf FO.</p>",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Folder Google Drive aset gambar satuan dan deskripsi layanan untuk katalog WhatsApp Business.",
@@ -3853,7 +3955,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Materi pembaruan fitur, tutorial, dan SOP pengelolaan komunikasi omnichannel Cekat AI.",
@@ -3866,7 +3970,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "Petunjuk teknis dan panduan kesiapan tim operasional untuk pelaksanaan event di Bali.",
@@ -3879,7 +3985,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "sop"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "id": "ql_01",
@@ -3895,7 +4003,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "title": "Sistem EMR & Rekam Medis Pasien WM Center",
     "summary": "Akses cepat ke portal EMR digital untuk input rekam medis, riwayat asesmen, dan catatan terapi.",
     "driveUrl": "https://emr.wmcenter.clinic",
-    "details": "Portal utama EMR klinik."
+    "details": "Portal utama EMR klinik.",
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Ketentuan dan Program Medal Mondays (versi sebelum diperbarui).",
@@ -3912,7 +4022,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Pembaruan Ketentuan dan Mekanisme Pelaksanaan Program Promo Medal Mondays.",
@@ -3929,7 +4041,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Ketentuan Standar dan Penggunaan Seragam Kerja Tim Front Office.",
@@ -3946,7 +4060,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Alur Operasional Harian Front Office yang Wajib Dijalankan Setiap Hari.",
@@ -3963,7 +4079,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Penerapan dan Ketentuan Pembayaran Uang Muka (Down Payment) Reservasi.",
@@ -3981,7 +4099,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Panduan Layanan dan Penjelasan Produk Custom Orthotic WM X Insole.",
@@ -4000,7 +4120,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Standar Kerapian, Tata Rias, Rambut, dan Penampilan Diri Front Office.",
@@ -4017,7 +4139,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Standar Higiene, Pakaian Praktik Terapi, dan Kerapian Tim Fisioterapi.",
@@ -4034,7 +4158,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Standar Kebersihan, Seragam, dan Penampilan Tim Cleaning Service Cabang.",
@@ -4051,7 +4177,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Kebijakan dan Alur Penggunaan Kode Referral Karyawan (WeRefer).",
@@ -4069,7 +4197,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Program PeepsCare - Benefit Fisioterapi Gratis bagi Karyawan Internal.",
@@ -4088,7 +4218,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Alur Program Apresiasi Pasien Loyal dan Skema Reward Referral.",
@@ -4106,7 +4238,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Ketentuan Mekanisme Distribusi dan Penukaran Voucher BTN JAKIM 2026.",
@@ -4123,7 +4257,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Alur Service Recovery Penanganan Pasien melalui Upgrade ke Senior Physiotherapist.",
@@ -4142,7 +4278,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Pembaruan Standar Operasional Harian Front Office (Revisi 02).",
@@ -4159,7 +4297,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Implementasi dan Distribusi Voucher Google Review dan Instagram Story / Threads.",
@@ -4177,7 +4317,9 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "quicklink"
     ],
-    "isFeatured": false
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
   },
   {
     "summary": "IOC Kerja Sama Layanan Penjualan Voucher Fisioterapi WM Center di Platform Blibli & Alur Verifikasi.",
@@ -4198,9 +4340,10 @@ document.addEventListener('DOMContentLoaded', () => {
       "quicklink",
       "mod_mtmfs2ka"
     ],
-    
-    "isFeatured": true
-  },
+    "isFeatured": false,
+    "requiresAck": false,
+    "readTimer": 30
+  }
 ];
 
   function loadState(key, fallback) {
