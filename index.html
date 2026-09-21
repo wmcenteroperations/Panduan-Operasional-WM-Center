@@ -4506,6 +4506,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (announcementDescText) announcementDescText.textContent = appSettings.announcementDesc;
 
     if (branchSelect) branchSelect.innerHTML = appSettings.branches.map(b => `<option value=\"${b}\">${b}</option>`).join('');
+    const hubStaffPos = document.getElementById('hubStaffPos');
+    const wgStaffPos = document.getElementById('wgStaffPos');
+    const positionsList = (appSettings.positions && appSettings.positions.length > 0) ? appSettings.positions : ['Front Office', 'Cleaning Service', 'Perawat', 'Dokter', 'Fisioterapis', 'Apoteker', 'Kasir'];
+    const posOptions = positionsList.map(p => `<option value="${p}">${p}</option>`).join('');
+    if (hubStaffPos) hubStaffPos.innerHTML = posOptions;
+    if (wgStaffPos) wgStaffPos.innerHTML = posOptions;
 
     renderModuleTabs();
     renderRolePills();
@@ -4674,9 +4680,7 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
               <div class="form-group">
                 <label class="form-label" for="hubStaffPos">Posisi / Jabatan *</label>
-                <select id="hubStaffPos" class="form-input" required>
-                  ${(appSettings.positions && appSettings.positions.length > 0 ? appSettings.positions : ['Front Office', 'Cleaning Service', 'Perawat', 'Dokter', 'Fisioterapis', 'Apoteker', 'Kasir']).map(p => `<option value="${p}">${p}</option>`).join('')}
-                </select>
+                <select id="hubStaffPos" class="form-input" required></select>
               </div>
             </div>
             
@@ -6489,9 +6493,7 @@ function initWeGrowEvents() {
               </div>
               <div class="wegrow-form-group" style="margin-bottom: 0;">
                 <label class="wegrow-form-label" for="wgStaffPos">Posisi <span class="req">*</span></label>
-                <select id="wgStaffPos" class="wegrow-form-input" required>
-                  ${(appSettings.positions && appSettings.positions.length > 0 ? appSettings.positions : ['Front Office', 'Cleaning Service', 'Perawat', 'Dokter', 'Fisioterapis', 'Apoteker', 'Kasir']).map(p => `<option value="${p}">${p}</option>`).join('')}
-                </select>
+                <select id="wgStaffPos" class="wegrow-form-input" required></select>
               </div>
             </div>
 
