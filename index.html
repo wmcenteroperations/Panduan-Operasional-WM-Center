@@ -2919,12 +2919,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v1789978676161') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v1790152850524') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v1789978676161');
+    localStorage.setItem('wmcenter_build_version', 'v1790152850524');
   }
 
   const defaultRoles = [
@@ -3012,12 +3012,6 @@ document.addEventListener('DOMContentLoaded', () => {
       "icon": "📅",
       "name": "Modul Training"
     }
-  ],
-  "positions": [
-    "Front Office",
-    "Branch Coordinator",
-    "Area Manager",
-    "Customer Service"
   ]
 };
 
@@ -3286,7 +3280,7 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   {
     "id": "fo_17",
-    "isFeatured": true,
+    "isFeatured": false,
     "modules": [
       "mod_mtmfs2ka",
       "sop"
@@ -4196,7 +4190,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "quicklink",
       "mod_mtmfs2ka"
     ],
-    "isFeatured": true
+    "isFeatured": false
   }
 ];
 
