@@ -2919,12 +2919,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v1790569391025') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v1790570196083') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v1790569391025');
+    localStorage.setItem('wmcenter_build_version', 'v1790570196083');
   }
 
   const defaultRoles = [
@@ -3045,6 +3045,19 @@ document.addEventListener('DOMContentLoaded', () => {
     "module": "mod_mtmfs2ka",
     "code": "FO-TASK-01",
     "title": "FO Daily Task Checklist",
+    "modules": [
+      "mod_mtmfs2ka"
+    ],
+    "isFeatured": false
+  },
+  {
+    "summary": "Rekapan pencapaian dan monitoring target harian Front Office seluruh cabang WM Center.",
+    "id": "fo_02",
+    "details": "<p>Spreadsheet rekapan semua targetan FO all cabang.</p>",
+    "driveUrl": "https://docs.google.com/spreadsheets/d/17Xh2gFJw5rZbb45Ftl4b1YuiptrfphE4hdQwzUW9jVs/edit?usp=sharing",
+    "module": "mod_mtmfs2ka",
+    "code": "FO-TARGET-02",
+    "title": "FO Daily Target Recap",
     "modules": [
       "mod_mtmfs2ka"
     ],
@@ -3267,7 +3280,7 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   {
     "id": "fo_17",
-    "isFeatured": false,
+    "isFeatured": true,
     "modules": [
       "mod_mtmfs2ka",
       "sop"
@@ -3493,7 +3506,7 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   {
     "id": "gops_08",
-    "isFeatured": true,
+    "isFeatured": false,
     "modules": [
       "mod_mtmfs2ka",
       "sop",
@@ -3505,14 +3518,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
     "category": "all",
     "code": "PL-KATALOG-PRODUK",
-    "title": "Digital Product Catalogue WM Center (Update 28-09-26)",
-    "driveUrl": "file:///C:/Users/User/Downloads/[Update%2028_09_26]%20Digital%20Product%20Catalogue.pdf",
-    "summary": "Katalog produk terbaru dan layanan lengkap WM Center yang disesuaikan untuk fitur WhatsApp Katalog.",
-    "details": "<p>PDF katalog digital product knowledge dan layanan terapi WM Center.</p>",
-    "requiresAck": true,
-    "ackUrl": "",
-    "readTimer": 0,
-    "icon": "💰"
+    "title": "Digital Product Catalogue WM Center",
+    "driveUrl": "https://drive.google.com/file/d/1nmfzg8EMeXCtLCpH4nZSV4AMgH_c0zlC/view",
+    "summary": "Katalog produk dan layanan lengkap WM Center yang disesuaikan untuk fitur WhatsApp Katalog.",
+    "details": "<p>PDF katalog digital product knowledge dan layanan terapi WM Center.</p>"
   },
   {
     "id": "gops_09",
@@ -4181,7 +4190,7 @@ document.addEventListener('DOMContentLoaded', () => {
       "quicklink",
       "mod_mtmfs2ka"
     ],
-    "isFeatured": false
+    "isFeatured": true
   }
 ];
 
