@@ -2919,12 +2919,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Clinic & Physio Ops Published Public App Script (Tampilan Utama Staf)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v1790571535367') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v1790571645963') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v1790571535367');
+    localStorage.setItem('wmcenter_build_version', 'v1790571645963');
   }
 
   const defaultRoles = [
@@ -3493,7 +3493,7 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   {
     "id": "gops_08",
-    "isFeatured": false,
+    "isFeatured": true,
     "modules": [
       "mod_mtmfs2ka",
       "sop",
@@ -3505,10 +3505,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
     "category": "all",
     "code": "PL-KATALOG-PRODUK",
-    "title": "Digital Product Catalogue WM Center",
-    "driveUrl": "https://drive.google.com/file/d/1nmfzg8EMeXCtLCpH4nZSV4AMgH_c0zlC/view",
+    "title": "Digital Product Catalogue WM Center (Update Oct 26)",
+    "driveUrl": "https://bit.ly/UpdateOct-26",
     "summary": "Katalog produk dan layanan lengkap WM Center yang disesuaikan untuk fitur WhatsApp Katalog.",
-    "details": "<p>PDF katalog digital product knowledge dan layanan terapi WM Center.</p>"
+    "details": "<p>PDF katalog digital product knowledge dan layanan terapi WM Center.</p>",
+    "requiresAck": true,
+    "ackUrl": "",
+    "readTimer": 30,
+    "icon": "💰"
   },
   {
     "id": "gops_09",
