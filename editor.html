@@ -2760,12 +2760,12 @@ h1, h2, h3, h4, h5, h6 {
 // WM Center Studio Editor Script (Internal Admin Edit Mode)
 document.addEventListener('DOMContentLoaded', () => {
   // Auto-upgrade storage cache for v24 with clean icons and removed role categories
-  if (localStorage.getItem('wmcenter_build_version') !== 'v1790908381908') {
+  if (localStorage.getItem('wmcenter_build_version') !== 'v1790908959256') {
     localStorage.removeItem('wmcenter_published_settings_v5');
     localStorage.removeItem('wmcenter_published_items_v5');
     localStorage.removeItem('wmcenter_draft_settings_v5');
     localStorage.removeItem('wmcenter_draft_items_v5');
-    localStorage.setItem('wmcenter_build_version', 'v1790908381908');
+    localStorage.setItem('wmcenter_build_version', 'v1790908959256');
   }
 
   const defaultRoles = [
@@ -2905,150 +2905,6 @@ document.addEventListener('DOMContentLoaded', () => {
     "isFeatured": false
   },
   {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Pemuda.",
-    "id": "fo_04_pemuda",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Pemuda.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1jDxMPnwk0AejhLpqNWTav9DaE3TuQlrJYiXh26i_SiM/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-PEMUDA",
-    "title": "Daily Income Cabang Pemuda",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang BSD.",
-    "id": "fo_05_bsd",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang BSD.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1TnHepaxSyc_SkGTCBGTzFhl6sHFkXdOBcaUs_db_mGE/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-BSD",
-    "title": "Daily Income Cabang BSD",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Kemang.",
-    "id": "fo_06_kemang",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Kemang.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1CdwHxuoia4kNNHW28PtfOSEy974Df8rsyZ0Si268Zis/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-KEMANG",
-    "title": "Daily Income Cabang Kemang",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Bandung.",
-    "id": "fo_07_bandung",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Bandung.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1MmATW7cpD9KoSIMzRBS5OcknHtCWw1hX4C60mHKuWTc/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-BANDUNG",
-    "title": "Daily Income Cabang Bandung",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Cibubur.",
-    "id": "fo_08_cibubur",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Cibubur.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1v06vWYEFvUobTEJnnFpV6TBKszkfCh23mVtj4bNruww/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-CIBUBUR",
-    "title": "Daily Income Cabang Cibubur",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Kebayoran.",
-    "id": "fo_09_kebayoran",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Kebayoran.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1zxeWAiITTNQAAjQ7H26dhvEtS1JcjnpuqTQgppSGYnk/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-KEBAYORAN",
-    "title": "Daily Income Cabang Kebayoran",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Puri.",
-    "id": "fo_10_puri",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Puri.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1CEwXv4Hi53HN-a5qSMAQeFQI1lebRG4KTn04MXoZoV4/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-PURI",
-    "title": "Daily Income Cabang Puri",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Surabaya.",
-    "id": "fo_11_surabaya",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Surabaya.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1Xf2n3k5DLxr2rwiOEPLCfegM9yAe4NbcR2lYE4TlTAM/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-SURABAYA",
-    "title": "Daily Income Cabang Surabaya",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Kuningan.",
-    "id": "fo_12_kuningan",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Kuningan.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1yPtkkZDloJyJNxr4gkktCOcPIRIyO4PRmskCXvlcUYI/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-KUNINGAN",
-    "title": "Daily Income Cabang Kuningan",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Alam Sutera.",
-    "id": "fo_13_alamsutera",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Alam Sutera.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1AM085_7HRpNU0YNInycSYacKrTq3wkv0-ZYcaw7O4-I/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-ALAMSUTERA",
-    "title": "Daily Income Cabang Alam Sutera",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Sunter.",
-    "id": "fo_14_sunter",
-    "details": "<p>Spreadsheet input transaksi dan omset harian cabang Sunter.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1jbiID58EdjOPX-7hv1mC9iW_BBdJH2j3Rj7ZN4M6gns/edit?gid=1760885747#gid=1760885747",
-    "module": "mod_mtmfs2ka",
-    "code": "INC-SUNTER",
-    "title": "Daily Income Cabang Sunter",
-    "icon": "&#128202;",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
     "summary": "Spreadsheet catatan dan log penyesuaian/revisi daily income seluruh cabang WM Center.",
     "id": "fo_15_adj_income",
     "details": "<p>Master spreadsheet catatan penyesuaian transaksi dan pembukuan daily income seluruh cabang WM Center.</p>",
@@ -3075,10 +2931,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
     "category": "all",
     "code": "WA-TEMPLATE-ADMIN",
-    "title": "Template Balasan WhatsApp Admin FO",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/1_qGAfx7Ai0-g1IwBxa6Keoc2KX-twHn2DlLLYVRPvUQ/edit?usp=sharing",
+    "title": "Template Chat WhatsApp  Terbaru",
+    "driveUrl": "https://docs.google.com/spreadsheets/d/17bnjktoSzPE3movcF2CxcywMnEVKT0JN_0G7jvDvayI/edit?usp=sharing",
     "summary": "Kumpulan template chat quick-reply WhatsApp admin untuk greeting, jadwal, dan reservasi.",
-    "details": "<p>Daftar template balas cepat WhatsApp resmi untuk admin FO.</p>"
+    "details": "<p>Daftar template balas cepat WhatsApp resmi untuk admin FO.</p>",
+    "requiresAck": false,
+    "ackUrl": "",
+    "readTimer": 30,
+    "icon": "📄"
   },
   {
     "summary": "Folder Google Drive database pasien seluruh program event dan paket khusus WM Center.",
@@ -3121,8 +2981,12 @@ document.addEventListener('DOMContentLoaded', () => {
     "code": "STORY-WA-SLOT-FO",
     "title": "Template Jadwal Kosong Terbaru (Story WhatsApp)",
     "driveUrl": "https://datastudio.google.com/reporting/4daf9b2c-214b-4771-9c20-e2dff78b6e91",
-    "summary": "Note: Link ini sudah bisa kalian pakai, agar tidak perlu manual edit di Story WA Cabang. \n\nJangan lupa pilih Cabang terlebih dahulu ya Team 🙏\nPilihannya ada: Today Slot (4-12 kolom) dan Tomorrow/Besok Slot (4-12 kolom). \n\nApabila jumlah slot kosong ganjil, Team FO bisa pilih draft yang jumlah kolomnya terdekat 🙏",
-    "details": "<p>Asset grafis story WhatsApp slot kosong harian.</p>"
+    "summary": "Jangan lupa pilih Cabang terlebih dahulu ya Team 🙏\nPilihannya ada: Today Slot (4-12 kolom) dan Tomorrow/Besok Slot (4-12 kolom).",
+    "details": "<p>Asset grafis story WhatsApp slot kosong harian.</p>",
+    "requiresAck": false,
+    "ackUrl": "",
+    "readTimer": 30,
+    "icon": "📄"
   },
   {
     "summary": "Materi promosi Free Consultation khusus posting hari Selasa - Kamis.",
