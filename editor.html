@@ -2778,7 +2778,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const defaultModules = [
   {
     "id": "mod_mtmfs2ka",
-    "icon": "💼",
+    "icon": "📑",
     "name": "Front Office"
   },
   {
@@ -2795,11 +2795,6 @@ document.addEventListener('DOMContentLoaded', () => {
     "id": "dailytask",
     "icon": "📅",
     "name": "Modul Training"
-  },
-  {
-    "id": "mod_sosialisasi",
-    "icon": "📢",
-    "name": "Sosialisasi & Log Baca FO"
   }
 ];
 
@@ -2862,7 +2857,7 @@ document.addEventListener('DOMContentLoaded', () => {
 };
 
   const defaultItems = [
-    {
+  {
     "summary": "Aplikasi web interaktif kamus istilah klinis, informasi pelayanan, dan modul latihan acak untuk Front Office.",
     "id": "fo_buku_saku",
     "details": "<h4>Aplikasi Interaktif Buku Saku FO:</h4><p>Portal web apps script interaktif yang berisi kamus istilah medis/klinis fisioterapi, informasi pelayanan, serta modul kuis/latihan acak untuk mengasah pemahaman tim Front Office.</p><hr style=\"margin:12px 0; border:0; border-top:1px solid #E2E8F0;\"><h5>Fitur Aplikasi:</h5><ul><li><strong>Kamus Klinis:</strong> Pencarian cepat istilah medis dan penjelasan mudah untuk pasien.</li><li><strong>Filter Kategori:</strong> Pengelompokan istilah berdasarkan tindakan klinis dan alur FO.</li><li><strong>Latihan Acak:</strong> Kuis tanya jawab interaktif untuk pelatihan mandiri staf.</li></ul>",
@@ -2875,7 +2870,6 @@ document.addEventListener('DOMContentLoaded', () => {
       "mod_mtmfs2ka",
       "dailytask"
     ],
-    
     "categories": [
       "fo",
       "management"
@@ -2892,19 +2886,6 @@ document.addEventListener('DOMContentLoaded', () => {
     "module": "mod_mtmfs2ka",
     "code": "FO-TASK-01",
     "title": "FO Daily Task Checklist",
-    "modules": [
-      "mod_mtmfs2ka"
-    ],
-    "isFeatured": false
-  },
-  {
-    "summary": "Rekapan pencapaian dan monitoring target harian Front Office seluruh cabang WM Center.",
-    "id": "fo_02",
-    "details": "<p>Spreadsheet rekapan semua targetan FO all cabang.</p>",
-    "driveUrl": "https://docs.google.com/spreadsheets/d/17Xh2gFJw5rZbb45Ftl4b1YuiptrfphE4hdQwzUW9jVs/edit?usp=sharing",
-    "module": "mod_mtmfs2ka",
-    "code": "FO-TARGET-02",
-    "title": "FO Daily Target Recap",
     "modules": [
       "mod_mtmfs2ka"
     ],
@@ -3053,7 +3034,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
     "isFeatured": false
   },
-    {
+  {
     "summary": "Rekap pasien harian dan closing transaksi pendapatan kasir harian cabang Sunter.",
     "id": "fo_14_sunter",
     "details": "<p>Spreadsheet input transaksi dan omset harian cabang Sunter.</p>",
@@ -3079,7 +3060,6 @@ document.addEventListener('DOMContentLoaded', () => {
     "modules": [
       "mod_mtmfs2ka"
     ],
-    
     "isFeatured": false
   },
   {
@@ -3089,7 +3069,6 @@ document.addEventListener('DOMContentLoaded', () => {
       "mod_mtmfs2ka",
       "dailytask"
     ],
-    
     "module": "mod_mtmfs2ka",
     "categories": [
       "all"
@@ -3129,7 +3108,7 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   {
     "id": "fo_17",
-    "isFeatured": true,
+    "isFeatured": false,
     "modules": [
       "mod_mtmfs2ka",
       "sop"
@@ -3355,7 +3334,7 @@ document.addEventListener('DOMContentLoaded', () => {
   },
   {
     "id": "gops_08",
-    "isFeatured": false,
+    "isFeatured": true,
     "modules": [
       "mod_mtmfs2ka",
       "sop",
@@ -3367,10 +3346,14 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
     "category": "all",
     "code": "PL-KATALOG-PRODUK",
-    "title": "Digital Product Catalogue WM Center",
-    "driveUrl": "https://drive.google.com/file/d/1nmfzg8EMeXCtLCpH4nZSV4AMgH_c0zlC/view",
+    "title": "Digital Product Catalogue WM Center (Update Oct 26)",
+    "driveUrl": "https://bit.ly/UpdateOct-26",
     "summary": "Katalog produk dan layanan lengkap WM Center yang disesuaikan untuk fitur WhatsApp Katalog.",
-    "details": "<p>PDF katalog digital product knowledge dan layanan terapi WM Center.</p>"
+    "details": "<p>PDF katalog digital product knowledge dan layanan terapi WM Center.</p>",
+    "requiresAck": true,
+    "ackUrl": "",
+    "readTimer": 30,
+    "icon": "💰"
   },
   {
     "id": "gops_09",
@@ -4039,9 +4022,8 @@ document.addEventListener('DOMContentLoaded', () => {
       "quicklink",
       "mod_mtmfs2ka"
     ],
-    
-    "isFeatured": true
-  },
+    "isFeatured": false
+  }
 ];
 
   function loadState(key, fallback) {
