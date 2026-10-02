@@ -5846,6 +5846,35 @@ document.addEventListener('DOMContentLoaded', () => {
           const putErrData = await putRes.json();
           throw new Error(putErrData.message || 'Gagal menyimpan (push) file ke GitHub.');
         }
+        // --- START UPDATE EDITOR.HTML ---
+        const pathEditor = 'editor.html';
+        const getUrlEditor = `https://api.github.com/repos/${owner}/${repo}/contents/${pathEditor}?ref=${branch}`;
+        const getResEditor = await fetch(getUrlEditor, { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } });
+        
+        if (getResEditor.ok) {
+           const getResDataEditor = await getResEditor.json();
+           const shaEditor = getResDataEditor.sha;
+           const base64ContentFromGithubEditor = getResDataEditor.content.replace(/\n/g, '');
+           let editorTemplate = b64_to_utf8(base64ContentFromGithubEditor);
+
+           editorTemplate = editorTemplate.replace(/const defaultModules = \[[\s\S]*?\];/, `const defaultModules = ${jsonModules};`);
+           editorTemplate = editorTemplate.replace(/const defaultSettings = \{[\s\S]*?\n\s*\};/, `const defaultSettings = ${jsonSettings};`);
+           editorTemplate = editorTemplate.replace(/const defaultItems = \[[\s\S]*?\];/, `const defaultItems = ${jsonItems};`);
+           editorTemplate = editorTemplate.replace(/localStorage\.setItem\('wmcenter_build_version', '.*?'\);/, `localStorage.setItem('wmcenter_build_version', '${newVer}');`);
+           editorTemplate = editorTemplate.replace(/localStorage\.getItem\('wmcenter_build_version'\) !== '.*?'/, `localStorage.getItem('wmcenter_build_version') !== '${newVer}'`);
+
+           const b64ContentToPushEditor = utf8_to_b64(editorTemplate);
+           const putUrlEditor = `https://api.github.com/repos/${owner}/${repo}/contents/${pathEditor}`;
+           const putResEditor = await fetch(putUrlEditor, {
+             method: 'PUT',
+             headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+             body: JSON.stringify({ message: `Auto-publish editor update ${newVer}`, content: b64ContentToPushEditor, sha: shaEditor, branch: branch })
+           });
+           if (!putResEditor.ok) {
+             console.warn('Gagal push editor.html');
+           }
+        }
+        // --- END UPDATE EDITOR.HTML ---
 
         showToast('✅ Berhasil Dipublikasikan!');
         setTimeout(() => {
